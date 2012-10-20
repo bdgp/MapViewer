@@ -1,0 +1,2 @@
+serviceClass: org.bdgp.somviewer.client.GreetingService
+path: 2DC38361F9ACBA34F444A6C431A51711.gwt.rpc

@@ -1,0 +1,2 @@
+serviceClass: org.bdgp.somviewer.rpc.SOMDataService
+path: B6F45180C409924EF56E1403C75E39CF.gwt.rpc
