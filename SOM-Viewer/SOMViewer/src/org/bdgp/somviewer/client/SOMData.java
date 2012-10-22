@@ -20,7 +20,7 @@ public class SOMData {
 	protected HashMap<Integer,SOMstruct> data;
 	protected HashMap<String,Library> library;
 	protected SOMDataPts pts;
-	protected Group data_grp = null;
+	protected HashMap<Integer,Group> data_grp = null;
 	protected float zoom;
 	
 	public SOMData(SOMDataPts pts) {
@@ -87,15 +87,30 @@ public class SOMData {
 	}
 	
 	
-	public void setDataCanvasGroup(Group grp, float zoom) {
-		data_grp = grp;
+	public void setDataCanvasGroup(Group grp, int id, float zoom) {
+		if ( data_grp == null )
+			data_grp = new HashMap<Integer,Group>();
+		data_grp.put(new Integer(id), grp);
 		this.zoom = zoom;
 	}
 	
 	
-	public Group getDataCanvasGroup() {
-		return data_grp;
+	public Group getDataCanvasGroup(int id) {
+		if ( data_grp == null )
+			return null;
+		if ( data_grp.containsKey(new Integer(id)) ) 
+			return data_grp.get(id);
+		else
+			return null;
 	}
+	
+	public boolean existsCanvasGroup() {
+		if ( data_grp == null )
+			return false;
+		else
+			return true;
+	}
+	
 	
 	public void invalidateCanvasGroup() {
 		data_grp = null;

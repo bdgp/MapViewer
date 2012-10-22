@@ -65,6 +65,9 @@ public class SOMComposite extends ResizeComposite {
 	
 	protected final int ctrlPanelSize = 150;
 	protected int canv_gapx = 0, canv_gapy = 0;
+	
+	protected final static int GRP_TXT = 0;
+	protected final static int GRP_CIRC = 1;
 
 	Circle c1;
 
@@ -208,7 +211,6 @@ public class SOMComposite extends ResizeComposite {
 		canv_x = x + 2 * canv_gapx / zoom;
 		canv_y = y + 2 * canv_gapy / zoom;
 				
-		som.setZoom(zoom);
 		populateCatPanel();
 		draw();
 	}
@@ -222,6 +224,7 @@ public class SOMComposite extends ResizeComposite {
 			return;
 		}
 		
+		som.setZoom(zoom);		
 		Text tz = new Text(100, 100, "Zoom = " + zoom);
 		canvas.add(tz);
 		
@@ -233,18 +236,24 @@ public class SOMComposite extends ResizeComposite {
 		canvas.setHeight(acanvy);
 		canvas.setWidth(acanvx);
 		
-		Group grp_structure = null;
+		Group grp_txt = null;
+		Group grp_circ = null;
 		
 		if ( showCircles || showLabels ) {
 			
-			grp_structure = som.getDataCanvasGroup();
+			if ( som.existsCanvasGroup() == true ) {
+				grp_txt = som.getDataCanvasGroup(GRP_TXT);
+				grp_circ = som.getDataCanvasGroup(GRP_CIRC);
+			}
+			
 			
 			// See if we have a cached group
-			if ( grp_structure == null ) {
+			if ( (grp_txt == null && showLabels) || (grp_circ == null && showCircles) ) {
 				
 				int x,y;
-				grp_structure = new Group();
-
+				Group ngrp_txt = new Group();
+				Group ngrp_circ = new Group();
+				
 				Iterator<SOMData.SOMstruct> som_data = som.getData();
 
 				while ( som_data.hasNext() ) {
@@ -254,15 +263,15 @@ public class SOMComposite extends ResizeComposite {
 					x = (int) xf;
 					y = (int) yf;
 
-					if ( showCircles == true ) {
+					if ( showCircles == true && grp_circ == null ) {
 						Circle c = new Circle(x, y, crad);
 						c.setFillColor("fuchsia");
 						c.setFillOpacity(0.5);
 						c.setStrokeWidth(0);
 						c.setStrokeColor("white");
-						grp_structure.add(c);
+						ngrp_circ.add(c);
 					}
-					if ( showLabels == true ) {
+					if ( showLabels == true && grp_txt == null ) {
 						Text t = new Text(x, y, som_xy.name);
 						t.setFontFamily("Arial");
 						t.setFontSize(10);
@@ -272,14 +281,22 @@ public class SOMComposite extends ResizeComposite {
 						int fh = t.getTextHeight() / 2;
 						t.setX(x - fw);
 						t.setY(y + fh);
-						grp_structure.add(t);
+						ngrp_txt.add(t);
 					}
 
 				}
-				som.setDataCanvasGroup(grp_structure, zoom);
+				if ( showCircles == true && grp_circ == null ) {
+					som.setDataCanvasGroup(ngrp_circ, GRP_CIRC, zoom);
+					grp_circ = ngrp_circ;
+				}
+				if ( showLabels == true && grp_txt == null ) {
+					som.setDataCanvasGroup(grp_txt, GRP_TXT, zoom);
+					grp_txt = ngrp_txt;
+				}
 			}
 			
 		}
+		
 		
 		OverlayIterator som_overlay = som.getOverlays();
 		
@@ -316,9 +333,17 @@ public class SOMComposite extends ResizeComposite {
 			}
 			canvas.add(grp_overlay);
 		}
-					
-		if ( grp_structure != null )
-			canvas.add(grp_structure);
+		
+		
+		// Order: 
+		// 1) Overlays
+		// 2) Circles
+		// 3) Text
+		if ( grp_circ != null )
+			canvas.add(grp_circ);
+		if ( grp_txt != null )
+			canvas.add(grp_txt);
+
 		
 //		canvas.addMouseMoveHandler(new MouseMoveHandler() {
 //			  public void onMouseMove(MouseMoveEvent event) {
