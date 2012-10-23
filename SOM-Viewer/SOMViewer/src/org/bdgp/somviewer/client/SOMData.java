@@ -73,6 +73,28 @@ public class SOMData {
 	}
 	
 	
+	public int getMaxVariant () {
+		int max = 0;
+		
+		for (Map.Entry<String, Library> entry : library.entrySet()) {
+			int lmax = entry.getValue().max;
+		    if ( lmax > max )
+		    	max = lmax;
+		}
+		
+		return max;
+	}
+	
+	public int getMaxVariant (String name) {
+		Library l = library.get(name);
+		if ( l == null ) {
+			throw new NoSuchElementException();
+		}
+		
+		return l.max;
+	}
+	
+	
 	public void setZoom(float zoom) {
 		if ( this.zoom != zoom ) {
 			data_grp = null;
@@ -139,6 +161,8 @@ public class SOMData {
 		
 		Overlay ovn = new Overlay();
 		ovn.active = true;
+		ovn.name = name;
+		ovn.variant = variant;
 		ovn.ids = id;
 		ovn.vectorGroup = null;
 		ovn.color = col != null? col : l.color;
@@ -160,17 +184,63 @@ public class SOMData {
 		return overlay.containsKey(overlay2uuid(name, variant));
 	}
 	
+	/**
+	 * Set overlay with specified name & variant active
+	 * @param name
+	 * @param variant
+	 */
 	public void setOverlayActive(String name, int variant) {		
 		if ( overlay == null )
 			return;
 		
 		overlay.get(overlay2uuid(name, variant)).active = true;
 	}
+
 	
+	/**
+	 * Set all overlays with specified variant active
+	 * @param variant
+	 */
+	public void setOverlayActive(int variant) {
+		if ( overlay == null )
+			return;
+		
+		Iterator<Map.Entry<String, Overlay>> alloverlays = overlay.entrySet().iterator();
+		
+		while (alloverlays.hasNext()) {
+			Map.Entry<String, Overlay> entry = (Map.Entry<String, Overlay>) alloverlays.next();
+			Overlay ov = (Overlay) entry.getValue();
+			
+			if ( ov.variant == variant )
+				ov.active = true;
+		}
+
+	}
+	
+	/**
+	 * Set all overlays with specified name active
+	 * @param name
+	 */
+	public void setOverlayActive(String name) {
+		if ( overlay == null )
+			return;
+		
+		Iterator<Map.Entry<String, Overlay>> alloverlays = overlay.entrySet().iterator();
+		
+		while (alloverlays.hasNext()) {
+			Map.Entry<String, Overlay> entry = (Map.Entry<String, Overlay>) alloverlays.next();
+			Overlay ov = (Overlay) entry.getValue();
+			
+			if ( ov.name.compareTo(name) == 0 )
+				ov.active = true;
+		}
+
+	}
+
 	public void setOverlayInactive(String name) {
 		Library l = library.get(name);
 		if ( l == null ) {
-			throw new NoSuchElementException();
+			return;
 		}
 		
 		for ( int var=0; var <= l.max; var++ ) {
@@ -224,6 +294,20 @@ public class SOMData {
 			
 			alldata = null;
 			idx = 0;
+		}
+		
+		
+		public IterateCoordinates(boolean allOverlays) {
+			
+			if ( allOverlays == false ) {
+				ov = null;
+				alldata = data.entrySet().iterator();
+				return;
+			}
+			
+			// TODO: create data structure for all overlays
+			
+			
 		}
 		
 		
@@ -354,6 +438,9 @@ public class SOMData {
 	
 	protected class Overlay {
 		boolean active;
+		// boolean pending; // RPC request pending
+		String name;
+		int variant;
 		int [] ids;
 		String color;
 		Group vectorGroup;

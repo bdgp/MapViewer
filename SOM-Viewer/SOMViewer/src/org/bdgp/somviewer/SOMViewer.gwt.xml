@@ -13,6 +13,7 @@
 
   <!-- Other module inherits                                      -->
   <inherits name='org.vaadin.gwtgraphics.GWTGraphics' />
+  <inherits name="com.kiouri.sliderbar.SliderBarMVP" />
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='org.bdgp.somviewer.client.SOMViewer'/>
