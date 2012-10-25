@@ -60,7 +60,7 @@ public class SOMComposite extends ResizeComposite {
 	protected float canv_x, canv_y;
 	
 	protected SOMData som = null;
-	protected SOMDataPts pts = null;
+//	protected SOMDataPts pts = null;
 
 	protected Button but_zplus, but_zone, but_zminus;
 	protected ListBox avail_somBox;
@@ -126,6 +126,7 @@ public class SOMComposite extends ResizeComposite {
 		zoomPanel.add(but_zminus);
 		but_zminus.addClickHandler(new ZoomHandler());
 		
+		//ScrollPanel scrollCatPanel = new ScrollPanel();
 		ScrollPanel scrollCatPanel = new ScrollPanel();
 		ctrlPanel.add(scrollCatPanel);
 		
@@ -176,13 +177,6 @@ public class SOMComposite extends ResizeComposite {
 		ServerService.getInstance().getSOMDataPts(som_src, new SomUpdater());
 	}
 	
-	protected void getOverlay(String name, int variant) {
-		if ( som == null )
-			return;
-		
-		ServerService.getInstance().getDataOverlay(som.getMapName(), name, variant, new SomOverlayUpdater());
-	}
-	
 	
 	protected void setMaps(Vector<String> maps) {
 		for ( String m : maps ) {
@@ -192,7 +186,7 @@ public class SOMComposite extends ResizeComposite {
 	
 	
 	protected void set(SOMDataPts data) {
-		pts = data;
+		SOMDataPts pts = data;
 
 		if (pts == null) {
 			return;
@@ -220,8 +214,12 @@ public class SOMComposite extends ResizeComposite {
 
 		canv_x = x + 2 * canv_gapx / zoom;
 		canv_y = y + 2 * canv_gapy / zoom;
-				
-		populateCatPanel();
+		
+		CategoryComposite cat = new CategoryComposite(this,som);
+		catPanel.clear();
+		catPanel.add(cat);
+		cat.activate(true);
+
 		draw();
 	}
 	
@@ -282,12 +280,12 @@ public class SOMComposite extends ResizeComposite {
 				Group ngrp_txt = new Group();
 				Group ngrp_circ = new Group();
 				
-				Iterator<SOMData.SOMstruct> som_data = som.getData();
+				Iterator<SOMpt> som_data = som.getData();
 
 				while ( som_data.hasNext() ) {
-					SOMData.SOMstruct som_xy = som_data.next();
-					float xf = som_xy.x * zoom;
-					float yf = som_xy.y * zoom;
+					SOMpt som_xy = som_data.next();
+					float xf = som_xy.getX() * zoom;
+					float yf = som_xy.getY() * zoom;
 					x = (int) xf;
 					y = (int) yf;
 
@@ -330,7 +328,7 @@ public class SOMComposite extends ResizeComposite {
 		
 		while (som_overlay.hasNext()) {
 		
-			Iterator<SOMData.SOMstruct> som_odata = som_overlay.next();
+			Iterator<SOMpt> som_odata = som_overlay.next();
 			
 			// Only overwrite groups if not active; we don't want to have an empty/stale group
 			if ( som_overlay.isActive() == false )
@@ -344,9 +342,9 @@ public class SOMComposite extends ResizeComposite {
 				grp_overlay = new Group();
 				
 				while ( som_odata.hasNext() ) {
-					SOMData.SOMstruct som_xy = som_odata.next();
-					float xf = som_xy.x * zoom;
-					float yf = som_xy.y * zoom;
+					SOMpt som_xy = som_odata.next();
+					float xf = som_xy.getX() * zoom;
+					float yf = som_xy.getY() * zoom;
 					x = (int) xf;
 					y = (int) yf;
 					
@@ -397,134 +395,6 @@ public class SOMComposite extends ResizeComposite {
 //	}
 	
 	
-	protected void updateOverlays() {
-		
-		for ( CheckBox cb : overlay_cb ) {
-			if ( cb.getValue() == true ) {
-				
-			}
-		}
-		
-	}
-	
-	
-	protected void activateOverlay(String name, int variant, boolean redraw) {
-		
-		if ( variant < 0 ) {
-			variant = som.getMaxVariant();
-		}
-		
-		if ( ! som.existsOverlay(name, variant) ) {
-			getOverlay(name, variant); // launch RPC request
-		} else {
-			som.setOverlayActive(name, variant);
-			draw();
-		}
-	}
-	
-	protected void inactivateOverlay(String name) {
-		// inactivate all overlays with name
-		som.setOverlayInactive(name);
-		draw();
-	}
-
-	
-	protected void populateCatPanel() {
-
-		catPanel.clear();
-
-		CheckBox circCheckBox = new CheckBox();
-		catPanel.add(circCheckBox);
-		circCheckBox.setText("Show positions");
-		circCheckBox.setValue(showCircles);
-		circCheckBox.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				boolean checked = ((CheckBox) event.getSource()).getValue();
-				showCircles = checked;
-				if ( som != null )
-					som.invalidateCanvasGroup();
-				draw();
-				// Window.alert("It is " + (checked ? "" : "not ") + "checked");
-			}
-		});
-		
-		
-		CheckBox labelsCheckBox = new CheckBox();
-		catPanel.add(labelsCheckBox);
-		labelsCheckBox.setText("Show names");
-		labelsCheckBox.setValue(showLabels);
-		labelsCheckBox.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				boolean checked = ((CheckBox) event.getSource()).getValue();
-				showLabels = checked;
-				if ( som != null )
-					som.invalidateCanvasGroup();
-				draw();
-			}
-		});				
-
-		Label lblNewLabel = new Label("Organ system");
-		catPanel.add(lblNewLabel);
-		
-		
-		HorizontalPanel global_varPanel = new HorizontalPanel();
-		catPanel.add(global_varPanel);
-		
-		VariationSelectWidget globalSlider = new VariationSelectWidget(som.getMaxVariant(),"60px",true);
-		global_varPanel.add(globalSlider.asWidget());
-		globalSlider.setValue(som.getMaxVariant());
-		
-		IntegerBox globalInt = new IntegerBox();
-		global_varPanel.add(globalInt);
-		globalInt.setValue(som.getMaxVariant());
-		globalInt.setMaxLength(2);
-		globalInt.setWidth("10px");
-		
-		VarBarHandler globalSliderHandler = new VarBarHandler(null, null, globalInt, globalSlider);
-		VarBoxHandler globalBoxHandler = new VarBoxHandler(null, null, globalInt, globalSlider);
-		globalSlider.addBarValueChangedHandler(globalSliderHandler);
-		globalInt.addChangeHandler(globalBoxHandler);
-		
-		Vector<String> ovnames = som.getOverlayNames();				
-		Grid osGrid = new Grid(ovnames.size(), 3);
-		catPanel.add(osGrid);
-		
-		Vector<CatVariantHandler> os_handlers = new Vector<CatVariantHandler>(ovnames.size());
-		int row = 0;
-		for ( String ovn : ovnames ) {
-
-			// overlay Checkbox 
-			CheckBox osCheckBox = new CheckBox();
-			osGrid.setWidget(row, 0, osCheckBox);
-			osCheckBox.setText(ovn);
-			
-			// overlay Slider
-			VariationSelectWidget osVarSlider = new VariationSelectWidget(som.getMaxVariant(),"60px",true);
-			osGrid.setWidget(row, 1, osVarSlider);
-			osVarSlider.setValue(som.getMaxVariant());
-			
-			// overlay numeric box
-			IntegerBox osInt = new IntegerBox();
-			osGrid.setWidget(row, 2, osInt);
-			osInt.setValue(som.getMaxVariant());
-			osInt.setMaxLength(2);
-			osInt.setWidth("10px");
-			
-			row++;
-			
-			// Handlers, link them together
-			osCheckBox.addClickHandler(new CatHandler(ovn, osInt));
-			osVarSlider.addBarValueChangedHandler(new VarBarHandler(ovn, osCheckBox, osInt, osVarSlider));
-			VarBoxHandler osBoxHandler = new VarBoxHandler(ovn, osCheckBox, osInt, osVarSlider);
-			osInt.addChangeHandler(osBoxHandler);
-			
-			os_handlers.add(osBoxHandler);
-		}
-		
-		globalSliderHandler.setChildHandlers(os_handlers);
-		globalBoxHandler.setChildHandlers(os_handlers);
-		
-	}
 	
 	
 	
@@ -571,28 +441,6 @@ public class SOMComposite extends ResizeComposite {
 		
 	}
 	
-	public class SomOverlayUpdater extends AbstractLoggingAsyncHandler {
-		
-		public void handleFailure(Throwable caught) {
-			
-		}
-		
-		public void handleSuccess(Object result) {
-			SOMDataOverlay data = (SOMDataOverlay) result;
-			
-			if ( data.queryResult != null ) {
-				setLogEntry("SOM overlay: ERROR " + data.queryResult);
-			} else {
-				setLogEntry("SOM overlay: Received " + data.id.length);
-				if ( som != null ) {
-					som.addOverlay(data.name, data.variant, data.id, null);
-					// Activate all newly received overlays - should be by request from slider/checkbox only
-					activateOverlay(data.name, data.variant, true);
-				}
-			}
-		}
-		
-	}
 
 	public class ZoomHandler implements ClickHandler {
 	      public void onClick(ClickEvent event) {
@@ -611,97 +459,5 @@ public class SOMComposite extends ResizeComposite {
 	          draw();
 	        }
 	}
-	
-	
-	public class CatHandler implements ClickHandler {
-		String name;
-		IntegerBox varBox;
 		
-		public CatHandler(String name, IntegerBox box) {
-			this.name = name;
-			this.varBox = box;
-		}
-		
-		public void onClick(ClickEvent event) {
-			// updateOverlays();
-			
-			boolean checked = ((CheckBox) event.getSource()).getValue();
-			if ( checked == true ) {
-				activateOverlay(name, varBox.getValue(), true);
-			} else {
-				inactivateOverlay(name);
-			}
-			// draw();
-		}
-	}
-	
-	
-	public class CatVariantHandler {
-		private String name;
-		private CheckBox cb;
-		protected IntegerBox numBox;
-		private VariationSelectWidget var;
-		private Vector<CatVariantHandler> others = null;
-		
-		public CatVariantHandler(String name, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
-			this.name = name;
-			this.cb = cb;
-			this.numBox = box;
-			this.var = var;
-		}
-				
-		public void setChildHandlers(Vector<CatVariantHandler> others) {
-			this.others = others;
-		}
-				
-		protected void change(int variant, boolean redraw) {
-			
-			// Synchronize the two
-			// The if statements shouldn't be necessary but GWT goes into infinite loop otherwise
-			if ( numBox.getValue() != variant ) 
-				numBox.setValue(variant);
-			if ( var.getValue() != variant )
-				var.setValue(variant);
-			
-			// if name == null, change all of them
-			if ( others != null ) {
-				for ( CatVariantHandler cvh : others ) {
-					cvh.change(variant, false);
-				}
-				draw();
-			}
-			
-			if ( name == null ) {
-				return;
-			}
-			
-			if ( cb != null && cb.getValue() != null && cb.getValue() == true ) {
-				som.setOverlayInactive(name);
-				activateOverlay(name, variant, redraw);
-			}
-		}		
-	}
-		
-	public class VarBarHandler extends CatVariantHandler implements BarValueChangedHandler {
-		
-		public VarBarHandler(String name, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
-			super(name, cb, box, var);
-		}
-		
-        public void onBarValueChanged(BarValueChangedEvent event) {
-            change(event.getValue(), true);
-         }
-	}
-	
-	public class VarBoxHandler extends CatVariantHandler implements ChangeHandler {
-		
-		public VarBoxHandler(String name, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
-			super(name, cb, box, var);
-		}
-
-		public void onChange(ChangeEvent event) {
-			change(numBox.getValue(), true);
-		}
-	}
-	
 }

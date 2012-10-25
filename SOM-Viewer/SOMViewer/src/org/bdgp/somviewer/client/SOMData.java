@@ -103,7 +103,7 @@ public class SOMData {
 	}
 	
 
-	public Iterator<SOMstruct> getData() {
+	public Iterator<SOMpt> getData() {
 		IterateCoordinates ic = new IterateCoordinates();
 		return ic;
 	}
@@ -151,8 +151,9 @@ public class SOMData {
 		
 		String uuid = overlay2uuid(name, variant);
 		
-		if ( overlay.containsKey(uuid))
-			return;
+		if ( overlay.containsKey(uuid) ) {
+			overlay.remove(uuid);
+		}
 		
 		Library l = library.get(name);
 		if ( l == null ) {
@@ -274,69 +275,98 @@ public class SOMData {
 	}
 	
 	
-	public class IterateCoordinates implements Iterator<SOMstruct> {
-		protected Overlay ov;
-		protected int idx;
-		protected Iterator<Map.Entry<Integer, SOMstruct>> alldata;
+	public class IterateCoordinates implements Iterator<SOMpt> {
+		protected HashMap<Integer,SOMpt> seldata;
+		protected Iterator<Map.Entry<Integer, SOMpt>> sel_it;
+		protected Iterator<Map.Entry<Integer, SOMstruct>> all_it;
 		
 		public IterateCoordinates() {
-			ov = null;
-			alldata = data.entrySet().iterator();
+			sel_it = null;
+			all_it = data.entrySet().iterator();
 		}
 		
 		public IterateCoordinates(String uuid) {
 			if ( overlay == null )
 				throw new NoSuchElementException();
 			
-			ov = overlay.get(uuid);
+			Overlay ov = overlay.get(uuid);
 			if ( ov == null )
 				throw new NoSuchElementException();			
 			
-			alldata = null;
-			idx = 0;
+			all_it = null;
+			genData(ov);
+			sel_it = seldata.entrySet().iterator();
 		}
 		
 		
 		public IterateCoordinates(boolean allOverlays) {
 			
 			if ( allOverlays == false ) {
-				ov = null;
-				alldata = data.entrySet().iterator();
+				sel_it = null;
+				all_it = data.entrySet().iterator();
 				return;
 			}
 			
-			// TODO: create data structure for all overlays
+			if ( overlay != null ){
+				for ( String key : overlay.keySet() ) {
+					Overlay ov = overlay.get(key);
+					if ( ov.active == true ) {
+						genData(ov);
+					}
+				}
+			}
+			sel_it = seldata.entrySet().iterator();
+		}
+		
+		
+		protected void genData(Overlay ov) {
 			
+			if ( ov == null ) {
+				return;
+			}
 			
+			if ( seldata == null ) {
+				seldata = new HashMap<Integer,SOMpt>();
+			}
+			
+			for ( int i = 0; i < ov.ids.length; i++ ) {
+				SOMpt pt;
+				if ( seldata.containsKey(ov.ids[i]) ) {
+					pt = seldata.get(ov.ids[i]);
+				} else {
+					SOMstruct value = data.get(ov.ids[i]);
+					pt = new SOMpt(value.x, value.y, value.name);
+					seldata.put(ov.ids[i], pt);
+				}
+				pt.addDrawDescription(ov.color, null);
+			}
 		}
 		
 		
 		public boolean hasNext() {
 			
-			if ( ov == null ) {
-				return alldata.hasNext();
+			if ( sel_it == null ) {
+				return all_it.hasNext();
+			} else {
+				return sel_it.hasNext();
 			}
-			if ( idx < ov.ids.length ) {
-				return true;
-			}
-			return false;
 		}
 
-		public SOMstruct next() {
+		public SOMpt next() {
+			SOMpt pt = null;
 			
-			if ( ov == null ) {
-			    Map.Entry<Integer, SOMstruct> entry = (Map.Entry<Integer, SOMstruct>) alldata.next();
+			if ( all_it != null ) {
+			    Map.Entry<Integer, SOMstruct> entry = (Map.Entry<Integer, SOMstruct>) all_it.next();
 			    SOMstruct value = (SOMstruct) entry.getValue();
-				return value;
+			    pt = new SOMpt(value.x, value.y, value.name);
+			}
+			else if ( sel_it != null ) {
+			    Map.Entry<Integer, SOMpt> entry = (Map.Entry<Integer, SOMpt>) sel_it.next();
+			    pt = (SOMpt) entry.getValue();
 			}
 			
-			if ( idx >= ov.ids.length )
-				throw new NoSuchElementException();
+			return pt;
 			
-			SOMstruct value = data.get(ov.ids[idx]);
-			idx++;
-			
-			return value;
 		}
 
 		public void remove() {
