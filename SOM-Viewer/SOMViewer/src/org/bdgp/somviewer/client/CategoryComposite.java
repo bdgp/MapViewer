@@ -159,6 +159,11 @@ public class CategoryComposite extends Composite {
 	}
 
 	
+	/**
+	 * Request the overlay data from the server
+	 * @param name
+	 * @param variant
+	 */
 	protected void getOverlay(String name, int variant) {
 		if ( som == null )
 			return;
@@ -167,6 +172,10 @@ public class CategoryComposite extends Composite {
 	}
 
 	
+	/**
+	 * @author erwin
+	 * RPC incoming data for the overlays
+	 */
 	public class SomOverlayUpdater extends AbstractLoggingAsyncHandler {
 		
 		public void handleFailure(Throwable caught) {
@@ -214,6 +223,11 @@ public class CategoryComposite extends Composite {
 	}
 	
 	
+	/**
+	 * @author erwin
+	 * Keeps checkbox, slider and textbox synchronized
+	 * Updates all sliders/textboxes with the master slider/textbox is changed
+	 */
 	public class CatVariantHandler {
 		protected DrawSync sync;
 		private String name;
@@ -235,8 +249,6 @@ public class CategoryComposite extends Composite {
 		}
 				
 		protected void change(int variant) {
-			
-			// toggleDraw(true);
 			
 			// Synchronize the two
 			// The if statements shouldn't be necessary but GWT goes into infinite loop otherwise
@@ -261,8 +273,6 @@ public class CategoryComposite extends Composite {
 				som.setOverlayInactive(name);
 				activateOverlay(name, variant);
 			}
-			
-			// toggleDraw(false);
 		}		
 	}
 		
@@ -292,6 +302,13 @@ public class CategoryComposite extends Composite {
 		}
 	}
 	
+	/**
+	 * @author erwin
+	 * This class keeps track of multiple draw requests
+	 * Used for the CatVariantHandler
+	 * This keeps the updates of the synchronized widgets from redrawing the canvas before finished.
+	 * Class would be very slow without that. 
+	 */
 	protected class DrawSync {
 		private int redraw;
 		private CanvasComposite canvas;

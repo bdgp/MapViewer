@@ -60,7 +60,6 @@ public class SOMComposite extends ResizeComposite {
 	protected float canv_x, canv_y;
 	
 	protected SOMData som = null;
-//	protected SOMDataPts pts = null;
 
 	protected Button but_zplus, but_zone, but_zminus;
 	protected ListBox avail_somBox;
@@ -178,7 +177,6 @@ public class SOMComposite extends ResizeComposite {
 		CategoryComposite cat = new CategoryComposite(canvPanel,som);
 		catPanel.clear();
 		catPanel.add(cat);
-		//cat.activate(true);
 
 		canvPanel.updateCanvas(true);
 	}
@@ -246,7 +244,6 @@ public class SOMComposite extends ResizeComposite {
 	          }
 	          if ( som != null )
 	        	  som.setZoom(zoom);
-	          // draw();
 	        }
 	}
 		
