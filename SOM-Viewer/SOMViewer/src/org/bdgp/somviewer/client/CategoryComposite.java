@@ -24,14 +24,14 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
 public class CategoryComposite extends Composite {
 
 	protected SOMData som;
-	protected SOMComposite canvasOwner;
+	protected CanvasComposite canvasOwner;
 	protected VerticalPanel catPanel  = new VerticalPanel();
 	protected int redraw = -1;
 
 	protected boolean showCircles = true, showLabels = true;
 
 	
-	public CategoryComposite(SOMComposite canvasOwner, SOMData som) {
+	public CategoryComposite(CanvasComposite canvasOwner, SOMData som) {
 		this.som = som;
 		this.canvasOwner = canvasOwner;
 		

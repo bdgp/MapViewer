@@ -69,6 +69,8 @@ public class SOMComposite extends ResizeComposite {
 	protected IntegerBox intMain;
 	protected Vector<CheckBox> overlay_cb;
 	
+	protected CanvasComposite canvPanel;
+	
 	protected boolean showCircles = true, showLabels = true;
 	protected float zoom = 1;
 	protected float base_zoom = 1;
@@ -81,6 +83,7 @@ public class SOMComposite extends ResizeComposite {
 
 	Circle c1;
 
+	protected final static boolean TEST_CANV = true;
 	
 	public SOMComposite(RootLayoutPanel parentPanel) {
 		
@@ -133,35 +136,10 @@ public class SOMComposite extends ResizeComposite {
 		catPanel = new VerticalPanel();
 		scrollCatPanel.setWidget(catPanel);
 		catPanel.setSize("100%", "100%");
-						
-		ScrollPanel scrollCanvasPanel = new ScrollPanel();
-		scrollCanvasPanel.setAlwaysShowScrollBars(false);
-		// scrollCanvasPanel.setSize("428px", "417px");
-		mainPanel.add(scrollCanvasPanel);
-		//Element container = mainPanel.getWidgetContainerElement(scrollCanvasPanel);
-		//minx = container.getOffsetWidth();
-		//miny = container.getOffsetHeight();
-		// minx = mainPanel.getOffsetWidth() - 100;
-		// miny = mainPanel.getOffsetHeight();
-		Window.enableScrolling(false);
-		win_w = Window.getClientWidth() - ctrlPanelSize;
-		win_h = Window.getClientHeight();
 		
-		// minx = mainPanel.
+		canvPanel = new CanvasComposite(ctrlPanelSize,0);
+		mainPanel.add(canvPanel);
 		
-		canvas = new DrawingArea(win_w, win_h);
-		scrollCanvasPanel.add(canvas);
-		
-		// Calculate spaces at boundary with some dummy text
-		Text t = new Text(win_w/2, win_h/2, "CG888888");
-		int fw = t.getTextWidth() / 2;
-		int fh = t.getTextHeight() / 2;
-		canv_gapx = fw;
-		canv_gapy = fh > DEFAULT_CIRC_RAD ? fh : DEFAULT_CIRC_RAD;
-		
-		t = new Text(win_w/2, win_h/2, "Select SOM from list");
-		canvas.add(t);
-
 		getSOMlist();
 	}
 
@@ -194,207 +172,15 @@ public class SOMComposite extends ResizeComposite {
 
 		som = new SOMData(pts);
 		
-		// Adjust to current window size
-		win_w = Window.getClientWidth() - ctrlPanelSize;
-		win_h = Window.getClientHeight();
-
-		// find max/min x/y values for setting zoom & canvas
-		float x = -1, y = -1;
-		for ( int i = 0; i < pts.id.length; i++ ) {
-			if ( pts.x[i] > x )
-				x = pts.x[i];
-			if ( pts.y[i] > y )
-				y = pts.y[i];
-		}
+		canvPanel.setSOM(som);
 				
-		float zx = (win_w - 2 * canv_gapx) / x;
-		float zy = (win_h - 2 * canv_gapy) / y;
-		base_zoom = zx > zy ? zy : zx;
-		zoom = base_zoom;
-
-		canv_x = x + 2 * canv_gapx / zoom;
-		canv_y = y + 2 * canv_gapy / zoom;
-		
-		CategoryComposite cat = new CategoryComposite(this,som);
+		CategoryComposite cat = new CategoryComposite(canvPanel,som);
 		catPanel.clear();
 		catPanel.add(cat);
 		cat.activate(true);
 
-		draw();
+		canvPanel.draw();
 	}
-	
-	
-	protected void draw() {
-		
-		boolean text_tofg = false;
-		
-		if (som == null) {
-			return;
-		}
-		
-		som.setZoom(zoom);		
-		Text tz = new Text(100, 100, "Zoom = " + zoom);
-		canvas.add(tz);
-		
-		float fcanvx = canv_x * zoom;
-		float fcanvy = canv_y * zoom;
-		int acanvx = (int) (fcanvx > win_w ? fcanvx : win_w);
-		int acanvy = (int) (fcanvy > win_h ? fcanvy : win_h);
-
-		canvas.setHeight(acanvy);
-		canvas.setWidth(acanvx);
-		
-		Group grp_txt = som.getDataCanvasGroup(GRP_TXT);
-		Group grp_circ = null;
-		
-		// Text is really slow to draw, everything else is quick
-		// Thus, if we encounter text, keep it on the canvas instead of clearing the whole thing.
-		if ( grp_txt != null && showLabels ) {
-			for ( int i=0; i < canvas.getVectorObjectCount(); i++ ) {
-				VectorObject canv_obj = canvas.getVectorObject(i);
-				if ( canv_obj == grp_txt ) {
-					text_tofg = true;
-				} else {
-					canvas.remove(canv_obj);
-				}
-			}
-		}
-		// Text object not found or not valid - clear it and continue normally. 
-		if ( text_tofg == false ) {
-			canvas.clear();
-			grp_txt = null;
-		}
-		
-		if ( showCircles || showLabels ) {
-			
-			if ( som.existsCanvasGroup() == true ) {
-				grp_txt = som.getDataCanvasGroup(GRP_TXT);
-				grp_circ = som.getDataCanvasGroup(GRP_CIRC);
-			}
-			
-			
-			// See if we have a cached group
-			if ( (grp_txt == null && showLabels) || (grp_circ == null && showCircles) ) {
-				
-				int x,y;
-				Group ngrp_txt = new Group();
-				Group ngrp_circ = new Group();
-				
-				Iterator<SOMpt> som_data = som.getData();
-
-				while ( som_data.hasNext() ) {
-					SOMpt som_xy = som_data.next();
-					float xf = som_xy.getX() * zoom;
-					float yf = som_xy.getY() * zoom;
-					x = (int) xf;
-					y = (int) yf;
-
-					if ( showCircles == true && grp_circ == null ) {
-						Circle c = new Circle(x, y, DEFAULT_CIRC_RAD);
-						c.setFillColor("fuchsia");
-						c.setFillOpacity(0.5);
-						c.setStrokeWidth(0);
-						c.setStrokeColor("white");
-						ngrp_circ.add(c);
-					}
-					if ( showLabels == true && grp_txt == null ) {
-						Text t = new Text(x, y, som_xy.name);
-						t.setFontFamily("Arial");
-						t.setFontSize(10);
-						t.setStrokeWidth(0);
-						t.setFillColor("black");
-						int fw = t.getTextWidth() / 2;
-						int fh = t.getTextHeight() / 2;
-						t.setX(x - fw);
-						t.setY(y + fh);
-						ngrp_txt.add(t);
-					}
-
-				}
-				if ( showCircles == true && grp_circ == null ) {
-					som.setDataCanvasGroup(ngrp_circ, GRP_CIRC, zoom);
-					grp_circ = ngrp_circ;
-				}
-				if ( showLabels == true && grp_txt == null ) {
-					som.setDataCanvasGroup(grp_txt, GRP_TXT, zoom);
-					grp_txt = ngrp_txt;
-				}
-			}
-			
-		}
-		
-		
-		OverlayIterator som_overlay = som.getOverlays();
-		
-		while (som_overlay.hasNext()) {
-		
-			Iterator<SOMpt> som_odata = som_overlay.next();
-			
-			// Only overwrite groups if not active; we don't want to have an empty/stale group
-			if ( som_overlay.isActive() == false )
-				continue;
-			
-			Group grp_overlay = som_overlay.getGroup();
-			
-			if ( grp_overlay == null ) {
-				int x, y;
-				String color = som_overlay.color();
-				grp_overlay = new Group();
-				
-				while ( som_odata.hasNext() ) {
-					SOMpt som_xy = som_odata.next();
-					float xf = som_xy.getX() * zoom;
-					float yf = som_xy.getY() * zoom;
-					x = (int) xf;
-					y = (int) yf;
-					
-					Circle c = new Circle(x, y, DEFAULT_CIRC_RAD);
-					c.setFillColor("#" + color);
-					c.setFillOpacity(0.9);
-					c.setStrokeWidth(0);
-					c.setStrokeColor("white");
-					grp_overlay.add(c);				
-				}
-				som_overlay.setGroup(grp_overlay);
-			}
-			canvas.add(grp_overlay);
-		}
-		
-		
-		// Order: 
-		// 1) Overlays
-		// 2) Circles
-		// 3) Text
-		if ( grp_circ != null )
-			canvas.add(grp_circ);
-		if ( grp_txt != null ) {
-			if ( text_tofg == true )
-				canvas.bringToFront(grp_txt);
-			else
-				canvas.add(grp_txt);
-		}
-
-		
-//		canvas.addMouseMoveHandler(new MouseMoveHandler() {
-//			  public void onMouseMove(MouseMoveEvent event) {
-//				  if ( c1 != null ) {
-//					  c1.setX(event.getX());
-//					  c1.setY(event.getY());
-//				  }
-//			  }
-//			});
-		
-	}
-	
-//	public void onResize() {
-//		super.onResize();
-//		
-//		win_w = Window.getClientWidth() - ctrlPanelSize;
-//		win_h = Window.getClientHeight();
-//		draw();
-//	}
-	
-	
 	
 	
 	
@@ -446,17 +232,20 @@ public class SOMComposite extends ResizeComposite {
 	      public void onClick(ClickEvent event) {
 	          Button bzoom = ((Button) event.getSource());
 	          if ( bzoom == but_zplus ) {
+	        	  canvPanel.zoomIncrease();
 	        	  zoom *= 1.5;
 	          }
 	          else if (bzoom == but_zminus ) {
+	        	  canvPanel.zoomDecrease();
 	        	  zoom *= 0.75;
 	          }
 	          else {
+	        	  canvPanel.zoomReset();
 	        	  zoom = base_zoom;
 	          }
 	          if ( som != null )
 	        	  som.setZoom(zoom);
-	          draw();
+	          // draw();
 	        }
 	}
 		
