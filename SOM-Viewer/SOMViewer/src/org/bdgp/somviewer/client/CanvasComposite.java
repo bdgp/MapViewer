@@ -30,6 +30,7 @@ public class CanvasComposite extends Composite {
 	protected float canv_x, canv_y;
 	protected float zoom = 1;
 	protected float base_zoom = 1;
+	protected boolean updCanvas = true;
 
 	protected boolean showCircles = true, showLabels = true;
 	
@@ -61,12 +62,21 @@ public class CanvasComposite extends Composite {
 		
 		// Calculate spaces at boundary with some dummy text
 		Text t = new Text(win_w/2, win_h/2, "CG888888");
+		t.setFontFamily("Arial");
+		t.setFontSize(10);
+		t.setStrokeWidth(0);
+		t.setFillColor("black");
 		int fw = t.getTextWidth() / 2;
 		int fh = t.getTextHeight() / 2;
 		canv_gapx = fw;
 		canv_gapy = fh > DEFAULT_CIRC_RAD ? fh : DEFAULT_CIRC_RAD;
 		
 		t = new Text(win_w/2, win_h/2, "Select SOM from list");
+		t.setFontSize(36);
+		fw = t.getTextWidth() / 2;
+		fh = t.getTextHeight() / 2;
+		t.setX(win_w/2 - fw);
+		t.setY(win_h/2 + fh);
 		canvas.add(t);
 	}
 
@@ -111,6 +121,12 @@ public class CanvasComposite extends Composite {
 		showLabels = lab;
 	}
 
+	public void updateCanvas(boolean act) {
+		updCanvas = act;
+		if ( updCanvas == true )
+			draw();
+	}
+		
 	
 	public void zoomReset() {
 		doZoom(true,0);
@@ -154,14 +170,16 @@ public class CanvasComposite extends Composite {
 	
 	
 	
-	protected void draw() {
+	public void draw() {
 		
-		boolean text_tofg = false;
+		if ( updCanvas == false )
+			return;
 		
 		if (som == null) {
 			return;
 		}
 		
+		boolean text_tofg = false;
 		Group grp_txt = som.getDataCanvasGroup(GRP_TXT);
 		Group grp_circ = null;
 		

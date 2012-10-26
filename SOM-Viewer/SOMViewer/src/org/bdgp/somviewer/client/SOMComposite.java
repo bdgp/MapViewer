@@ -172,14 +172,15 @@ public class SOMComposite extends ResizeComposite {
 
 		som = new SOMData(pts);
 		
+		canvPanel.updateCanvas(false);
 		canvPanel.setSOM(som);
 				
 		CategoryComposite cat = new CategoryComposite(canvPanel,som);
 		catPanel.clear();
 		catPanel.add(cat);
-		cat.activate(true);
+		//cat.activate(true);
 
-		canvPanel.draw();
+		canvPanel.updateCanvas(true);
 	}
 	
 	

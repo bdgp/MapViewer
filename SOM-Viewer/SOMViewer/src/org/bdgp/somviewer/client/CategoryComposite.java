@@ -26,7 +26,6 @@ public class CategoryComposite extends Composite {
 	protected SOMData som;
 	protected CanvasComposite canvasOwner;
 	protected VerticalPanel catPanel  = new VerticalPanel();
-	protected int redraw = -1;
 
 	protected boolean showCircles = true, showLabels = true;
 
@@ -37,28 +36,6 @@ public class CategoryComposite extends Composite {
 		
 		initWidget(catPanel);
 		populatePanel();	
-	}
-
-	public void activate(boolean act) {
-		if ( act == true )
-			redraw = 0;
-		else
-			redraw = -1;
-	}
-	
-	protected void toggleDraw(boolean noredraw) {
-		if ( redraw < 0 )
-			return;
-		if ( noredraw == true )
-			redraw++;
-		else if ( redraw > 0 )
-			redraw--;
-	}
-	
-	
-	protected void draw() {
-		if ( redraw == 0 )
-			canvasOwner.draw();
 	}
 	
 	
@@ -76,9 +53,10 @@ public class CategoryComposite extends Composite {
 			public void onClick(ClickEvent event) {
 				boolean checked = ((CheckBox) event.getSource()).getValue();
 				showCircles = checked;
+				canvasOwner.setMarkers(checked);
 				if ( som != null )
 					som.invalidateCanvasGroup();
-				draw();
+				canvasOwner.draw();
 			}
 		});
 		
@@ -91,15 +69,17 @@ public class CategoryComposite extends Composite {
 			public void onClick(ClickEvent event) {
 				boolean checked = ((CheckBox) event.getSource()).getValue();
 				showLabels = checked;
+				canvasOwner.setLabels(checked);
 				if ( som != null )
 					som.invalidateCanvasGroup();
-				draw();
+				canvasOwner.draw();
 			}
 		});				
 
 		Label lblNewLabel = new Label("Organ system");
 		catPanel.add(lblNewLabel);
-		
+
+		DrawSync dsync = new DrawSync(canvasOwner);
 		
 		HorizontalPanel global_varPanel = new HorizontalPanel();
 		catPanel.add(global_varPanel);
@@ -114,8 +94,8 @@ public class CategoryComposite extends Composite {
 		globalInt.setMaxLength(2);
 		globalInt.setWidth("10px");
 		
-		VarBarHandler globalSliderHandler = new VarBarHandler(null, null, globalInt, globalSlider);
-		VarBoxHandler globalBoxHandler = new VarBoxHandler(null, null, globalInt, globalSlider);
+		VarBarHandler globalSliderHandler = new VarBarHandler(null, dsync, null, globalInt, globalSlider);
+		VarBoxHandler globalBoxHandler = new VarBoxHandler(null, dsync, null, globalInt, globalSlider);
 		globalSlider.addBarValueChangedHandler(globalSliderHandler);
 		globalInt.addChangeHandler(globalBoxHandler);
 		
@@ -148,8 +128,8 @@ public class CategoryComposite extends Composite {
 			
 			// Handlers, link them together
 			osCheckBox.addClickHandler(new CatHandler(ovn, osInt));
-			osVarSlider.addBarValueChangedHandler(new VarBarHandler(ovn, osCheckBox, osInt, osVarSlider));
-			VarBoxHandler osBoxHandler = new VarBoxHandler(ovn, osCheckBox, osInt, osVarSlider);
+			osVarSlider.addBarValueChangedHandler(new VarBarHandler(ovn, dsync, osCheckBox, osInt, osVarSlider));
+			VarBoxHandler osBoxHandler = new VarBoxHandler(ovn, dsync, osCheckBox, osInt, osVarSlider);
 			osInt.addChangeHandler(osBoxHandler);
 			
 			os_handlers.add(osBoxHandler);
@@ -204,7 +184,7 @@ public class CategoryComposite extends Composite {
 					som.addOverlay(data.name, data.variant, data.id, null);
 					// Activate all newly received overlays - should be by request from slider/checkbox only
 					activateOverlay(data.name, data.variant);
-					draw();
+					canvasOwner.draw();
 				}
 			}
 		}
@@ -229,23 +209,25 @@ public class CategoryComposite extends Composite {
 			} else {
 				inactivateOverlay(name);
 			}
-			draw();
+			canvasOwner.draw();
 		}
 	}
 	
 	
 	public class CatVariantHandler {
+		protected DrawSync sync;
 		private String name;
 		private CheckBox cb;
 		protected IntegerBox numBox;
 		private VariationSelectWidget var;
 		private Vector<CatVariantHandler> others = null;
 		
-		public CatVariantHandler(String name, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
+		public CatVariantHandler(String name, DrawSync sync, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
 			this.name = name;
 			this.cb = cb;
 			this.numBox = box;
 			this.var = var;
+			this.sync = sync;
 		}
 				
 		public void setChildHandlers(Vector<CatVariantHandler> others) {
@@ -254,7 +236,7 @@ public class CategoryComposite extends Composite {
 				
 		protected void change(int variant) {
 			
-			toggleDraw(true);
+			// toggleDraw(true);
 			
 			// Synchronize the two
 			// The if statements shouldn't be necessary but GWT goes into infinite loop otherwise
@@ -280,32 +262,57 @@ public class CategoryComposite extends Composite {
 				activateOverlay(name, variant);
 			}
 			
-			toggleDraw(false);
+			// toggleDraw(false);
 		}		
 	}
 		
 	public class VarBarHandler extends CatVariantHandler implements BarValueChangedHandler {
 		
-		public VarBarHandler(String name, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
-			super(name, cb, box, var);
+		public VarBarHandler(String name, DrawSync sync, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
+			super(name, sync, cb, box, var);
 		}
 		
         public void onBarValueChanged(BarValueChangedEvent event) {
+        	sync.noDraw();
             change(event.getValue());
-            draw();
+            sync.draw();
          }
 	}
 	
 	public class VarBoxHandler extends CatVariantHandler implements ChangeHandler {
 		
-		public VarBoxHandler(String name, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
-			super(name, cb, box, var);
+		public VarBoxHandler(String name, DrawSync sync, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
+			super(name, sync, cb, box, var);
 		}
 
 		public void onChange(ChangeEvent event) {
+			sync.noDraw();
 			change(numBox.getValue());
-			draw();
+			sync.draw();
 		}
 	}
+	
+	protected class DrawSync {
+		private int redraw;
+		private CanvasComposite canvas;
+		
+		public DrawSync(CanvasComposite canvas) {
+			redraw = 0;
+			this.canvas = canvas;
+		}
+		
+		public void noDraw() {
+			redraw++;
+		}
+		
+		public void draw() {
+			if ( --redraw <= 0 ) {
+				redraw = 0;
+				canvas.draw();
+			}
+		}
+		
+	}
+	
 
 }
