@@ -327,7 +327,7 @@ public class SOMData {
 				while (all_it.hasNext()) {
 				    Map.Entry<Integer, SOMstruct> entry = (Map.Entry<Integer, SOMstruct>) all_it.next();
 				    SOMstruct value = (SOMstruct) entry.getValue();
-				    SOMpt pt = new SOMpt(value.x, value.y, value.name);
+				    SOMpt pt = new SOMpt(entry.getKey(), value.x, value.y, value.name);
 					seldata.put(entry.getKey(), pt);
 				}
 				all_it = null;
@@ -362,10 +362,10 @@ public class SOMData {
 					pt = seldata.get(ov.ids[i]);
 				} else {
 					SOMstruct value = data.get(ov.ids[i]);
-					pt = new SOMpt(value.x, value.y, value.name);
+					pt = new SOMpt(ov.ids[i], value.x, value.y, value.name);
 					seldata.put(ov.ids[i], pt);
 				}
-				pt.addDrawDescription(ov.color, null);
+				pt.addDrawDescription(ov.variant, ov.color, null);
 			}
 		}
 		
@@ -385,7 +385,7 @@ public class SOMData {
 			if ( all_it != null ) {
 			    Map.Entry<Integer, SOMstruct> entry = (Map.Entry<Integer, SOMstruct>) all_it.next();
 			    SOMstruct value = (SOMstruct) entry.getValue();
-			    pt = new SOMpt(value.x, value.y, value.name);
+			    pt = new SOMpt(entry.getKey(), value.x, value.y, value.name);
 			}
 			else if ( sel_it != null ) {
 			    Map.Entry<Integer, SOMpt> entry = (Map.Entry<Integer, SOMpt>) sel_it.next();

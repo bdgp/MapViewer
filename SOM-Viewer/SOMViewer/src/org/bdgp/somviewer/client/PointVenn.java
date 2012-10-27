@@ -10,7 +10,8 @@ import org.vaadin.gwtgraphics.client.VectorObject;
  * Generates a Venn diagram like point for multiple overlapping colors
  */
 public class PointVenn extends PointBasic {
-
+	
+	protected static int uuid = 12346;
 	protected static final int ShiftVal = 2;
 	protected Vector<PtShifts> shifts = new Vector<PtShifts>(10);
 		

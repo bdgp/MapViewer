@@ -4,6 +4,7 @@ import java.util.Vector;
 
 public class SOMpt {
 
+	public Integer id;
 	public float x;
 	public float y;
 	public String name;
@@ -13,12 +14,17 @@ public class SOMpt {
 		// TODO Auto-generated constructor stub
 	}
 
-	public SOMpt(float x, float y, String name) {
+	public SOMpt(Integer id, float x, float y, String name) {
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.name = name;
 	}
 
+	public Integer getId() {
+		return id;
+	}
+	
 	public float getX() {
 		return x;
 	}
@@ -59,8 +65,19 @@ public class SOMpt {
 		return col;
 	}
 	
-	public void addDrawDescription(String color, String shape) {
+	public int getVariant() {
+		//TODO: This shouldn't return a fixed value!!!
+		if ( draw.size() == 0 ) {
+			return 5;
+		}
+
+		return draw.get(0).variant;
+	}
+	
+	
+	public void addDrawDescription(int var, String color, String shape) {
 		DrawHints dh = new DrawHints();
+		dh.variant = var;
 		dh.color = color;
 		dh.shape = shape;
 		draw.add(dh);
@@ -68,6 +85,7 @@ public class SOMpt {
 	
 
 	protected class DrawHints {
+		public int variant;
 		public String color;
 		public String shape;
 	}

@@ -8,6 +8,7 @@ import org.bdgp.somviewer.rpc.SOMDataService;
 import org.bdgp.somviewer.rpc.data.SOMDataOverlay;
 import org.bdgp.somviewer.rpc.data.SOMDataPts;
 import org.bdgp.somviewer.rpc.data.SOMList;
+import org.bdgp.somviewer.rpc.data.SOMPtInfo;
 import org.bdgp.somviewer.server.data.SOMoverlay;
 import org.bdgp.somviewer.server.data.SOMstructure;
 import org.bdgp.somviewer.shared.FieldVerifier;
@@ -149,6 +150,32 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 		
 		
 		return so;
+	}
+	
+	
+	public SOMPtInfo getPtInfo(int id, int variant) {
+		SOMPtInfo pti = new SOMPtInfo();
+		String html = new String(); 
+		
+		// Avoid injection attacks by making sure name exists in database
+		// String map = verifyMapname(datasrc);
+		
+		manageQuery(true);
+		
+		try {
+			html = db.shortInfo(id, variant);
+		}
+		catch (Exception e) {
+			pti.queryResult = "Exception: " + e.getMessage();
+		}
+		
+		manageQuery(false);
+		
+		pti.html_Sinfo = html;
+		pti.req_id = id;
+		pti.req_variant = variant;
+		
+		return pti;
 	}
 	
 	

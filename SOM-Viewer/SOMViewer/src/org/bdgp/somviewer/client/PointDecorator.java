@@ -12,9 +12,13 @@ public interface PointDecorator {
 	
 	VectorObject drawMarker(boolean showMarker, Vector<String> colors);
 	
-	void infoQuick();
+	void infoQuick(Integer id, int variant);
 	
-	void infoLong();
+	void infoLong(Integer id);
+	
+	boolean isDraw();
+	
+	boolean isInfo();
 	
 	int uuid();
 	

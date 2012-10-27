@@ -46,4 +46,8 @@ public class ServerService {
 		proxy.getDataOverlay(datasrc, overlay, variant, callback);
 	}
 
+	public void getPtInfo(int id, int variant, AsyncCallback callback) {
+		proxy.getPtInfo(id, variant, callback);
+	}
+	
 }

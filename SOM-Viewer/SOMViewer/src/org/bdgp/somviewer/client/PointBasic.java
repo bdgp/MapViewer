@@ -9,7 +9,7 @@ import org.vaadin.gwtgraphics.client.shape.Text;
 
 public class PointBasic implements PointDecorator {
 
-	protected final static int uuid = 12345;
+	protected static int uuid = 12345;
 	protected final static int MARKER_CIRC_RAD = 2;
 	protected final static int OVERLAY_CIRC_RAD = 7;
 	int x,y;
@@ -69,14 +69,22 @@ public class PointBasic implements PointDecorator {
 	}
 	
 	
-	public void infoQuick() {
+	public void infoQuick(Integer id, int variant) {
 	}
 
-	public void infoLong() {
+	public void infoLong(Integer id) {
 	}
 
 	public int uuid() {
 		return uuid;
+	}
+
+	public boolean isDraw() {
+		return true;
+	}
+
+	public boolean isInfo() {
+		return false;
 	}
 
 }

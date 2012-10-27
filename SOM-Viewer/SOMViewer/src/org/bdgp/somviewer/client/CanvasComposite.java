@@ -9,13 +9,15 @@ import org.vaadin.gwtgraphics.client.VectorObject;
 import org.vaadin.gwtgraphics.client.shape.Circle;
 import org.vaadin.gwtgraphics.client.shape.Text;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class CanvasComposite extends Composite {
 
-	public enum DrawItem { MARKER, MARKER_OVERLAY, OVERLAY };
+	public enum PointDecoratorType { DRAW,CLICK };
 		
 	protected final static int DEFAULT_CIRC_RAD = 5;
 	protected final static float DEFAULT_ZOOM_FACTOR = 1.5f;
@@ -31,6 +33,7 @@ public class CanvasComposite extends Composite {
 	protected DrawingArea canvas;
 
 	protected Vector<PointDecorator> pt_draw = new Vector<PointDecorator>(3);
+	protected PointDecorator pt_info = null;
 	
 	protected float canv_x, canv_y;
 	protected float zoom = 1;
@@ -85,6 +88,7 @@ public class CanvasComposite extends Composite {
 		canvas.add(t);
 		
 		addDecorator(new PointVenn());
+		setDecorator(new PointInfo());
 	}
 
 	
@@ -118,6 +122,15 @@ public class CanvasComposite extends Composite {
 		canv_y = maxy + 2 * canv_gapy / zoom;
 	}
 
+	
+	public void setDecorator(PointDecorator pd) {
+		if ( pd == null )
+			return;
+		
+		if ( pd.isInfo() )
+			pt_info = pd;
+	}
+	
 	
 	public void addDecorator(PointDecorator pd) {
 		
@@ -262,11 +275,19 @@ public class CanvasComposite extends Composite {
 				
 				for ( PointDecorator p : pt_draw ) {
 					p.setPoint(x, y);
-					if ( doLabels == true)
-						grp_txt.add(p.drawLabel(som_xy.name));
+					if ( doLabels == true) {
+						VectorObject txt = p.drawLabel(som_xy.name);
+						grp_txt.add(txt);
+						if ( pt_info != null )
+							txt.addClickHandler(new InfoClick(som_xy.getId(), som_xy.getVariant()));
+
+					}
 					VectorObject m = p.drawMarker(showCircles, som_xy.getColors());
-					if ( m != null )
+					if ( m != null ) {
 						canvas.add(m);
+						if ( pt_info != null )
+							m.addClickHandler(new InfoClick(som_xy.getId(), som_xy.getVariant()));
+					}
 				}
 			}
 			
@@ -417,5 +438,24 @@ public class CanvasComposite extends Composite {
 		return(c);
 	}
 
+	
+	protected class InfoClick implements ClickHandler {
+		protected Integer id;
+		protected int variant;
+		
+		public InfoClick(Integer id, int variant) {
+			this.id = id;
+			this.variant = variant;
+		}
+		
+		public void onClick(ClickEvent event) {
+			if ( pt_info != null ) {
+				pt_info.infoQuick(id, variant);
+			}
+			
+		}
+		
+	}
+	
 	
 }
