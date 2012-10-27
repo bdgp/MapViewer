@@ -235,6 +235,7 @@ public class CategoryComposite extends Composite {
 		protected IntegerBox numBox;
 		private VariationSelectWidget var;
 		private Vector<CatVariantHandler> others = null;
+		protected boolean change_req = false;
 		
 		public CatVariantHandler(String name, DrawSync sync, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
 			this.name = name;
@@ -284,7 +285,12 @@ public class CategoryComposite extends Composite {
 		
         public void onBarValueChanged(BarValueChangedEvent event) {
         	sync.noDraw();
-            change(event.getValue());
+        	// This prevents the handler from running two simultaneous RPC requests/redraws
+        	if ( change_req == false ) {
+        		change_req = true;
+        		change(event.getValue());
+        		change_req = false;
+        	}
             sync.draw();
          }
 	}
@@ -297,7 +303,12 @@ public class CategoryComposite extends Composite {
 
 		public void onChange(ChangeEvent event) {
 			sync.noDraw();
-			change(numBox.getValue());
+			// This prevents the handler from running two simultaneous RPC requests/redraws
+        	if ( change_req == false ) {
+        		change_req = true;
+        		change(numBox.getValue());
+        		change_req = false;
+        	}
 			sync.draw();
 		}
 	}

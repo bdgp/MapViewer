@@ -108,6 +108,11 @@ public class SOMData {
 		return ic;
 	}
 	
+	public Iterator<SOMpt> getAllData() {
+		IterateCoordinates ic = new IterateCoordinates(true);
+		return ic;
+	}		
+	
 	
 	public void setDataCanvasGroup(Group grp, int id, float zoom) {
 		if ( data_grp == null )
@@ -299,14 +304,36 @@ public class SOMData {
 		}
 		
 		
-		public IterateCoordinates(boolean allOverlays) {
+		/**
+		 * Generate an coordinate iterator that either 
+		 * - contains all datapoints only (all == false)
+		 * - contains all datapoints and overlays (all == true)
+		 * @param all
+		 */
+		public IterateCoordinates(boolean all) {
 			
-			if ( allOverlays == false ) {
+			all_it = data.entrySet().iterator();
+
+			if ( all == false ) {
+				// Use all_it
 				sel_it = null;
-				all_it = data.entrySet().iterator();
 				return;
 			}
+			else
+			{
+				seldata = new HashMap<Integer,SOMpt>();
+				
+				// copy everything to seldata
+				while (all_it.hasNext()) {
+				    Map.Entry<Integer, SOMstruct> entry = (Map.Entry<Integer, SOMstruct>) all_it.next();
+				    SOMstruct value = (SOMstruct) entry.getValue();
+				    SOMpt pt = new SOMpt(value.x, value.y, value.name);
+					seldata.put(entry.getKey(), pt);
+				}
+				all_it = null;
+			}
 			
+			// if there are overlays, add them to sel_it
 			if ( overlay != null ){
 				for ( String key : overlay.keySet() ) {
 					Overlay ov = overlay.get(key);

@@ -48,6 +48,16 @@ public class SOMpt {
 		this.name = name;
 	}
 
+	public Vector<String> getColors() {
+		if ( draw.size() == 0 ) {
+			return null;
+		}
+		Vector<String> col = new Vector<String>(draw.size());
+		for ( DrawHints dh : draw )
+			col.add(dh.color);
+		
+		return col;
+	}
 	
 	public void addDrawDescription(String color, String shape) {
 		DrawHints dh = new DrawHints();

@@ -1,6 +1,7 @@
 package org.bdgp.somviewer.client;
 
 import java.util.Iterator;
+import java.util.Vector;
 
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Group;
@@ -14,6 +15,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class CanvasComposite extends Composite {
 
+	public enum DrawItem { MARKER, MARKER_OVERLAY, OVERLAY };
+		
 	protected final static int DEFAULT_CIRC_RAD = 5;
 	protected final static float DEFAULT_ZOOM_FACTOR = 1.5f;
 
@@ -27,6 +30,8 @@ public class CanvasComposite extends Composite {
 	
 	protected DrawingArea canvas;
 
+	protected Vector<PointDecorator> pt_draw = new Vector<PointDecorator>(3);
+	
 	protected float canv_x, canv_y;
 	protected float zoom = 1;
 	protected float base_zoom = 1;
@@ -78,6 +83,8 @@ public class CanvasComposite extends Composite {
 		t.setX(win_w/2 - fw);
 		t.setY(win_h/2 + fh);
 		canvas.add(t);
+		
+		addDecorator(new PointVenn());
 	}
 
 	
@@ -111,6 +118,37 @@ public class CanvasComposite extends Composite {
 		canv_y = maxy + 2 * canv_gapy / zoom;
 	}
 
+	
+	public void addDecorator(PointDecorator pd) {
+		
+		// Make sure list contains only one object with uuid
+		if ( pt_draw.size() > 0 ) {
+			for ( PointDecorator p : pt_draw ) {
+				if ( p.uuid() == pd.uuid() ) {
+					pt_draw.remove(p);
+				}
+			}
+		}
+		
+		pt_draw.add(pd);
+	}
+	
+	
+	public void rmDecorator(int uuid) {
+		if ( pt_draw.size() > 0 ) {
+			for ( PointDecorator p : pt_draw ) {
+				if ( p.uuid() == uuid ) {
+					pt_draw.remove(p);
+				}
+			}
+		}		
+	}
+	
+	
+	public void resetDecorators() {
+		pt_draw.clear();
+	}
+	
 	
 	public void setMarkers(boolean mk) {
 		showCircles = mk;
@@ -200,6 +238,52 @@ public class CanvasComposite extends Composite {
 			canvas.clear();
 			grp_txt = null;
 		}
+		
+		
+		if ( pt_draw.size() > 0 ) {
+			int x,y;
+			float xf, yf;
+			boolean doLabels = false;
+			
+			if ( grp_txt == null && showLabels == true ) {
+				grp_txt = new Group();
+				doLabels = true;
+			}
+			
+			// TODO: Make sure there is anything to draw 
+			Iterator<SOMpt> som_data = som.getAllData();
+
+			while ( som_data.hasNext() ) {
+				SOMpt som_xy = som_data.next();
+				xf = som_xy.getX() * zoom;
+				yf = som_xy.getY() * zoom;
+				x = (int) xf;
+				y = (int) yf;
+				
+				for ( PointDecorator p : pt_draw ) {
+					p.setPoint(x, y);
+					if ( doLabels == true)
+						grp_txt.add(p.drawLabel(som_xy.name));
+					VectorObject m = p.drawMarker(showCircles, som_xy.getColors());
+					if ( m != null )
+						canvas.add(m);
+				}
+			}
+			
+			if ( doLabels == true ) {
+				som.setDataCanvasGroup(grp_txt, GRP_TXT, zoom);
+			}
+			
+			if ( grp_txt != null ) {
+				if ( text_tofg == true )
+					canvas.bringToFront(grp_txt);
+				else
+					canvas.add(grp_txt);
+			}
+			
+			return;
+		}
+		
 		
 		if ( showCircles || showLabels ) {
 			
