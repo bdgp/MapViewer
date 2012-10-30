@@ -42,6 +42,8 @@ public class CanvasComposite extends Composite {
 
 	protected boolean showCircles = true, showLabels = true;
 	
+	protected int commonVariant = 5;
+	
 	protected final static int GRP_TXT = 0;
 	protected final static int GRP_CIRC = 1;
 
@@ -177,7 +179,12 @@ public class CanvasComposite extends Composite {
 		if ( updCanvas == true )
 			draw();
 	}
-		
+	
+	
+	public void setCommonVariant(int var) {
+		commonVariant = var;
+	}
+	
 	
 	public void zoomReset() {
 		doZoom(true,0);
@@ -275,18 +282,17 @@ public class CanvasComposite extends Composite {
 				
 				for ( PointDecorator p : pt_draw ) {
 					p.setPoint(x, y);
+					ClickHandler onclick = null;
+					if ( pt_info != null )
+							onclick = new InfoClick(som_xy.getId(), som_xy.getVariant());
 					if ( doLabels == true) {
-						VectorObject txt = p.drawLabel(som_xy.name);
+						VectorObject txt = p.drawLabel(som_xy.name, onclick);
 						grp_txt.add(txt);
-						if ( pt_info != null )
-							txt.addClickHandler(new InfoClick(som_xy.getId(), som_xy.getVariant()));
 
 					}
-					VectorObject m = p.drawMarker(showCircles, som_xy.getColors());
+					VectorObject m = p.drawMarker(showCircles, som_xy.getColors(), onclick);
 					if ( m != null ) {
 						canvas.add(m);
-						if ( pt_info != null )
-							m.addClickHandler(new InfoClick(som_xy.getId(), som_xy.getVariant()));
 					}
 				}
 			}
@@ -450,7 +456,7 @@ public class CanvasComposite extends Composite {
 		
 		public void onClick(ClickEvent event) {
 			if ( pt_info != null ) {
-				pt_info.infoQuick(id, variant);
+				pt_info.infoQuick(id, variant, event.getClientX(), event.getClientY());
 			}
 			
 		}

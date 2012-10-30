@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.ResizeComposite;
@@ -111,6 +112,7 @@ public class SOMComposite extends ResizeComposite {
 		// avail_somBox.addItem("test");
 		
 		HorizontalPanel zoomPanel = new HorizontalPanel();
+		zoomPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		ctrlPanel.add(zoomPanel);
 
 		Label lblNewLabel_1 = new Label("Zoom:");

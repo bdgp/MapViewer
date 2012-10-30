@@ -72,7 +72,7 @@ public class InsituDatabase extends DBMySQL {
 				sym = new String();
 				fbgn = new String();
 				est_id = new String();
-				logEvent(this, DBbase.WARN, "No image result set returned");
+				logEvent(this, DBbase.WARN, "No gene information result set returned");
 			}
 			else
 			{
@@ -84,29 +84,30 @@ public class InsituDatabase extends DBMySQL {
 						
 			}
 		
-			
-			rs = query(imquery);
-			if ( rs == null ) {
-				logEvent(this, DBbase.WARN, "No image result set returned");
-			}
-			else
-			{
-				while (rs.next()) {	
-					impaths.add(rs.getString(1));
-					logEvent(this, DBbase.INFO, "impath=" + rs.getString(1));								
-				}				
-			}
+			if ( variant > 0 ) {
+				rs = query(imquery);
+				if ( rs == null ) {
+					logEvent(this, DBbase.WARN, "No image result set returned");
+				}
+				else
+				{
+					while (rs.next()) {	
+						impaths.add(rs.getString(1));
+						logEvent(this, DBbase.INFO, "impath=" + rs.getString(1));								
+					}				
+				}
 
-			rs = query(tquery);			
-			if ( rs == null ) {
-				logEvent(this, DBbase.WARN, "No image result set returned");
-			}
-			else
-			{
-				while (rs.next()) {	
-					terms.add(rs.getString(1));
-					logEvent(this, DBbase.INFO, "term=" + rs.getString(1));								
-				}				
+				rs = query(tquery);			
+				if ( rs == null ) {
+					logEvent(this, DBbase.WARN, "No term result set returned");
+				}
+				else
+				{
+					while (rs.next()) {	
+						terms.add(rs.getString(1));
+						logEvent(this, DBbase.INFO, "term=" + rs.getString(1));								
+					}				
+				}
 			}
 
 		}
@@ -122,11 +123,18 @@ public class InsituDatabase extends DBMySQL {
 		
 		
 		html += "<h3>" + sym + "</h3>";
-		for ( String im : impaths )
-			html += "<img src=\"" + im_url + im + "\" alt=\"" + est_id + "\"/><BR>";
+		html += "<a href=\"http://flybase.org/reports/" + fbgn + ".html\" target=\"_blank\">" + fbgn + "</a>";
 		html += "<P>";
-		for ( String t : terms )
-			html += t + "<BR>";
+		if ( variant > 0 ) {
+			for ( String im : impaths )
+				html += "<img src=\"" + im_url + im + "\" alt=\"" + est_id + "\"/><BR>";
+			html += "<P>";
+			for ( String t : terms )
+				html += t + "<BR>";
+		} else {
+			html += "<B>No stage selected!</B>";
+			html += "Quick view supports only one stage.";
+		}
 		
 		return html;
 	}

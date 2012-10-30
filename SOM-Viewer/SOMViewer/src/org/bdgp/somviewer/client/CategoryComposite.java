@@ -111,6 +111,9 @@ public class CategoryComposite extends Composite {
 			CheckBox osCheckBox = new CheckBox();
 			osGrid.setWidget(row, 0, osCheckBox);
 			osCheckBox.setText(ovn);
+			String col = som.getOverlayColor(ovn);
+			if ( col != null)
+				osCheckBox.getElement().getStyle().setProperty("backgroundColor", "#" + col);
 			
 			// overlay Slider
 			VariationSelectWidget osVarSlider = new VariationSelectWidget(som.getMaxVariant(),"60px",true);
@@ -261,6 +264,7 @@ public class CategoryComposite extends Composite {
 			
 			// if name == null, change all of them
 			if ( others != null ) {
+				canvasOwner.setCommonVariant(variant);
 				for ( CatVariantHandler cvh : others ) {
 					cvh.change(variant);
 				}

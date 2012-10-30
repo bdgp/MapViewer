@@ -7,6 +7,8 @@ import org.vaadin.gwtgraphics.client.VectorObject;
 import org.vaadin.gwtgraphics.client.shape.Circle;
 import org.vaadin.gwtgraphics.client.shape.Text;
 
+import com.google.gwt.event.dom.client.ClickHandler;
+
 public class PointBasic implements PointDecorator {
 
 	protected static int uuid = 12345;
@@ -22,7 +24,7 @@ public class PointBasic implements PointDecorator {
 		this.y = y;
 	}
 
-	public VectorObject drawLabel(String label) {
+	public VectorObject drawLabel(String label, ClickHandler onclick) {
 
 		Text t = new Text(x, y, label);
 		t.setFontFamily("Arial");
@@ -34,10 +36,13 @@ public class PointBasic implements PointDecorator {
 		t.setX(x - fw);
 		t.setY(y + fh);
 		
+		if (onclick != null)
+			t.addClickHandler(onclick);
+		
 		return t;
 	}
 
-	public VectorObject drawMarker(boolean showMarker, Vector<String> colors) {
+	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick) {
 
 		if ( colors == null ) {
 			if ( showMarker == true )
@@ -69,7 +74,7 @@ public class PointBasic implements PointDecorator {
 	}
 	
 	
-	public void infoQuick(Integer id, int variant) {
+	public void infoQuick(Integer id, int variant, int x ,int y) {
 	}
 
 	public void infoLong(Integer id) {

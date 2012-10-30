@@ -73,6 +73,16 @@ public class SOMData {
 	}
 	
 	
+	public String getOverlayColor(String name) {
+		
+		if ( library.containsKey(name) )
+			return library.get(name).color;
+		
+		return null;
+		
+	}
+	
+	
 	public int getMaxVariant () {
 		int max = 0;
 		

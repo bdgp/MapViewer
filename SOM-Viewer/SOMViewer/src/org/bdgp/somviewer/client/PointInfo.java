@@ -12,6 +12,7 @@ import org.vaadin.gwtgraphics.client.VectorObject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
@@ -21,6 +22,7 @@ public class PointInfo implements PointDecorator {
 
 	protected final static int uuid = 12347;
 	int x,y;
+	int click_x, click_y; // Last click position
 
 	HashMap<Integer,String> infoCache = new HashMap<Integer,String>();
 	
@@ -36,15 +38,17 @@ public class PointInfo implements PointDecorator {
 		this.y = y;
 	}
 
-	public VectorObject drawLabel(String label) {
+	public VectorObject drawLabel(String label, ClickHandler onclick) {
 		return null;
 	}
 
-	public VectorObject drawMarker(boolean showMarker, Vector<String> colors) {
+	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick) {
 		return null;
 	}
 
-	public void infoQuick(Integer id, int variant) {
+	public void infoQuick(Integer id, int variant, int x, int y) {
+		
+		click_x = x; click_y = y;
 		
 		if ( infoCache.containsKey(id) )
 			infoDialog(infoCache.get(id));
@@ -64,7 +68,7 @@ public class PointInfo implements PointDecorator {
 		// Create the popup dialog box
 		
 		if ( dialogBox == null ) {
-			dialogBox = new DialogBox();
+			dialogBox = new DialogBoxClosable();
 			dialogBox.setText("Information");
 			dialogBox.setAnimationEnabled(true);
 			dialogVPanel = new VerticalPanel();
@@ -77,9 +81,11 @@ public class PointInfo implements PointDecorator {
 		closeButton.getElement().setId("closeButton");
 		dialogVPanel.addStyleName("dialogVPanel");
 		dialogVPanel.add(new HTML(html));
-		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
+		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
 		dialogVPanel.add(closeButton);
 		dialogBox.setWidget(dialogVPanel);
+		// dialogBox.setPopupPosition(Window.getClientWidth()/2, Window.getClientHeight()/2);
+		dialogBox.setPopupPosition(click_x, click_y);
 		dialogBox.show();
 
 		// Add a handler to close the DialogBox
@@ -128,5 +134,6 @@ public class PointInfo implements PointDecorator {
 		return true;
 	}
 
+	
 	
 }
