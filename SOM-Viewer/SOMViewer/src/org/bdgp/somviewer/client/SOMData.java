@@ -43,6 +43,8 @@ public class SOMData {
 			Library l = new Library();
 			l.color = a.color;
 			l.max = a.variant;
+			l.type = a.type;
+			l.decorator = a.decorator;
 			library.put(a.name,l);
 		}
 	}
@@ -60,6 +62,20 @@ public class SOMData {
 	public String getMapName() {
 		return map_name;
 	}
+	
+	
+	public Vector<String> getOverlayTypes() {
+
+		Vector<String> ov_types = new Vector<String>(library.size());
+		
+		for (Map.Entry<String, Library> entry : library.entrySet()) {
+		    ov_types.add(entry.getValue().type);
+		}
+
+		return ov_types;
+		
+	}
+	
 	
 	public Vector<String> getOverlayNames() {
 		
@@ -501,6 +517,8 @@ public class SOMData {
 	protected class Library {
 		int max;
 		String color;
+		String type;
+		String decorator;
 	}
 	
 	protected class Overlay {

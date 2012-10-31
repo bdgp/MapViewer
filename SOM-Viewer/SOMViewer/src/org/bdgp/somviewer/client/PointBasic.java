@@ -9,6 +9,11 @@ import org.vaadin.gwtgraphics.client.shape.Text;
 
 import com.google.gwt.event.dom.client.ClickHandler;
 
+/**
+ * @author erwin
+ * This one is the base class for many PointDecorators
+ * It does everything but not very well, should be overridden when possible
+ */
 public class PointBasic implements PointDecorator {
 
 	protected static int uuid = 12345;

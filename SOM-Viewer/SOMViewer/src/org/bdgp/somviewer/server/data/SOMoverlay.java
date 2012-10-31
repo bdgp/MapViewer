@@ -11,7 +11,7 @@ import org.bdgp.somviewer.server.DBbase.LogSeverity;
 public class SOMoverlay {
 	
 	private final String st_title_id = "select id from somtitle where name = ";
-	private final String st_availoverlays = "select distinct(name), max(variant), color from somoverlay_info where somtitle_id = __ID  group by name";	
+	private final String st_availoverlays = "select distinct(name), max(variant), color, type, decorator from somoverlay_info where somtitle_id = __ID  group by name";	
 	private final String st_overlay = "select somstruct_id from somoverlay so, somoverlay_info si where so.somoverlay_info_id = si.id and si.name = '__NAME' and si.variant = __VAR and si.somtitle_id = __ID";
 	
 	protected DBbase db;
@@ -82,6 +82,8 @@ public class SOMoverlay {
 				av.name = rs.getString(1);
 				av.variant = rs.getInt(2);
 				av.color = rs.getString(3);
+				av.type = rs.getString(4);
+				av.decorator = rs.getString(5);
 				
 				db.logEvent(this, LogSeverity.INFO, "Name=" + av.name + ", Variant=" + av.variant + ", Colormap=" + av.color);
 				
@@ -165,7 +167,7 @@ public class SOMoverlay {
 		pts.available = new Vector<SOMOverlaysAvailable>(available.size());
 		
 		for ( int i=0; i < available.size(); i++ ) {
-			pts.available.add(pts.CreateAvailable(available.get(i).name, available.get(i).variant, available.get(i).color));
+			pts.available.add(pts.CreateAvailable(available.get(i).name, available.get(i).variant, available.get(i).color, available.get(i).type, available.get(i).decorator));
 		}
 		
 		return pts;
@@ -176,6 +178,8 @@ public class SOMoverlay {
 		String name;
 		int variant;
 		String color;
+		String type;
+		String decorator;
 	}
 	
 }

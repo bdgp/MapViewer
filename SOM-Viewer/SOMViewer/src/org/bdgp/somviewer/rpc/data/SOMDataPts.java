@@ -16,14 +16,14 @@ public class SOMDataPts implements IsSerializable {
 		
 	public Vector<SOMOverlaysAvailable> available;
 	
-	public SOMOverlaysAvailable CreateAvailable(String name, int variant, String color) {
+	public SOMOverlaysAvailable CreateAvailable(String name, int variant, String color, String type, String decorator) {
 		SOMOverlaysAvailable oa = new SOMOverlaysAvailable();
 		oa.name = name;
 		oa.variant = variant;
 		oa.color = color;
+		oa.type = type;
+		oa.decorator = decorator;
 		return oa;
 	}
-//	public HashMap<String,String> shortinfo = null;
-//	public HashMap<String,String> longinfo = null;
 		
 }

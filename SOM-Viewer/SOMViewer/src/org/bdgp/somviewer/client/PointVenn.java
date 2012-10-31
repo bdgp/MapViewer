@@ -39,10 +39,19 @@ public class PointVenn extends PointBasic {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see org.bdgp.somviewer.client.PointBasic#drawLabel(java.lang.String, com.google.gwt.event.dom.client.ClickHandler)
+	 * We don't draw any text in this class
+	 */
+	public VectorObject drawLabel(String label, ClickHandler onclick) {
+		return null;
+	}
+	
 	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick) {
 
 		VectorObject vo = null;
 		
+		// TODO: This will be handled by PointMarker
 		if ( colors == null ) {
 			if ( showMarker == true ) {
 				vo = drawCircle(MARKER_CIRC_RAD, 0.5f, "fuchsia");
