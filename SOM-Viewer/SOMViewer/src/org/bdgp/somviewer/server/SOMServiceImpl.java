@@ -9,6 +9,7 @@ import org.bdgp.somviewer.rpc.data.SOMDataOverlay;
 import org.bdgp.somviewer.rpc.data.SOMDataPts;
 import org.bdgp.somviewer.rpc.data.SOMList;
 import org.bdgp.somviewer.rpc.data.SOMPtInfo;
+import org.bdgp.somviewer.server.DBbase.LogSeverity;
 import org.bdgp.somviewer.server.data.SOMoverlay;
 import org.bdgp.somviewer.server.data.SOMstructure;
 import org.bdgp.somviewer.shared.FieldVerifier;
@@ -92,6 +93,8 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 			sd.map = new String(datasrc);
 			
 			overlay.availData(sd);
+		} else {
+			sd.queryResult += db.flatLog(LogSeverity.ALL);
 		}
 		
 		return sd;
@@ -146,6 +149,8 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 		if ( so.id != null ) {
 			so.name = name;
 			so.variant = variant;
+		} else {
+			so.queryResult += db.flatLog(LogSeverity.ALL);
 		}
 		
 		
@@ -166,7 +171,7 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 			html = db.shortInfo(id, variant);
 		}
 		catch (Exception e) {
-			pti.queryResult = "Exception: " + e.getMessage();
+			pti.queryResult = "Exception: " + e.getMessage() + db.flatLog(LogSeverity.ALL);
 		}
 		
 		manageQuery(false);

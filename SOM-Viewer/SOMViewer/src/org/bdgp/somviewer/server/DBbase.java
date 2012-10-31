@@ -26,9 +26,7 @@ public abstract class DBbase {
 	public boolean active = false;
 	public String status;
 	
-	static public LogSeverity INFO = new LogSeverity();
-	static public LogSeverity WARN = new LogSeverity();
-	static public LogSeverity ERROR = new LogSeverity();
+	public enum LogSeverity {INFO, WARN, ERROR, ALL};
 	
 	public DBbase() {
 		
@@ -149,7 +147,7 @@ public abstract class DBbase {
 		query_log.clear();
 	}
 	
-	public String flatLog(String severity) {
+	public String flatLog(LogSeverity severity) {
 		String log_entries = new String("Database query log:\n");
 		
 		for (int i=0; i < query_log.size(); i++ ) {
@@ -181,6 +179,5 @@ public abstract class DBbase {
 				
 	}
 	
-	public static class LogSeverity {};
 	
 }

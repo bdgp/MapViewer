@@ -30,17 +30,17 @@ public class InsituDatabase extends DBMySQL {
 			ResultSet rs = query(st_qmaps);
 
 			if ( rs == null ) {
-				logEvent(this, DBbase.WARN, "No result set returned");
+				logEvent(this, LogSeverity.WARN, "No result set returned");
 				return null;
 			}
 			
 			while (rs.next()) {	
 				maps.add(rs.getString(1));
-				logEvent(this, DBbase.INFO, "maps=" + rs.getString(1));								
+				logEvent(this, LogSeverity.INFO, "maps=" + rs.getString(1));								
 			}
 		}
 		catch (Exception e) {
-			logEvent(this, DBbase.ERROR, "Exception: " + e.getMessage());
+			logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
 			throw e;
 		}
 
@@ -72,7 +72,7 @@ public class InsituDatabase extends DBMySQL {
 				sym = new String();
 				fbgn = new String();
 				est_id = new String();
-				logEvent(this, DBbase.WARN, "No gene information result set returned");
+				logEvent(this, LogSeverity.WARN, "No gene information result set returned");
 			}
 			else
 			{
@@ -80,39 +80,39 @@ public class InsituDatabase extends DBMySQL {
 				sym = rs.getString(1);
 				fbgn = rs.getString(2);
 				est_id = rs.getString(3);
-				logEvent(this, DBbase.INFO, "impath=" + rs.getString(1));								
+				logEvent(this, LogSeverity.INFO, "impath=" + rs.getString(1));								
 						
 			}
 		
 			if ( variant > 0 ) {
 				rs = query(imquery);
 				if ( rs == null ) {
-					logEvent(this, DBbase.WARN, "No image result set returned");
+					logEvent(this, LogSeverity.WARN, "No image result set returned");
 				}
 				else
 				{
 					while (rs.next()) {	
 						impaths.add(rs.getString(1));
-						logEvent(this, DBbase.INFO, "impath=" + rs.getString(1));								
+						logEvent(this, LogSeverity.INFO, "impath=" + rs.getString(1));								
 					}				
 				}
 
 				rs = query(tquery);			
 				if ( rs == null ) {
-					logEvent(this, DBbase.WARN, "No term result set returned");
+					logEvent(this, LogSeverity.WARN, "No term result set returned");
 				}
 				else
 				{
 					while (rs.next()) {	
 						terms.add(rs.getString(1));
-						logEvent(this, DBbase.INFO, "term=" + rs.getString(1));								
+						logEvent(this, LogSeverity.INFO, "term=" + rs.getString(1));								
 					}				
 				}
 			}
 
 		}
 		catch (Exception e) {
-			logEvent(this, DBbase.ERROR, "Exception: " + e.getMessage());
+			logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
 			throw e;
 		}
 		

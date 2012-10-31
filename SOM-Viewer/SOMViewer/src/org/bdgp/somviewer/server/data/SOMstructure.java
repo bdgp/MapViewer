@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.util.Vector;
 
 import org.bdgp.somviewer.server.DBbase;
+import org.bdgp.somviewer.server.DBbase.LogSeverity;
 
 public class SOMstructure {
 
@@ -28,7 +29,7 @@ public class SOMstructure {
 		}
 		
 		String fquery = st_som + "'" + q_name + "'";
-		db.logEvent(this, DBbase.INFO, fquery);
+		db.logEvent(this, LogSeverity.INFO, fquery);
 		
 		somdata = new Vector<SOMData>(10);
 		
@@ -36,7 +37,7 @@ public class SOMstructure {
 			ResultSet rs = db.query(fquery);
 
 			if ( rs == null ) {
-				db.logEvent(this, DBbase.WARN, "No result set returned");
+				db.logEvent(this, LogSeverity.WARN, "No result set returned");
 				return;
 			}
 			
@@ -48,7 +49,7 @@ public class SOMstructure {
 				sd.x = rs.getFloat(2);
 				sd.y = rs.getFloat(3);
 				sd.name = rs.getString(4);
-				db.logEvent(this, DBbase.INFO, "id=" + sd.id + ": x=" + sd.x + ",y=" + sd.y + ", name=" + sd.name);
+				db.logEvent(this, LogSeverity.INFO, "id=" + sd.id + ": x=" + sd.x + ",y=" + sd.y + ", name=" + sd.name);
 				
 				if ( sd.name != null ) {
 					somdata.add(sd);
@@ -57,7 +58,7 @@ public class SOMstructure {
 			}
 		}
 		catch (Exception e) {
-			db.logEvent(this, DBbase.ERROR, "Exception: " + e.getMessage());
+			db.logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
 			somdata = null;
 			throw e;
 		}

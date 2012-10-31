@@ -6,6 +6,7 @@ import java.util.Vector;
 import org.bdgp.somviewer.rpc.data.SOMDataPts;
 import org.bdgp.somviewer.rpc.data.SOMOverlaysAvailable;
 import org.bdgp.somviewer.server.DBbase;
+import org.bdgp.somviewer.server.DBbase.LogSeverity;
 
 public class SOMoverlay {
 	
@@ -32,14 +33,14 @@ public class SOMoverlay {
 		ResultSet rs = db.query(fquery);
 		
 		if ( rs == null ) {
-			db.logEvent(this, DBbase.WARN, "No result set returned");
+			db.logEvent(this, LogSeverity.WARN, "No result set returned");
 			success = false;
 		}
 		else {
 			rs.next();
 			som_id = rs.getInt(1);
 			if ( som_id == 0 ) {
-				db.logEvent(this, DBbase.WARN, "No id returned");
+				db.logEvent(this, LogSeverity.WARN, "No id returned");
 				success = false;
 			}
 		}
@@ -62,7 +63,7 @@ public class SOMoverlay {
 		}
 		
 		String fquery = st_availoverlays.replace("__ID", new Integer(som_id).toString());
-		db.logEvent(this, DBbase.INFO, fquery);
+		db.logEvent(this, LogSeverity.INFO, fquery);
 		
 		available = new Vector<Available>(10);
 		
@@ -70,7 +71,7 @@ public class SOMoverlay {
 			ResultSet rs = db.query(fquery);
 
 			if ( rs == null ) {
-				db.logEvent(this, DBbase.WARN, "No result set returned");
+				db.logEvent(this, LogSeverity.WARN, "No result set returned");
 				return;
 			}
 			
@@ -82,7 +83,7 @@ public class SOMoverlay {
 				av.variant = rs.getInt(2);
 				av.color = rs.getString(3);
 				
-				db.logEvent(this, DBbase.INFO, "Name=" + av.name + ", Variant=" + av.variant + ", Colormap=" + av.color);
+				db.logEvent(this, LogSeverity.INFO, "Name=" + av.name + ", Variant=" + av.variant + ", Colormap=" + av.color);
 				
 				if ( av.name != null ) {
 					available.add(av);
@@ -91,7 +92,7 @@ public class SOMoverlay {
 			}
 		}
 		catch (Exception e) {
-			db.logEvent(this, DBbase.ERROR, "Exception: " + e.getMessage());
+			db.logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
 			available = null;
 			throw e;
 		}
@@ -131,7 +132,7 @@ public class SOMoverlay {
 		ResultSet rs = db.query(fquery);
 
 		if ( rs == null ) {
-			db.logEvent(this, DBbase.WARN, "No result set returned");
+			db.logEvent(this, LogSeverity.WARN, "No result set returned");
 			return null;
 		}
 		
@@ -143,7 +144,7 @@ public class SOMoverlay {
 						
 		}
 		
-		db.logEvent(this, DBbase.INFO, "Received " + ov_id.size() + " overlays");
+		db.logEvent(this, LogSeverity.INFO, "Received " + ov_id.size() + " overlays");
 		
 		int [] ov = new int[ov_id.size()];
 		
