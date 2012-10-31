@@ -1,5 +1,6 @@
 package org.bdgp.somviewer.client;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.vaadin.gwtgraphics.client.Group;
@@ -13,11 +14,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
  */
 public class PointVenn extends PointBasic {
 	
-	protected static int uuid = 12346;
+	protected int uuid = 12346;
 	protected static final int ShiftVal = 4;
 	protected Vector<PtShifts> shifts = new Vector<PtShifts>(10);
 		
-	public PointVenn() {
+	public PointVenn(HashMap<String,String> colormap) {
+		super(colormap);
+		
 		add(-1,0);
 		add(1,0);
 		add(0,-1);
@@ -47,23 +50,27 @@ public class PointVenn extends PointBasic {
 		return null;
 	}
 	
-	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick) {
+	public VectorObject drawMarker(boolean showMarker, Vector<String> colormap_ids, ClickHandler onclick) {
 
 		VectorObject vo = null;
 		
 		// TODO: This will be handled by PointMarker
-		if ( colors == null ) {
-			if ( showMarker == true ) {
-				vo = drawCircle(MARKER_CIRC_RAD, 0.5f, "fuchsia");
-				if ( onclick != null) 
-					vo.addClickHandler(onclick);
-				return vo;
-			} else
-				return null;
+		if ( colormap_ids == null ) {
+			return null;
+//			if ( showMarker == true ) {
+//				vo = drawCircle(MARKER_CIRC_RAD, 0.5f, "fuchsia");
+//				if ( onclick != null) 
+//					vo.addClickHandler(onclick);
+//				return vo;
+//			} else
+//				return null;
 		}
 
-		if ( colors.size() == 1 ) {
-			vo = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colors.get(0));
+		
+		if ( colormap_ids.size() == 1 ) {
+			if ( ! colormap.containsKey(colormap_ids.get(0)) )
+				return null;
+			vo = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.get(colormap_ids.get(0)));
 			if ( onclick != null) 
 				vo.addClickHandler(onclick);
 			return vo;
@@ -73,14 +80,17 @@ public class PointVenn extends PointBasic {
 		int ct = 0;
 		
 		Group g = new Group();
-		for ( String col : colors ) {
+		for ( String col : colormap_ids ) {
 			if ( ct >= shifts.size() )
 				ct = 0;
+
+			if ( ! colormap.containsKey(col) )
+				continue;
 			
 			x_save = x; y_save = y;
 			x += shifts.get(ct).xs;
 			y += shifts.get(ct).ys;
-			vo = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + col);
+			vo = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.get(col));
 			g.add(vo);
 			if ( onclick != null )
 				vo.addClickHandler(onclick);
@@ -90,6 +100,9 @@ public class PointVenn extends PointBasic {
 			ct++;
 		}
 
+		if ( g.getVectorObjectCount() == 0 )
+			g = null;
+		
 		return g;
 	}
 

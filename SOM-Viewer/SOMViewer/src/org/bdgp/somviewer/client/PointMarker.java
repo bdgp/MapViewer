@@ -1,5 +1,6 @@
 package org.bdgp.somviewer.client;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.vaadin.gwtgraphics.client.VectorObject;
@@ -9,8 +10,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 public class PointMarker extends PointBasic {
 
-	public PointMarker() {
-		
+	protected int uuid = 12348;
+	
+	public PointMarker(HashMap<String,String> colormap) {
+		super(colormap);
 	}
 
 	public VectorObject drawLabel(String label, ClickHandler onclick) {

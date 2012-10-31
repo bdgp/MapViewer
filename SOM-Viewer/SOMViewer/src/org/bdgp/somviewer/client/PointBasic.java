@@ -1,5 +1,6 @@
 package org.bdgp.somviewer.client;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.vaadin.gwtgraphics.client.Group;
@@ -16,12 +17,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
  */
 public class PointBasic implements PointDecorator {
 
-	protected static int uuid = 12345;
+	protected int uuid = 12345;
 	protected final static int MARKER_CIRC_RAD = 2;
 	protected final static int OVERLAY_CIRC_RAD = 7;
+	protected HashMap<String,String> colormap;
 	int x,y;
 	
-	public PointBasic() {
+	public PointBasic(HashMap<String,String> colormap) {
+		this.colormap = colormap;
 	}
 
 	public void setPoint(int x, int y) {
@@ -86,7 +89,8 @@ public class PointBasic implements PointDecorator {
 	}
 
 	public int uuid() {
-		return uuid;
+		int ret_uuid = this.uuid;
+		return ret_uuid;
 	}
 
 	public boolean isDraw() {

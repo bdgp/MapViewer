@@ -9,6 +9,7 @@ public class SOMpt {
 	public float y;
 	public String name;
 	public Vector<DrawHints> draw = new Vector<DrawHints>(2);
+	public Vector<String> overlay_names = new Vector<String>(2);
 	
 	public SOMpt() {
 		// TODO Auto-generated constructor stub
@@ -65,6 +66,15 @@ public class SOMpt {
 		return col;
 	}
 	
+	
+	public Vector<String> getColorMapNames() {
+		if ( overlay_names.size() == 0 ) {
+			return null;
+		}
+		return overlay_names;
+	}
+	
+	
 	public int getVariant() {
 		//TODO: This shouldn't return a fixed value!!!
 		if ( draw.size() == 0 ) {
@@ -81,6 +91,10 @@ public class SOMpt {
 		dh.color = color;
 		dh.shape = shape;
 		draw.add(dh);
+	}
+	
+	public void addColorMapName(String n) {
+		overlay_names.add(n);
 	}
 	
 

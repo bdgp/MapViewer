@@ -89,6 +89,17 @@ public class SOMData {
 	}
 	
 	
+	public HashMap<String,String> getColorMap() {
+		HashMap<String,String> colormap = new HashMap<String,String>();
+		
+		for (Map.Entry<String, Library> entry : library.entrySet()) {
+			colormap.put(entry.getKey(), entry.getValue().color);
+		}
+		
+		return colormap;
+	}
+	
+	
 	public String getOverlayColor(String name) {
 		
 		if ( library.containsKey(name) )
@@ -392,6 +403,7 @@ public class SOMData {
 					seldata.put(ov.ids[i], pt);
 				}
 				pt.addDrawDescription(ov.variant, ov.color, null);
+				pt.addColorMapName(ov.name);
 			}
 		}
 		

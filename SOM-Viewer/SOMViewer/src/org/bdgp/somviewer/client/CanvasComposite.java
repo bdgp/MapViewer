@@ -89,14 +89,17 @@ public class CanvasComposite extends Composite {
 		t.setY(win_h/2 + fh);
 		canvas.add(t);
 		
-		addDecorator(new PointVenn());
-		setDecorator(new PointInfo());
 	}
 
 	
 	public void setSOM(SOMData som) {
 
 		this.som = som;
+		
+		resetDecorators();
+		addDecorator(new PointMarker(som.getColorMap()));
+		addDecorator(new PointVenn(som.getColorMap()));
+		setDecorator(new PointInfo());
 
 		float maxx = -1, maxy = -1;
 		
@@ -131,24 +134,53 @@ public class CanvasComposite extends Composite {
 		
 		if ( pd.isInfo() )
 			pt_info = pd;
+		else {
+			pt_draw.clear();
+			pt_draw.add(pd);
+		}
 	}
 	
 	
 	public void addDecorator(PointDecorator pd) {
 		
-		// Make sure list contains only one object with uuid
-		if ( pt_draw.size() > 0 ) {
-			for ( PointDecorator p : pt_draw ) {
-				if ( p.uuid() == pd.uuid() ) {
-					pt_draw.remove(p);
-				}
-			}
+		// This class should add the pd and remove any Decorator with the same uuid
+		// The current uuid design doesn't appear to work in GWT
+		// -> just add them without checking and make sure externally that everything is cleared
+		
+		if ( pd == null )
+			return;
+		
+		if ( pd.isInfo() ) {
+			// at this time we can only have one info
+			// cannot see how having more than one is useful
+			pt_info = pd;
+		} else {
+			pt_draw.add(pd);
 		}
 		
-		pt_draw.add(pd);
+		//  old uuid checking code:
+//		Vector<PointDecorator> rm = null;		
+//		// Make sure list contains only one object with uuid
+//		if ( pt_draw.size() > 0 ) {
+//			for ( PointDecorator p : pt_draw ) {
+//				if ( p.uuid() == pd.uuid() ) {
+//					if ( rm == null )
+//						rm = new Vector<PointDecorator>();
+//					rm.add(p);
+//				}
+//			}
+//		}
+//		
+//		pt_draw.add(pd);
+//		
+//		if ( rm != null )
+//			for (PointDecorator p : rm) {
+//				pt_draw.remove(p);
+//			}
+		
 	}
 	
-	
+	// TODO: This will crash
 	public void rmDecorator(int uuid) {
 		if ( pt_draw.size() > 0 ) {
 			for ( PointDecorator p : pt_draw ) {
@@ -287,10 +319,11 @@ public class CanvasComposite extends Composite {
 							onclick = new InfoClick(som_xy.getId(), som_xy.getVariant());
 					if ( doLabels == true) {
 						VectorObject txt = p.drawLabel(som_xy.name, onclick);
-						grp_txt.add(txt);
+						if ( txt != null )
+							grp_txt.add(txt);
 
 					}
-					VectorObject m = p.drawMarker(showCircles, som_xy.getColors(), onclick);
+					VectorObject m = p.drawMarker(showCircles, som_xy.getColorMapNames(), onclick);
 					if ( m != null ) {
 						canvas.add(m);
 					}
