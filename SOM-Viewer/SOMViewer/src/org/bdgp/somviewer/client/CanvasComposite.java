@@ -97,9 +97,9 @@ public class CanvasComposite extends Composite {
 		this.som = som;
 		
 		resetDecorators();
-		addDecorator(new PointMarker(som.getColorMap()));
-		addDecorator(new PointVenn(som.getColorMap()));
-		setDecorator(new PointInfo());
+//		addDecorator(new PointMarker(som.getColorMap()));
+//		addDecorator(new PointVenn(som.getColorMap()));
+//		setDecorator(new PointInfo());
 
 		float maxx = -1, maxy = -1;
 		

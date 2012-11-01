@@ -172,9 +172,19 @@ public class SOMComposite extends ResizeComposite {
 		}
 
 		som = new SOMData(pts);
+
+		DecoratorFactory df = new DecoratorFactory();
+		som.setDecorators(df);
 		
 		canvPanel.updateCanvas(false);
 		canvPanel.setSOM(som);
+		
+		canvPanel.addDecorator(new PointMarker(som.getColorMap()));
+		Iterator<PointDecorator> it_df = df.getDecorators();
+		while ( it_df.hasNext() )
+			canvPanel.addDecorator(it_df.next());
+		canvPanel.setDecorator(new PointInfo());
+		
 				
 		CategoryComposite cat = new CategoryComposite(canvPanel,som);
 		catPanel.clear();

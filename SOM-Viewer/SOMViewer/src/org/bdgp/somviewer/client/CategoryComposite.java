@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
@@ -26,6 +27,7 @@ public class CategoryComposite extends Composite {
 	protected SOMData som;
 	protected CanvasComposite canvasOwner;
 	protected VerticalPanel catPanel  = new VerticalPanel();
+	protected DrawSync dsync;
 
 	protected boolean showCircles = true, showLabels = true;
 
@@ -35,6 +37,8 @@ public class CategoryComposite extends Composite {
 		this.canvasOwner = canvasOwner;
 		
 		initWidget(catPanel);
+		
+		dsync = new DrawSync(canvasOwner);
 		populatePanel();	
 	}
 	
@@ -75,31 +79,44 @@ public class CategoryComposite extends Composite {
 				canvasOwner.draw();
 			}
 		});				
+		
+		for ( String t : som.getOverlayTypes() ) {
+			populateCatGroup(t);
+		}
+		
+	}
 
-		Label lblNewLabel = new Label("Organ system");
+	
+	protected void populateCatGroup(String type) {
+		int max_variant = som.getMaxVariantByType(type);
+		
+		Label lblNewLabel = new Label(type);
 		catPanel.add(lblNewLabel);
+		
+		VarBarHandler globalSliderHandler = null;
+		VarBoxHandler globalBoxHandler = null;
+		if ( max_variant > 1 ) {
+			HorizontalPanel global_varPanel = new HorizontalPanel();
+			global_varPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+			catPanel.add(global_varPanel);
 
-		DrawSync dsync = new DrawSync(canvasOwner);
+			VariationSelectWidget globalSlider = new VariationSelectWidget(max_variant,"60px",true);
+			global_varPanel.add(globalSlider.asWidget());
+			globalSlider.setValue(som.getMaxVariant());
+
+			IntegerBox globalInt = new IntegerBox();
+			global_varPanel.add(globalInt);
+			globalInt.setValue(som.getMaxVariant());
+			globalInt.setMaxLength(2);
+			globalInt.setWidth("10px");
+
+			globalSliderHandler = new VarBarHandler(null, dsync, null, globalInt, globalSlider);
+			globalBoxHandler = new VarBoxHandler(null, dsync, null, globalInt, globalSlider);
+			globalSlider.addBarValueChangedHandler(globalSliderHandler);
+			globalInt.addChangeHandler(globalBoxHandler);
+		}
 		
-		HorizontalPanel global_varPanel = new HorizontalPanel();
-		catPanel.add(global_varPanel);
-		
-		VariationSelectWidget globalSlider = new VariationSelectWidget(som.getMaxVariant(),"60px",true);
-		global_varPanel.add(globalSlider.asWidget());
-		globalSlider.setValue(som.getMaxVariant());
-		
-		IntegerBox globalInt = new IntegerBox();
-		global_varPanel.add(globalInt);
-		globalInt.setValue(som.getMaxVariant());
-		globalInt.setMaxLength(2);
-		globalInt.setWidth("10px");
-		
-		VarBarHandler globalSliderHandler = new VarBarHandler(null, dsync, null, globalInt, globalSlider);
-		VarBoxHandler globalBoxHandler = new VarBoxHandler(null, dsync, null, globalInt, globalSlider);
-		globalSlider.addBarValueChangedHandler(globalSliderHandler);
-		globalInt.addChangeHandler(globalBoxHandler);
-		
-		Vector<String> ovnames = som.getOverlayNames();				
+		Vector<String> ovnames = som.getOverlayNames(type);				
 		Grid osGrid = new Grid(ovnames.size(), 3);
 		catPanel.add(osGrid);
 		
@@ -107,7 +124,7 @@ public class CategoryComposite extends Composite {
 		int row = 0;
 		for ( String ovn : ovnames ) {
 
-			// overlay Checkbox 
+			// overlay Checkbox - always there
 			CheckBox osCheckBox = new CheckBox();
 			osGrid.setWidget(row, 0, osCheckBox);
 			osCheckBox.setText(ovn);
@@ -115,34 +132,47 @@ public class CategoryComposite extends Composite {
 			if ( col != null)
 				osCheckBox.getElement().getStyle().setProperty("backgroundColor", "#" + col);
 			
-			// overlay Slider
-			VariationSelectWidget osVarSlider = new VariationSelectWidget(som.getMaxVariant(),"60px",true);
-			osGrid.setWidget(row, 1, osVarSlider);
-			osVarSlider.setValue(som.getMaxVariant());
 			
-			// overlay numeric box
-			IntegerBox osInt = new IntegerBox();
-			osGrid.setWidget(row, 2, osInt);
-			osInt.setValue(som.getMaxVariant());
-			osInt.setMaxLength(2);
-			osInt.setWidth("10px");
-			
-			row++;
-			
-			// Handlers, link them together
-			osCheckBox.addClickHandler(new CatHandler(ovn, osInt));
-			osVarSlider.addBarValueChangedHandler(new VarBarHandler(ovn, dsync, osCheckBox, osInt, osVarSlider));
-			VarBoxHandler osBoxHandler = new VarBoxHandler(ovn, dsync, osCheckBox, osInt, osVarSlider);
-			osInt.addChangeHandler(osBoxHandler);
-			
-			os_handlers.add(osBoxHandler);
+			if ( max_variant > 1 ) {
+				// Create sliders and value box and link them to each other
+				
+				// overlay Slider
+				VariationSelectWidget osVarSlider = new VariationSelectWidget(max_variant,"60px",true);
+				osGrid.setWidget(row, 1, osVarSlider);
+				osVarSlider.setValue(max_variant);
+
+				// overlay numeric box
+				IntegerBox osInt = new IntegerBox();
+				osGrid.setWidget(row, 2, osInt);
+				osInt.setValue(max_variant);
+				osInt.setMaxLength(2);
+				osInt.setWidth("10px");
+
+				row++;
+
+				// Handlers, link them together
+				osCheckBox.addClickHandler(new CatHandler(ovn, osInt));
+				osVarSlider.addBarValueChangedHandler(new VarBarHandler(ovn, dsync, osCheckBox, osInt, osVarSlider));
+				VarBoxHandler osBoxHandler = new VarBoxHandler(ovn, dsync, osCheckBox, osInt, osVarSlider);
+				osInt.addChangeHandler(osBoxHandler);
+
+				os_handlers.add(osBoxHandler);
+			}
+			else
+			{
+				// Just leave it with the checkbox, add handler
+				osCheckBox.addClickHandler(new CatHandler(ovn, max_variant));
+			}
 		}
 		
-		globalSliderHandler.setChildHandlers(os_handlers);
-		globalBoxHandler.setChildHandlers(os_handlers);
+		if ( globalSliderHandler != null )
+			globalSliderHandler.setChildHandlers(os_handlers);
+		if ( globalBoxHandler != null )
+			globalBoxHandler.setChildHandlers(os_handlers);
 		
 	}
-
+	
+	
 	protected void activateOverlay(String name, int variant) {
 		
 		if ( variant < 0 ) {
@@ -206,18 +236,29 @@ public class CategoryComposite extends Composite {
 	public class CatHandler implements ClickHandler {
 		String name;
 		IntegerBox varBox;
+		int const_value;
 		
 		public CatHandler(String name, IntegerBox box) {
 			this.name = name;
 			this.varBox = box;
 		}
 		
+		public CatHandler(String name, int const_value) {
+			this.name = name;
+			this.const_value = const_value;
+			varBox = null;
+		}
+		
+		
 		public void onClick(ClickEvent event) {
 			// updateOverlays();
 			
 			boolean checked = ((CheckBox) event.getSource()).getValue();
 			if ( checked == true ) {
-				activateOverlay(name, varBox.getValue());
+				if ( varBox != null )
+					activateOverlay(name, varBox.getValue());
+				else
+					activateOverlay(name, const_value);
 			} else {
 				inactivateOverlay(name);
 			}

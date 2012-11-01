@@ -19,6 +19,7 @@ public class SOMData {
 	protected HashMap<String,Overlay> overlay;
 	protected HashMap<Integer,SOMstruct> data;
 	protected HashMap<String,Library> library;
+	protected Vector<String> types, decorators;
 	protected SOMDataPts pts;
 	protected HashMap<Integer,Group> data_grp = null;
 	protected float zoom;
@@ -38,15 +39,24 @@ public class SOMData {
 			data.put(new Integer(pts.id[i]), sd);
 		}
 		
+		
+		Unique un_type = new Unique();
+		Unique un_decorator = new Unique();
+		
 		Vector<SOMOverlaysAvailable> av = pts.available;
 		for ( SOMOverlaysAvailable a : av ) {
 			Library l = new Library();
 			l.color = a.color;
 			l.max = a.variant;
 			l.type = a.type;
+			un_type.addTerm(a.type);
 			l.decorator = a.decorator;
+			un_decorator.addTerm(a.decorator);
 			library.put(a.name,l);
 		}
+		
+		types = un_type.getUnique();
+		decorators = un_decorator.getUnique();
 	}
 
 	public static String overlay2uuid(String name, int variant) {
@@ -65,16 +75,13 @@ public class SOMData {
 	
 	
 	public Vector<String> getOverlayTypes() {
-
-		Vector<String> ov_types = new Vector<String>(library.size());
-		
-		for (Map.Entry<String, Library> entry : library.entrySet()) {
-		    ov_types.add(entry.getValue().type);
-		}
-
-		return ov_types;
-		
+		return types;
 	}
+	
+	public Vector<String> getOverlayDecorators() {
+		return decorators;
+	}
+
 	
 	
 	public Vector<String> getOverlayNames() {
@@ -89,6 +96,19 @@ public class SOMData {
 	}
 	
 	
+	public Vector<String> getOverlayNames(String type) {
+		
+		Vector<String> names = new Vector<String>(library.size());
+		
+		for (Map.Entry<String, Library> entry : library.entrySet()) {
+			if ( entry.getValue().type.compareTo(type) == 0)
+				names.add(entry.getKey());
+		}
+
+		return names;
+	}
+
+	
 	public HashMap<String,String> getColorMap() {
 		HashMap<String,String> colormap = new HashMap<String,String>();
 		
@@ -97,6 +117,16 @@ public class SOMData {
 		}
 		
 		return colormap;
+	}
+	
+
+	public DecoratorFactory setDecorators(DecoratorFactory df) {
+
+		for (Map.Entry<String, Library> entry : library.entrySet()) {
+			df.addOverlayType(entry.getKey(), entry.getValue().decorator, entry.getValue().color);
+		}
+		
+		return df;
 	}
 	
 	
@@ -122,13 +152,28 @@ public class SOMData {
 		return max;
 	}
 	
-	public int getMaxVariant (String name) {
+	public int getMaxVariantByName(String name) {
 		Library l = library.get(name);
 		if ( l == null ) {
 			throw new NoSuchElementException();
 		}
 		
 		return l.max;
+	}
+	
+	public int getMaxVariantByType(String type) {
+		int max = 0;
+		
+		for (Map.Entry<String, Library> entry : library.entrySet()) {
+			Library l = entry.getValue();			
+			if ( l.type.compareTo(type) == 0) {			
+				int lmax = entry.getValue().max;
+				if ( lmax > max )
+					max = lmax;
+			}
+		}
+		
+		return max;
 	}
 	
 	
@@ -517,6 +562,33 @@ public class SOMData {
 		}
 		
 	}
+	
+	
+	
+	protected class Unique {
+		protected HashMap<String,Integer> unique = new HashMap<String,Integer>();
+		protected Integer dummy = new Integer(1);
+		
+		public void addTerm(String term) {
+			if ( unique.containsKey(term) == false ) {
+				unique.put(term, dummy);
+			}
+		}
+		
+		public Vector<String> getUnique() {
+			if ( unique.size() == 0 ) {
+				return null;
+			}
+			
+			Vector<String> un = new Vector<String>(unique.size());
+			for ( String key : unique.keySet() ) {
+				un.add(key);
+			}
+			return un;
+		}
+		
+	}
+	
 	
 	
 	public class SOMstruct {
