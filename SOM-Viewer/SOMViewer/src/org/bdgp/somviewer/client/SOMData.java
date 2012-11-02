@@ -14,29 +14,40 @@ import org.vaadin.gwtgraphics.client.Group;
 public class SOMData {
 	
 	protected static final int MAX_OVERLAY = 30;
+	protected static final float ZOOM_INC = 100;
 	
 	protected String map_name;
 	protected HashMap<String,Overlay> overlay;
-	protected HashMap<Integer,SOMstruct> data;
+	protected Vector<SOMstruct> all_data; // all data 
+	protected HashMap<Integer,SOMstruct> data; // visible data
+	protected HashMap<Integer,Integer> hid_data; // mappings from hidden to visible
 	protected HashMap<String,Library> library;
 	protected Vector<String> types, decorators;
 	protected SOMDataPts pts;
 	protected HashMap<Integer,Group> data_grp = null;
 	protected float zoom;
+	protected float zoom_range = 1000;
 	
 	public SOMData(SOMDataPts pts) {
 		this.pts = pts;
 		
 		map_name = pts.map;
+		all_data = new Vector<SOMstruct>(100);
 		data = new HashMap<Integer, SOMstruct>();
+		hid_data = new HashMap<Integer,Integer>();
 		library = new HashMap<String, Library>();
+		
+		float hid_res = 1 / zoom_range;
 		
 		for ( int i = 0; i < pts.id.length; i++ ) {
 			SOMstruct sd = new SOMstruct();
+			sd.id = new Integer(pts.id[i]);
 			sd.x = pts.x[i];
 			sd.y = pts.y[i];
 			sd.name = pts.names[i];
-			data.put(new Integer(pts.id[i]), sd);
+			all_data.add(sd);
+			categorizeVisibility(sd, hid_res);
+			// data.put(new Integer(pts.id[i]), sd);
 		}
 		
 		
@@ -59,6 +70,35 @@ public class SOMData {
 		decorators = un_decorator.getUnique();
 	}
 
+	
+	/**
+	 * This function categorizes the data if they are visible or not (i.e. on the same point, depending on the zoom)
+	 * Normally this weeds out identical points but this version is zoom dependent.
+	 * Thus points with very small differences can become visible if zoomed enough.
+	 * @param id
+	 * @param eval
+	 * @param resolution
+	 */
+	protected void categorizeVisibility(SOMstruct eval, float resolution) {
+		
+		boolean invisible = false;
+		
+		for (Map.Entry<Integer, SOMstruct> entry : data.entrySet()) {
+			SOMstruct s = entry.getValue();
+			
+			if ( Math.abs(s.x - eval.x) <= resolution && Math.abs(s.y - eval.y) <= resolution ) {
+				hid_data.put(eval.id, entry.getKey());
+				invisible = true;
+				break;
+			}			
+		}
+		
+		if ( invisible == false )
+			data.put(eval.id, eval);
+		
+	}
+	
+	
 	public static String overlay2uuid(String name, int variant) {
 		String uuid;
 		if ( variant > 0 )
@@ -182,6 +222,19 @@ public class SOMData {
 			data_grp = null;
 		}
 		this.zoom = zoom;
+		
+		if ( zoom > zoom_range ) {
+			// re-categorize the visibility
+			zoom_range *= ZOOM_INC;
+			
+			data = new HashMap<Integer,SOMstruct>();
+			hid_data = new HashMap<Integer, Integer>();
+			float hid_res = 1 /zoom_range;
+			for ( SOMstruct s : all_data ) {
+				categorizeVisibility(s, hid_res);
+			}
+		}
+		
 	}
 	
 
@@ -440,9 +493,28 @@ public class SOMData {
 			
 			for ( int i = 0; i < ov.ids.length; i++ ) {
 				SOMpt pt;
+								
 				if ( seldata.containsKey(ov.ids[i]) ) {
 					pt = seldata.get(ov.ids[i]);
-				} else {
+				}
+				else if ( hid_data.containsKey(ov.ids[i])) {
+					// The overlay is in the hidden set, fetch the primary data
+					Integer primary_id = hid_data.get(ov.ids[i]);
+					if ( seldata.containsKey(primary_id) ) {
+						pt = seldata.get(primary_id);
+						// Make sure colormap is in there only once
+						if ( pt.getColorMapNames() != null)
+							for ( String mapname : pt.getColorMapNames() ) {
+								if ( mapname.compareTo(ov.name) == 0 )
+									continue;
+							}
+					} else {
+						SOMstruct value = data.get(primary_id);
+						pt = new SOMpt(ov.ids[i], value.x, value.y, value.name);
+						seldata.put(ov.ids[i], pt);
+					}
+				}
+				else {
 					SOMstruct value = data.get(ov.ids[i]);
 					pt = new SOMpt(ov.ids[i], value.x, value.y, value.name);
 					seldata.put(ov.ids[i], pt);
@@ -592,6 +664,7 @@ public class SOMData {
 	
 	
 	public class SOMstruct {
+		public Integer id;
 		public float x;
 		public float y;
 		public String name;

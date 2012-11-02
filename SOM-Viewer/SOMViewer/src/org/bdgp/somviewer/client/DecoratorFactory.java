@@ -12,10 +12,12 @@ public class DecoratorFactory {
 	
 	protected PointDecorator toPointDecorator(Decorator d) {
 		
-		if ( d.decorator.compareTo("Venn") == 0 )
+		if ( d.decorator.compareTo("Basic") == 0 )
+			return new PointBasic(d.colormap);
+		else if ( d.decorator.compareTo("Venn") == 0 )
 			return new PointVenn(d.colormap);
-		else if ( d.decorator.compareTo("Cloud") == 0 )
-			return null;
+		else if ( d.decorator.compareTo("Cloudy") == 0 )
+			return new PointCloudy(d.colormap);
 		
 		return null;
 	}

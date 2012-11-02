@@ -98,6 +98,12 @@ public class SOMpt {
 	}
 	
 
+	protected class Identical {
+		public Integer id;
+		public String name;
+	}
+	
+	
 	protected class DrawHints {
 		public int variant;
 		public String color;

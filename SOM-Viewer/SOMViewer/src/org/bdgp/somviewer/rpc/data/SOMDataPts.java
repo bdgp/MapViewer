@@ -13,7 +13,7 @@ public class SOMDataPts implements IsSerializable {
 	public int [] id;
 	public float [] x, y;
 	public String [] names;
-		
+	
 	public Vector<SOMOverlaysAvailable> available;
 	
 	public SOMOverlaysAvailable CreateAvailable(String name, int variant, String color, String type, String decorator) {

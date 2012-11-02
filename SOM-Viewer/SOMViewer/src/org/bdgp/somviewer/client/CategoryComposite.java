@@ -148,8 +148,6 @@ public class CategoryComposite extends Composite {
 				osInt.setMaxLength(2);
 				osInt.setWidth("10px");
 
-				row++;
-
 				// Handlers, link them together
 				osCheckBox.addClickHandler(new CatHandler(ovn, osInt));
 				osVarSlider.addBarValueChangedHandler(new VarBarHandler(ovn, dsync, osCheckBox, osInt, osVarSlider));
@@ -163,6 +161,9 @@ public class CategoryComposite extends Composite {
 				// Just leave it with the checkbox, add handler
 				osCheckBox.addClickHandler(new CatHandler(ovn, max_variant));
 			}
+			
+			row++;
+
 		}
 		
 		if ( globalSliderHandler != null )

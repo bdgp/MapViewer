@@ -1,6 +1,7 @@
 package org.bdgp.somviewer.server.data;
 
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.bdgp.somviewer.server.DBbase;
@@ -8,12 +9,12 @@ import org.bdgp.somviewer.server.DBbase.LogSeverity;
 
 public class SOMstructure {
 
-	String st_som = "select somstruct.id, somstruct.x, somstruct.y, somstruct.name from somstruct, somtitle where somstruct.somtitle_id = somtitle.id and somtitle.name = ";
+	protected final String st_som = "select somstruct.id, somstruct.x, somstruct.y, somstruct.name from somstruct, somtitle where somstruct.somtitle_id = somtitle.id and somtitle.name = ";
 	
 	protected DBbase db;
 	
-	String somtitle = null;
-	Vector<SOMData> somdata = null;
+	protected String somtitle = null;
+	protected Vector<SOMData> somdata = null;
 	
 	
 	public SOMstructure(DBbase db) {
@@ -65,7 +66,7 @@ public class SOMstructure {
 		
 		return;
 	}
-
+	
 
 	public int [] getId() {
 		if ( somdata == null )
@@ -120,9 +121,9 @@ public class SOMstructure {
 		return name;
 	}
 
-	
+
 	protected class SOMData {
-		int id;
+		Integer id;
 		float x, y;
 		String name;
 	}
