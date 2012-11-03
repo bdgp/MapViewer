@@ -1,5 +1,7 @@
 package org.bdgp.somviewer.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 public class SOMpt {
@@ -10,6 +12,9 @@ public class SOMpt {
 	public String name;
 	public Vector<DrawHints> draw = new Vector<DrawHints>(2);
 	public Vector<String> overlay_names = new Vector<String>(2);
+	protected HashMap<String,Integer> overlay_unique = new HashMap<String,Integer>();
+	protected Integer dummy  = new Integer(1);
+	protected HashMap<Integer,String> identical_pts;
 	
 	public SOMpt() {
 		// TODO Auto-generated constructor stub
@@ -68,8 +73,13 @@ public class SOMpt {
 	
 	
 	public Vector<String> getColorMapNames() {
-		if ( overlay_names.size() == 0 ) {
+		if ( overlay_unique.size() == 0 )
 			return null;
+		
+		if ( overlay_names.size() == 0 ) {
+			for (Map.Entry<String, Integer> entry : overlay_unique.entrySet()) {
+				overlay_names.add(entry.getKey());
+			}
 		}
 		return overlay_names;
 	}
@@ -93,14 +103,27 @@ public class SOMpt {
 		draw.add(dh);
 	}
 	
+	// Colormaps, by definition, have to be unique
 	public void addColorMapName(String n) {
-		overlay_names.add(n);
+		//overlay_names.add(n);
+		overlay_unique.put(n, dummy);
 	}
 	
 
-	protected class Identical {
-		public Integer id;
-		public String name;
+	public void addIdenticalPt(Integer id, String name) {
+		if ( identical_pts == null )
+			identical_pts = new HashMap<Integer,String>();
+		identical_pts.put(id, name);
+	}
+	
+	
+	public int sizeIdenticalPt() {
+		return identical_pts.size();
+	}
+	
+	
+	public HashMap<Integer,String> getIdenticalPt() {
+		return identical_pts;
 	}
 	
 	

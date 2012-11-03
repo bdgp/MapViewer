@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
@@ -97,8 +98,9 @@ public class SOMComposite extends ResizeComposite {
 		VerticalPanel ctrlPanel = new VerticalPanel();
 		mainPanel.addWest(ctrlPanel,ctrlPanelSize);
 		
-		Label lblNewLabel_2 = new Label("Select:");
-		ctrlPanel.add(lblNewLabel_2);
+		//Label lblNewLabel_2 = new Label("Select:");
+		//ctrlPanel.add(lblNewLabel_2);
+		ctrlPanel.add(new HTML("<b>List of maps:</b>"));
 		
 		avail_somBox = new ListBox();
 		ctrlPanel.add(avail_somBox);

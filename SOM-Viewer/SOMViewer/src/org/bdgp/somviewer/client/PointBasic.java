@@ -20,7 +20,11 @@ public class PointBasic implements PointDecorator {
 	protected int uuid = 12345;
 	protected final static int MARKER_CIRC_RAD = 2;
 	protected final static int OVERLAY_CIRC_RAD = 7;
+	
 	protected HashMap<String,String> colormap;
+	protected HashMap<Integer,String> contents;
+	protected String label;
+	protected Integer id;
 	int x,y;
 	
 	public PointBasic(HashMap<String,String> colormap) {
@@ -31,6 +35,14 @@ public class PointBasic implements PointDecorator {
 		this.x = x;
 		this.y = y;
 	}
+	
+	
+	public void setInfo(Integer id, String name, HashMap<Integer,String> others) {
+		this.id = id;
+		this.label = name;
+		this.contents = others;
+	}
+	
 
 	public VectorObject drawLabel(String label, ClickHandler onclick) {
 

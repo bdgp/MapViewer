@@ -18,7 +18,7 @@ public class SOMData {
 	
 	protected String map_name;
 	protected HashMap<String,Overlay> overlay;
-	protected Vector<SOMstruct> all_data; // all data 
+	protected HashMap<Integer,SOMstruct> all_data; // all data 
 	protected HashMap<Integer,SOMstruct> data; // visible data
 	protected HashMap<Integer,Integer> hid_data; // mappings from hidden to visible
 	protected HashMap<String,Library> library;
@@ -32,8 +32,8 @@ public class SOMData {
 		this.pts = pts;
 		
 		map_name = pts.map;
-		all_data = new Vector<SOMstruct>(100);
-		data = new HashMap<Integer, SOMstruct>();
+		all_data = new HashMap<Integer,SOMstruct>(100);
+		data = new HashMap<Integer, SOMstruct>(100);
 		hid_data = new HashMap<Integer,Integer>();
 		library = new HashMap<String, Library>();
 		
@@ -45,7 +45,7 @@ public class SOMData {
 			sd.x = pts.x[i];
 			sd.y = pts.y[i];
 			sd.name = pts.names[i];
-			all_data.add(sd);
+			all_data.put(sd.id, sd);
 			categorizeVisibility(sd, hid_res);
 			// data.put(new Integer(pts.id[i]), sd);
 		}
@@ -230,7 +230,8 @@ public class SOMData {
 			data = new HashMap<Integer,SOMstruct>();
 			hid_data = new HashMap<Integer, Integer>();
 			float hid_res = 1 /zoom_range;
-			for ( SOMstruct s : all_data ) {
+			for ( Map.Entry<Integer, SOMstruct> entry : all_data.entrySet() ) {
+				SOMstruct s = entry.getValue();
 				categorizeVisibility(s, hid_res);
 			}
 		}
@@ -459,6 +460,7 @@ public class SOMData {
 				seldata = new HashMap<Integer,SOMpt>();
 				
 				// copy everything to seldata
+				// First generate the visible data
 				while (all_it.hasNext()) {
 				    Map.Entry<Integer, SOMstruct> entry = (Map.Entry<Integer, SOMstruct>) all_it.next();
 				    SOMstruct value = (SOMstruct) entry.getValue();
@@ -466,6 +468,16 @@ public class SOMData {
 					seldata.put(entry.getKey(), pt);
 				}
 				all_it = null;
+				
+				// ... then add the hidden data
+				Iterator<Map.Entry<Integer, Integer>> hid_it = hid_data.entrySet().iterator();
+				while (hid_it.hasNext()) {
+				    Map.Entry<Integer, Integer> entry = (Map.Entry<Integer, Integer>) hid_it.next();
+				    Integer secondary_id = (Integer) entry.getKey();
+				    Integer primary_id = (Integer) entry.getValue();
+				    SOMpt pt = seldata.get(primary_id);
+				    pt.addIdenticalPt(secondary_id, all_data.get(secondary_id).name);
+				}
 			}
 			
 			// if there are overlays, add them to sel_it
@@ -502,17 +514,12 @@ public class SOMData {
 					Integer primary_id = hid_data.get(ov.ids[i]);
 					if ( seldata.containsKey(primary_id) ) {
 						pt = seldata.get(primary_id);
-						// Make sure colormap is in there only once
-						if ( pt.getColorMapNames() != null)
-							for ( String mapname : pt.getColorMapNames() ) {
-								if ( mapname.compareTo(ov.name) == 0 )
-									continue;
-							}
 					} else {
 						SOMstruct value = data.get(primary_id);
 						pt = new SOMpt(ov.ids[i], value.x, value.y, value.name);
 						seldata.put(ov.ids[i], pt);
 					}
+					// pt.addIdenticalPt(ov.ids[i], all_data.get(ov.ids[i]).name);
 				}
 				else {
 					SOMstruct value = data.get(ov.ids[i]);

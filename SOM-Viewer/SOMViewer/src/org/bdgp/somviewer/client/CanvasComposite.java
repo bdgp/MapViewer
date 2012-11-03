@@ -243,8 +243,8 @@ public class CanvasComposite extends Composite {
 			return;
 		
 		som.setZoom(zoom);		
-		Text tz = new Text(100, 100, "Zoom = " + zoom);
-		canvas.add(tz);
+		// Text tz = new Text(100, 100, "Zoom = " + zoom);
+		// canvas.add(tz);
 		
 		float fcanvx = canv_x * zoom;
 		float fcanvy = canv_y * zoom;
@@ -290,61 +290,67 @@ public class CanvasComposite extends Composite {
 			canvas.clear();
 			grp_txt = null;
 		}
-		
-		
-		if ( pt_draw.size() > 0 ) {
-			int x,y;
-			float xf, yf;
-			boolean doLabels = false;
-			
-			if ( grp_txt == null && showLabels == true ) {
-				grp_txt = new Group();
-				doLabels = true;
-			}
-			
-			// TODO: Make sure there is anything to draw 
-			Iterator<SOMpt> som_data = som.getAllData();
-
-			while ( som_data.hasNext() ) {
-				SOMpt som_xy = som_data.next();
-				xf = som_xy.getX() * zoom;
-				yf = som_xy.getY() * zoom;
-				x = (int) xf;
-				y = (int) yf;
 				
-				for ( PointDecorator p : pt_draw ) {
-					p.setPoint(x, y);
-					ClickHandler onclick = null;
-					if ( pt_info != null )
-							onclick = new InfoClick(som_xy.getId(), som_xy.getVariant());
-					if ( doLabels == true) {
-						VectorObject txt = p.drawLabel(som_xy.name, onclick);
-						if ( txt != null )
-							grp_txt.add(txt);
-
-					}
-					VectorObject m = p.drawMarker(showCircles, som_xy.getColorMapNames(), onclick);
-					if ( m != null ) {
-						canvas.add(m);
-					}
-				}
-			}
-			
-			if ( doLabels == true ) {
-				som.setDataCanvasGroup(grp_txt, GRP_TXT, zoom);
-			}
-			
-			if ( grp_txt != null ) {
-				if ( text_tofg == true )
-					canvas.bringToFront(grp_txt);
-				else
-					canvas.add(grp_txt);
-			}
-			
+		if ( pt_draw.size() == 0 ) {
+			// old fallback routine - depreciated
+			draw_fallback(grp_txt,grp_circ,text_tofg);
 			return;
 		}
 		
 		
+		int x,y;
+		float xf, yf;
+		boolean doLabels = false;
+
+		if ( grp_txt == null && showLabels == true ) {
+			grp_txt = new Group();
+			doLabels = true;
+		}
+
+		// TODO: Make sure there is anything to draw 
+		Iterator<SOMpt> som_data = som.getAllData();
+
+		while ( som_data.hasNext() ) {
+			SOMpt som_pt = som_data.next();
+			xf = som_pt.getX() * zoom;
+			yf = som_pt.getY() * zoom;
+			x = (int) xf;
+			y = (int) yf;
+
+			for ( PointDecorator p : pt_draw ) {
+				p.setPoint(x, y);
+				p.setInfo(som_pt.getId(), som_pt.getName(), som_pt.getIdenticalPt());
+				ClickHandler onclick = null;
+				if ( pt_info != null ) {
+					onclick = new InfoClick(som_pt.getId(), som_pt.getVariant());
+				}
+				if ( doLabels == true) {
+					VectorObject txt = p.drawLabel(som_pt.name, onclick);
+					if ( txt != null )
+						grp_txt.add(txt);
+
+				}
+				VectorObject m = p.drawMarker(showCircles, som_pt.getColorMapNames(), onclick);
+				if ( m != null ) {
+					canvas.add(m);
+				}
+			}
+		}
+
+		if ( doLabels == true ) {
+			som.setDataCanvasGroup(grp_txt, GRP_TXT, zoom);
+		}
+
+		if ( grp_txt != null ) {
+			if ( text_tofg == true )
+				canvas.bringToFront(grp_txt);
+			else
+				canvas.add(grp_txt);
+		}
+	}
+	
+	
+	protected void draw_fallback(Group grp_txt, Group grp_circ, boolean text_tofg) {
 		if ( showCircles || showLabels ) {
 			
 			if ( som.existsCanvasGroup() == true ) {
@@ -450,7 +456,9 @@ public class CanvasComposite extends Composite {
 //			  }
 //			});
 		
+		
 	}
+	
 	
 	protected VectorObject drawPtText(int x, int y, String text) {
 

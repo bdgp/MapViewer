@@ -24,6 +24,10 @@ public class PointInfo implements PointDecorator {
 	int x,y;
 	int click_x, click_y; // Last click position
 
+	protected HashMap<Integer,String> contents;
+	protected String label;
+	protected Integer id;
+
 	HashMap<Integer,String> infoCache = new HashMap<Integer,String>();
 	
 	DialogBox dialogBox = null;
@@ -38,6 +42,13 @@ public class PointInfo implements PointDecorator {
 		this.y = y;
 	}
 
+	public void setInfo(Integer id, String name, HashMap<Integer,String> others) {
+		this.id = id;
+		this.label = name;
+		this.contents = others;
+	}
+	
+	
 	public VectorObject drawLabel(String label, ClickHandler onclick) {
 		return null;
 	}
@@ -70,6 +81,7 @@ public class PointInfo implements PointDecorator {
 		if ( dialogBox == null ) {
 			dialogBox = new DialogBoxClosable();
 			dialogBox.setText("Information");
+			// dialogBox.setText(label);
 			dialogBox.setAnimationEnabled(true);
 			dialogVPanel = new VerticalPanel();
 		} else {

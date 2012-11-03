@@ -1,6 +1,7 @@
 package org.bdgp.somviewer.client;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.vaadin.gwtgraphics.client.VectorObject;
@@ -17,8 +18,17 @@ public class PointMarker extends PointBasic {
 	}
 
 	public VectorObject drawLabel(String label, ClickHandler onclick) {
-
-		Text t = new Text(x, y, label);
+		
+		String draw = new String(label);
+		
+		if ( contents != null ) {
+			draw += "+";
+//			for (Map.Entry<Integer, String> entry : contents.entrySet()) {
+//				draw += "\n" + entry.getValue();
+//			}
+		}
+		
+		Text t = new Text(x, y, draw);
 		t.setFontFamily("Arial");
 		t.setFontSize(10);
 		t.setStrokeWidth(0);
@@ -40,7 +50,7 @@ public class PointMarker extends PointBasic {
 		
 		if ( colors == null ) {
 			if ( showMarker == true ) {
-				vo = drawCircle(MARKER_CIRC_RAD, 0.5f, "fuchsia");
+				vo = drawCircle(markerSize(), 0.5f, "fuchsia");
 				if ( onclick != null) 
 					vo.addClickHandler(onclick);
 				return vo;
@@ -49,4 +59,17 @@ public class PointMarker extends PointBasic {
 
 		return null;
 	}
+	
+	protected int markerSize() {
+		int s = 0;
+		
+		if ( contents != null ) {
+			s = contents.size() / 2;
+			s = s == 0 ? 1 : s;
+		}
+
+		s += MARKER_CIRC_RAD;
+		return s;
+	}
+	
 }
