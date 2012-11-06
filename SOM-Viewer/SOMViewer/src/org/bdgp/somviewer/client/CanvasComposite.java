@@ -8,6 +8,7 @@ import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Group;
 import org.vaadin.gwtgraphics.client.VectorObject;
 import org.vaadin.gwtgraphics.client.shape.Circle;
+import org.vaadin.gwtgraphics.client.shape.Rectangle;
 import org.vaadin.gwtgraphics.client.shape.Text;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -18,10 +19,9 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class CanvasComposite extends Composite {
 
-	public enum PointDecoratorType { DRAW,CLICK };
-		
 	protected final static int DEFAULT_CIRC_RAD = 5;
 	protected final static float DEFAULT_ZOOM_FACTOR = 1.5f;
+	protected final static int DEFAULT_TREASURE_AREA = 10;
 
 	protected int xPanelSize = 180;
 	protected int yPanelSize = 0;
@@ -35,6 +35,9 @@ public class CanvasComposite extends Composite {
 
 	protected Vector<PointDecorator> pt_draw = new Vector<PointDecorator>(3);
 	protected PointDecorator pt_info = null;
+	
+	protected SOMpt treasure = null;
+	protected Rectangle rec_treasure = null;
 	
 	protected float canv_x, canv_y;
 	protected float zoom = 1;
@@ -219,6 +222,37 @@ public class CanvasComposite extends Composite {
 	}
 	
 	
+	public void setMark(SOMpt pt) {
+		this.treasure = pt;
+		drawTreasure();
+	}
+	
+	public void unsetMark() {
+		if ( this.rec_treasure != null ) {
+			canvas.remove(rec_treasure);
+			rec_treasure = null;
+		}
+		this.treasure = null;
+	}
+	
+	
+	protected void drawTreasure() {
+		if ( treasure != null ) {
+			
+			float xf = treasure.getX() * zoom - DEFAULT_TREASURE_AREA;
+			float yf = treasure.getY() * zoom - DEFAULT_TREASURE_AREA;
+			
+			rec_treasure = new Rectangle((int) xf, (int) yf, DEFAULT_TREASURE_AREA*2, DEFAULT_TREASURE_AREA*2);
+			rec_treasure.setFillOpacity(0);
+			rec_treasure.setStrokeWidth(3);
+			rec_treasure.setStrokeColor("red");	
+			rec_treasure.setFillColor("white");
+
+			canvas.add(rec_treasure);
+		}
+	}
+	
+	
 	public void zoomReset() {
 		doZoom(true,0);
 	}
@@ -348,6 +382,7 @@ public class CanvasComposite extends Composite {
 			else
 				canvas.add(grp_txt);
 		}
+		drawTreasure();
 	}
 	
 	

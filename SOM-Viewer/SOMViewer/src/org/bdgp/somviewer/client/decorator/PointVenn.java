@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import org.vaadin.gwtgraphics.client.Group;
 import org.vaadin.gwtgraphics.client.VectorObject;
+import org.vaadin.gwtgraphics.client.shape.Circle;
 
 import com.google.gwt.event.dom.client.ClickHandler;
 
@@ -52,7 +53,7 @@ public class PointVenn extends PointBasic {
 	
 	public VectorObject drawMarker(boolean showMarker, Vector<String> colormap_ids, ClickHandler onclick) {
 
-		VectorObject vo = null;
+//		VectorObject vo = null;
 		
 		// TODO: This will be handled by PointMarker
 		if ( colormap_ids == null ) {
@@ -66,19 +67,11 @@ public class PointVenn extends PointBasic {
 //				return null;
 		}
 
-		
-		if ( colormap_ids.size() == 1 ) {
-			if ( ! colormap.containsKey(colormap_ids.get(0)) )
-				return null;
-			vo = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.get(colormap_ids.get(0)));
-			if ( onclick != null) 
-				vo.addClickHandler(onclick);
-			return vo;
-		}
-		
+				
 		int x_save, y_save;
 		int ct = 0;
 		
+		Circle c = null;
 		Group g = new Group();
 		for ( String col : colormap_ids ) {
 			if ( ct >= shifts.size() )
@@ -90,10 +83,10 @@ public class PointVenn extends PointBasic {
 			x_save = x; y_save = y;
 			x += shifts.get(ct).xs;
 			y += shifts.get(ct).ys;
-			vo = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.get(col));
-			g.add(vo);
+			c = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.get(col));
+			g.add(c);
 			if ( onclick != null )
-				vo.addClickHandler(onclick);
+				c.addClickHandler(onclick);
 			x = x_save;
 			y = y_save;
 			
@@ -102,6 +95,12 @@ public class PointVenn extends PointBasic {
 
 		if ( g.getVectorObjectCount() == 0 )
 			g = null;
+		else if ( g.getVectorObjectCount() == 1 && c != null ) {
+			g.remove(c);
+			c.setX(x);
+			c.setY(y);
+			return c;
+		}
 		
 		return g;
 	}

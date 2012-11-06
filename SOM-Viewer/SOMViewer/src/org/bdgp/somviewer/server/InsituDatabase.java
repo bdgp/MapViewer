@@ -122,7 +122,7 @@ public class InsituDatabase extends DBMySQL {
 		}
 		
 		
-		html += "<h3>" + sym + "</h3>";
+		html += "<h3>" + sym + " (Stage " + resolveStage(variant) + ")</h3>";
 		html += "<a href=\"http://flybase.org/reports/" + fbgn + ".html\" target=\"_blank\">" + fbgn + "</a>";
 		html += "<P>";
 		if ( variant > 0 ) {
@@ -144,4 +144,31 @@ public class InsituDatabase extends DBMySQL {
 		return null;
 	}
 	
+	private String resolveStage(int stage) {
+		String stString = "unknown";
+		
+		switch (stage) {
+		case 1:
+			stString="1-3";
+			break;
+		case 2:
+			stString="4-6";
+			break;
+		case 3:
+			stString="7-8";
+			break;
+		case 4:
+			stString="9-10";
+			break;
+		case 5:
+			stString="11-12";
+			break;
+		case 6:
+			stString="13-16";
+			break;
+		}
+		
+		return stString;
+	}
+
 }

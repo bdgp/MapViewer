@@ -24,6 +24,9 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.user.client.Window;
@@ -52,6 +55,7 @@ import com.google.gwt.dom.client.Element ;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.kiouri.sliderbar.client.event.BarValueChangedEvent;
 import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
+import com.google.gwt.user.client.ui.TextBox;
 
 public class SOMComposite extends ResizeComposite {
 
@@ -89,6 +93,10 @@ public class SOMComposite extends ResizeComposite {
 	Circle c1;
 
 	protected final static boolean TEST_CANV = true;
+	private HorizontalPanel findPanel;
+	private TextBox findBox;
+	private Button btnFind;
+	private Button btnClear;
 	
 	public SOMComposite(RootLayoutPanel parentPanel) {
 		
@@ -115,6 +123,44 @@ public class SOMComposite extends ResizeComposite {
 				getSOM(avail_somBox.getValue(selected_map));
 			}
 		});
+		
+		//
+		// Search field
+		findPanel = new HorizontalPanel();
+		findPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		ctrlPanel.add(findPanel);
+		
+		findBox = new TextBox();
+		findPanel.add(findBox);
+		findBox.setWidth("60px");
+		
+		btnFind = new Button("Find");
+		findPanel.add(btnFind);
+		
+		btnClear = new Button("Clear");
+		findPanel.add(btnClear);
+		
+		btnFind.addClickHandler( new ClickHandler() {
+			public void onClick(ClickEvent sender) {
+				setFromSearchBox();
+			}
+		});
+		btnClear.addClickHandler( new ClickHandler() {
+			public void onClick(ClickEvent sender) {
+				findBox.setText("");
+				canvPanel.unsetMark();
+			}
+		});
+		
+		findBox.addKeyUpHandler(new KeyUpHandler() {
+		      public void onKeyUp(KeyUpEvent event) {
+		        if ( event.getNativeKeyCode() == KeyCodes.KEY_ENTER ) {
+		        	setFromSearchBox();
+		        }
+		      }
+		} );
+
+		
 		// avail_somBox.addItem("test");
 		
 		HorizontalPanel zoomPanel = new HorizontalPanel();
@@ -142,7 +188,7 @@ public class SOMComposite extends ResizeComposite {
 		
 		catPanel = new VerticalPanel();
 		scrollCatPanel.setWidget(catPanel);
-		catPanel.setSize("100%", "100%");
+		//catPanel.setSize("100%", "100%");
 		
 		canvPanel = new CanvasComposite(ctrlPanelSize,0);
 		mainPanel.add(canvPanel);
@@ -199,6 +245,24 @@ public class SOMComposite extends ResizeComposite {
 		canvPanel.updateCanvas(true);
 	}
 	
+	
+	protected void setFromSearchBox() {
+		String search_text = findBox.getText();
+		
+		if ( som == null )
+			return;
+		
+		if ( search_text.length() == 0 ) {
+			canvPanel.unsetMark();
+			return;
+		}
+		
+		SOMpt pt = som.search(search_text);
+		if ( pt != null )
+			canvPanel.setMark(pt);
+		
+	}
+
 	
 	
 	public class SomUpdater extends AbstractLoggingAsyncHandler {

@@ -239,6 +239,22 @@ public class SOMData {
 		
 	}
 	
+	
+	public SOMpt search(String name) {
+		
+		SOMpt pt = null;
+		
+		for ( Map.Entry<Integer, SOMstruct> entry : all_data.entrySet() ) {
+			SOMstruct s = entry.getValue();
+			if ( s.name.compareTo(name) == 0 ) {
+				pt = new SOMpt(s.id, s.x, s.y, s.name);
+				return pt;
+			}
+		}
+		
+		return null;
+	}
+	
 
 	public Iterator<SOMpt> getData() {
 		IterateCoordinates ic = new IterateCoordinates();
@@ -520,14 +536,16 @@ public class SOMData {
 						pt = new SOMpt(ov.ids[i], value.x, value.y, value.name);
 						seldata.put(ov.ids[i], pt);
 					}
-					// pt.addIdenticalPt(ov.ids[i], all_data.get(ov.ids[i]).name);
 				}
 				else {
 					SOMstruct value = data.get(ov.ids[i]);
 					pt = new SOMpt(ov.ids[i], value.x, value.y, value.name);
 					seldata.put(ov.ids[i], pt);
 				}
-				pt.addDrawDescription(ov.variant, ov.color, null);
+				if ( library.get(ov.name).max == 1 )
+					pt.addDrawDescription(ov.variant, ov.color, null);
+				else
+					pt.addDrawDescription(ov.variant, ov.color, null);
 				pt.addColorMapName(ov.name);
 			}
 		}
