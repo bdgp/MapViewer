@@ -3,6 +3,10 @@ package org.bdgp.somviewer.client;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.decorator.DecoratorFactory;
+import org.bdgp.somviewer.client.decorator.PointDecorator;
+import org.bdgp.somviewer.client.decorator.PointInfo;
+import org.bdgp.somviewer.client.decorator.PointMarker;
 import org.bdgp.somviewer.rpc.ServerService;
 import org.bdgp.somviewer.rpc.AbstractLoggingAsyncHandler;
 import org.bdgp.somviewer.rpc.data.SOMDataOverlay;

@@ -1,8 +1,9 @@
-package org.bdgp.somviewer.client;
+package org.bdgp.somviewer.client.decorator;
 
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.DialogBoxClosable;
 import org.bdgp.somviewer.client.CategoryComposite.SomOverlayUpdater;
 import org.bdgp.somviewer.rpc.AbstractLoggingAsyncHandler;
 import org.bdgp.somviewer.rpc.ServerService;

@@ -20,6 +20,7 @@
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
+  <source path='client/decorator'/>
   <source path='shared'/>
   <source path='rpc'/>
   <source path='rpc/data'/>

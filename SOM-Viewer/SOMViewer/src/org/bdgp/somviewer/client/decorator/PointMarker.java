@@ -1,4 +1,4 @@
-package org.bdgp.somviewer.client;
+package org.bdgp.somviewer.client.decorator;
 
 import java.util.HashMap;
 import java.util.Map;

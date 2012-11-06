@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.decorator.DecoratorFactory;
 import org.bdgp.somviewer.rpc.data.SOMDataPts;
 import org.bdgp.somviewer.rpc.data.SOMOverlaysAvailable;
 import org.vaadin.gwtgraphics.client.Group;

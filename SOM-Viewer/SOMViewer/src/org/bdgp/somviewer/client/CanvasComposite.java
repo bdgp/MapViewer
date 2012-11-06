@@ -3,6 +3,7 @@ package org.bdgp.somviewer.client;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.decorator.PointDecorator;
 import org.vaadin.gwtgraphics.client.DrawingArea;
 import org.vaadin.gwtgraphics.client.Group;
 import org.vaadin.gwtgraphics.client.VectorObject;
@@ -325,7 +326,7 @@ public class CanvasComposite extends Composite {
 					onclick = new InfoClick(som_pt.getId(), som_pt.getVariant());
 				}
 				if ( doLabels == true) {
-					VectorObject txt = p.drawLabel(som_pt.name, onclick);
+					VectorObject txt = p.drawLabel(som_pt.getName(), onclick);
 					if ( txt != null )
 						grp_txt.add(txt);
 
