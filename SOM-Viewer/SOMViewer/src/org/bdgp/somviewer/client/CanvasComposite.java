@@ -310,6 +310,7 @@ public class CanvasComposite extends Composite {
 		
 		// Text is really slow to draw, everything else is quick
 		// Thus, if we encounter text, keep it on the canvas instead of clearing the whole thing.
+		// Note: this only works if all the other markers are kept in overlay groups or a single group
 		if ( grp_txt != null && showLabels ) {
 			for ( int i=0; i < canvas.getVectorObjectCount(); i++ ) {
 				VectorObject canv_obj = canvas.getVectorObject(i);
@@ -344,7 +345,9 @@ public class CanvasComposite extends Composite {
 
 		// TODO: Make sure there is anything to draw 
 		Iterator<SOMpt> som_data = som.getAllData();
-
+		// this makes sure there is one group to add all the overlays
+		Group overlay_markers = new Group();
+		
 		while ( som_data.hasNext() ) {
 			SOMpt som_pt = som_data.next();
 			xf = som_pt.getX() * zoom;
@@ -367,11 +370,15 @@ public class CanvasComposite extends Composite {
 				}
 				VectorObject m = p.drawMarker(showCircles, som_pt.getColorMapNames(), onclick);
 				if ( m != null ) {
-					canvas.add(m);
+					overlay_markers.add(m);
 				}
 			}
 		}
 
+		if ( overlay_markers.getVectorObjectCount() > 0 ) {
+			canvas.add(overlay_markers);
+		}
+		
 		if ( doLabels == true ) {
 			som.setDataCanvasGroup(grp_txt, GRP_TXT, zoom);
 		}
