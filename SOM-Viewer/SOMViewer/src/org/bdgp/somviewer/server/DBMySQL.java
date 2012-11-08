@@ -11,13 +11,15 @@ public class DBMySQL extends DBbase {
 
 	public DBMySQL(String host, String db, String user, String password) {
 		
-		this.url = "jdbc:mysql://" + host + ":3306/" + db;
-		this.user = user;
-		this.password = password;
+		super("jdbc:mysql://" + host + ":3306/" + db, user, password, Connectivity.BONEJ);
 		
-		initConn();
-		
-		super.connect();
+//		this.url = "jdbc:mysql://" + host + ":3306/" + db;
+//		this.user = user;
+//		this.password = password;
+//		
+//		initConn();
+//		
+//		super.connect();
 	}
 
 	public void initConn() {

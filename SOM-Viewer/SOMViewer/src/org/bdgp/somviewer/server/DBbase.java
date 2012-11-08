@@ -12,11 +12,16 @@ import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
+
 /**
  * @author erwin
  *
  */
 public abstract class DBbase {
+	
+	public enum Connectivity {DIRECT, BONEJ};
 	
 	protected Connection con;
 	protected Statement stmt;
@@ -25,6 +30,9 @@ public abstract class DBbase {
 	protected Vector<DBLog> query_log = new Vector<DBLog>();
 	public boolean active = false;
 	public String status;
+	
+	protected BoneCP connectionPool = null;
+	protected Connectivity db_connect = Connectivity.DIRECT;
 	
 	public enum LogSeverity {INFO, WARN, ERROR, ALL};
 	
@@ -45,6 +53,26 @@ public abstract class DBbase {
 		connect();
 		
 	}
+
+	
+	public DBbase(String url, String user, String password, Connectivity con) {
+		
+		this.url = url;
+		this.user = user;
+		this.password = password;
+		this.db_connect = con;
+		
+		initConn();
+		
+		if ( db_connect == Connectivity.DIRECT )
+			connect();
+		else if ( db_connect == Connectivity.BONEJ ) {
+			connectBoneJ();
+		}
+		
+	}
+
+	
 	
 	public abstract void initConn();
 	
@@ -62,6 +90,30 @@ public abstract class DBbase {
 		status = "Successful connection";
 		active = true;
 		
+		return true;
+	}
+	
+	
+	public boolean connectBoneJ() {
+		
+		try {
+			BoneCPConfig config = new BoneCPConfig();
+			config.setJdbcUrl(this.url); // jdbc url specific to your database, eg jdbc:mysql://127.0.0.1/yourdb
+			config.setUsername(user); 
+			config.setPassword(password);
+			config.setMinConnectionsPerPartition(5);
+			config.setMaxConnectionsPerPartition(10);
+			config.setPartitionCount(1);
+			connectionPool = new BoneCP(config); // setup the connection pool			
+		} catch (SQLException e) {
+			status = e.getMessage() + " for " + url;
+			return false;
+		}
+
+		status = "Successful connection";
+		active = true;
+		
+		// connection = connectionPool.getConnection(); // fetch a 		
 		return true;
 	}
 	
@@ -98,8 +150,18 @@ public abstract class DBbase {
 		
 		if ( active == true ) {
 		
-			ResultSet rs = stmt.executeQuery(qstmt);
-			return rs;
+			if ( db_connect == Connectivity.DIRECT ) {
+				ResultSet rs = stmt.executeQuery(qstmt);
+				return rs;
+			} 
+			else if ( db_connect == Connectivity.BONEJ ) {
+				Connection connection = connectionPool.getConnection(); // fetch a connection from BoneJ pool
+				Statement bonej_stmt = connection.createStatement();
+				ResultSet rs = bonej_stmt.executeQuery(qstmt);
+				return rs;
+			}
+			else
+				return null;
 			
 		} else {
 			throw new SQLException("No connection: " + status);

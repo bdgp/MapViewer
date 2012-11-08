@@ -22,7 +22,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class SOMServiceImpl extends RemoteServiceServlet implements
 		GreetingService, SOMDataService {
 
-	InsituDatabase db = new InsituDatabase("localhost", "insitu", "erwin", null);
+	InsituDatabase db = new InsituDatabase("localhost", "insitu", "erwin", "");
 	
 	Vector<String> sommaps = null;
 	SOMstructure somstruct = null; // Could be a hashtable for saved queries

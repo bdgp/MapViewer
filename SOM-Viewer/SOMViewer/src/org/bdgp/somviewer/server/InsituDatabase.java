@@ -149,21 +149,18 @@ public class InsituDatabase extends DBMySQL {
 		
 		switch (stage) {
 		case 1:
-			stString="1-3";
-			break;
-		case 2:
 			stString="4-6";
 			break;
-		case 3:
+		case 2:
 			stString="7-8";
 			break;
-		case 4:
+		case 3:
 			stString="9-10";
 			break;
-		case 5:
+		case 4:
 			stString="11-12";
 			break;
-		case 6:
+		case 5:
 			stString="13-16";
 			break;
 		}
