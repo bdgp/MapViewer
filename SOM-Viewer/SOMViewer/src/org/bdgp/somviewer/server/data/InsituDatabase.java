@@ -1,9 +1,13 @@
-package org.bdgp.somviewer.server;
+package org.bdgp.somviewer.server.data;
 
 import java.sql.ResultSet;
 import java.util.Vector;
 
-public class InsituDatabase extends DBMySQL {
+import org.bdgp.somviewer.server.DBMySQL;
+import org.bdgp.somviewer.server.DBbase;
+import org.bdgp.somviewer.server.DBbase.LogSeverity;
+
+public class InsituDatabase implements SOMinfo {
 
 	private final String st_qmaps = "select distinct(name) from somtitle";
 	
@@ -13,9 +17,10 @@ public class InsituDatabase extends DBMySQL {
 	
 	private final String im_url = "http://insitu.fruitfly.org/insitu_image_storage/thumbnails/";
 
+	protected DBbase db;
 	
-	public InsituDatabase(String host, String db, String user, String password) {
-		super(host, db, user, password);
+	public InsituDatabase(DBbase db) {
+		this.db = db;
 	}
 
 	
@@ -27,20 +32,20 @@ public class InsituDatabase extends DBMySQL {
 		Vector<String> maps = new Vector<String>(2);
 		
 		try {
-			ResultSet rs = query(st_qmaps);
+			ResultSet rs = db.query(st_qmaps);
 
 			if ( rs == null ) {
-				logEvent(this, LogSeverity.WARN, "No result set returned");
+				db.logEvent(this, LogSeverity.WARN, "No result set returned");
 				return null;
 			}
 			
 			while (rs.next()) {	
 				maps.add(rs.getString(1));
-				logEvent(this, LogSeverity.INFO, "maps=" + rs.getString(1));								
+				db.logEvent(this, LogSeverity.INFO, "maps=" + rs.getString(1));								
 			}
 		}
 		catch (Exception e) {
-			logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
+			db.logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
 			throw e;
 		}
 
@@ -67,12 +72,12 @@ public class InsituDatabase extends DBMySQL {
 		try {
 			ResultSet rs;
 			
-			rs = query(nquery);			
+			rs = db.query(nquery);			
 			if ( rs == null ) {
 				sym = new String();
 				fbgn = new String();
 				est_id = new String();
-				logEvent(this, LogSeverity.WARN, "No gene information result set returned");
+				db.logEvent(this, LogSeverity.WARN, "No gene information result set returned");
 			}
 			else
 			{
@@ -80,39 +85,39 @@ public class InsituDatabase extends DBMySQL {
 				sym = rs.getString(1);
 				fbgn = rs.getString(2);
 				est_id = rs.getString(3);
-				logEvent(this, LogSeverity.INFO, "impath=" + rs.getString(1));								
+				db.logEvent(this, LogSeverity.INFO, "impath=" + rs.getString(1));								
 						
 			}
 		
 			if ( variant > 0 ) {
-				rs = query(imquery);
+				rs = db.query(imquery);
 				if ( rs == null ) {
-					logEvent(this, LogSeverity.WARN, "No image result set returned");
+					db.logEvent(this, LogSeverity.WARN, "No image result set returned");
 				}
 				else
 				{
 					while (rs.next()) {	
 						impaths.add(rs.getString(1));
-						logEvent(this, LogSeverity.INFO, "impath=" + rs.getString(1));								
+						db.logEvent(this, LogSeverity.INFO, "impath=" + rs.getString(1));								
 					}				
 				}
 
-				rs = query(tquery);			
+				rs = db.query(tquery);			
 				if ( rs == null ) {
-					logEvent(this, LogSeverity.WARN, "No term result set returned");
+					db.logEvent(this, LogSeverity.WARN, "No term result set returned");
 				}
 				else
 				{
 					while (rs.next()) {	
 						terms.add(rs.getString(1));
-						logEvent(this, LogSeverity.INFO, "term=" + rs.getString(1));								
+						db.logEvent(this, LogSeverity.INFO, "term=" + rs.getString(1));								
 					}				
 				}
 			}
 
 		}
 		catch (Exception e) {
-			logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
+			db.logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
 			throw e;
 		}
 		

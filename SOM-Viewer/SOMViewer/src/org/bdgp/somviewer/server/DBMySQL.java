@@ -9,9 +9,9 @@ package org.bdgp.somviewer.server;
  */
 public class DBMySQL extends DBbase {
 
-	public DBMySQL(String host, String db, String user, String password) {
+	public DBMySQL(String host, String db, String user, String password, Connectivity con_type) {
 		
-		super("jdbc:mysql://" + host + ":3306/" + db, user, password, Connectivity.BONEJ);
+		super("jdbc:mysql://" + host + ":3306/" + db, user, password, con_type);
 		
 //		this.url = "jdbc:mysql://" + host + ":3306/" + db;
 //		this.user = user;

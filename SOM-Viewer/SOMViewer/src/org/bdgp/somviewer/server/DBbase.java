@@ -21,7 +21,7 @@ import com.jolbox.bonecp.BoneCPConfig;
  */
 public abstract class DBbase {
 	
-	public enum Connectivity {DIRECT, BONEJ};
+	public enum Connectivity {DIRECT, BONECP};
 	
 	protected Connection con;
 	protected Statement stmt;
@@ -66,7 +66,7 @@ public abstract class DBbase {
 		
 		if ( db_connect == Connectivity.DIRECT )
 			connect();
-		else if ( db_connect == Connectivity.BONEJ ) {
+		else if ( db_connect == Connectivity.BONECP ) {
 			connectBoneJ();
 		}
 		
@@ -113,8 +113,17 @@ public abstract class DBbase {
 		status = "Successful connection";
 		active = true;
 		
-		// connection = connectionPool.getConnection(); // fetch a 		
 		return true;
+	}
+	
+	
+	public boolean concurrentConnections() {
+		
+		if ( db_connect == Connectivity.BONECP ) {
+			return true;
+		}
+		
+		return false;
 	}
 	
 	
@@ -154,10 +163,11 @@ public abstract class DBbase {
 				ResultSet rs = stmt.executeQuery(qstmt);
 				return rs;
 			} 
-			else if ( db_connect == Connectivity.BONEJ ) {
+			else if ( db_connect == Connectivity.BONECP ) {
 				Connection connection = connectionPool.getConnection(); // fetch a connection from BoneJ pool
 				Statement bonej_stmt = connection.createStatement();
 				ResultSet rs = bonej_stmt.executeQuery(qstmt);
+				connection.close();
 				return rs;
 			}
 			else

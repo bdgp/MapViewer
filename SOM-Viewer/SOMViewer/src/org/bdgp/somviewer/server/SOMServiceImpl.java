@@ -10,6 +10,8 @@ import org.bdgp.somviewer.rpc.data.SOMDataPts;
 import org.bdgp.somviewer.rpc.data.SOMList;
 import org.bdgp.somviewer.rpc.data.SOMPtInfo;
 import org.bdgp.somviewer.server.DBbase.LogSeverity;
+import org.bdgp.somviewer.server.data.InsituDatabase;
+import org.bdgp.somviewer.server.data.SOMinfo;
 import org.bdgp.somviewer.server.data.SOMoverlay;
 import org.bdgp.somviewer.server.data.SOMstructure;
 import org.bdgp.somviewer.shared.FieldVerifier;
@@ -22,16 +24,28 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class SOMServiceImpl extends RemoteServiceServlet implements
 		GreetingService, SOMDataService {
 
-	InsituDatabase db = new InsituDatabase("localhost", "insitu", "erwin", "");
+	DBMySQL db = new DBMySQL("localhost", "insitu", "erwin", "", DBbase.Connectivity.BONECP);
 	
 	Vector<String> sommaps = null;
 	SOMstructure somstruct = null; // Could be a hashtable for saved queries
 	SOMoverlay overlay = null;
+	SOMinfo info = null;
 	
 	static boolean queryInProgress = false;
 	
+	public SOMServiceImpl() {
+		
+		info = new InsituDatabase(db);
+		
+	}
+	
 	
 	private boolean manageQuery(boolean start) {
+		
+		// Check if db allows for concurrent connections - if yes, no need to hold
+		if ( db.concurrentConnections() ) {
+			// return true;
+		}
 		
 		if ( start ) {
 			// make sure we're only running one simultaneous query
@@ -103,13 +117,12 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 	
 	public SOMList getSOMmaps() {
 		
-		
 		SOMList sl = new SOMList();
 		
 		manageQuery(true);
 		
 		try {
-			sommaps = db.somMaps();
+			sommaps = info.somMaps();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			sl.queryResult = "Exception: " + e.getMessage();
@@ -168,7 +181,7 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 		manageQuery(true);
 		
 		try {
-			html = db.shortInfo(id, variant);
+			html = info.shortInfo(id, variant);
 		}
 		catch (Exception e) {
 			pti.queryResult = "Exception: " + e.getMessage() + db.flatLog(LogSeverity.ALL);
