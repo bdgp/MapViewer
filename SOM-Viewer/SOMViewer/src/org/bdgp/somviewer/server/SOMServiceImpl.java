@@ -44,7 +44,7 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 		
 		// Check if db allows for concurrent connections - if yes, no need to hold
 		if ( db.concurrentConnections() ) {
-			// return true;
+			return true;
 		}
 		
 		if ( start ) {

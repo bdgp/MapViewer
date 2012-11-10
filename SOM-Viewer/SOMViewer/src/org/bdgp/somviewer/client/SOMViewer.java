@@ -45,7 +45,7 @@ public class SOMViewer implements EntryPoint {
 		
 //		RootPanel somContainer = RootPanel.get("somContainer");
 		RootLayoutPanel somContainer = RootLayoutPanel.get();
-		final SOMComposite som = new SOMComposite(somContainer);
+		final MainComposite som = new MainComposite(somContainer);
 		
 		somContainer.add(som);
 		// som.getSOM("test");

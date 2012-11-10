@@ -202,6 +202,7 @@ public class CategoryComposite extends Composite {
 		if ( som == null )
 			return;
 		
+		Feedback.getInstance().rpcRequested(name + " - " + variant);
 		ServerService.getInstance().getDataOverlay(som.getMapName(), name, variant, new SomOverlayUpdater());
 	}
 
@@ -221,8 +222,10 @@ public class CategoryComposite extends Composite {
 			
 			if ( data.queryResult != null ) {
 				setLogEntry("SOM overlay: ERROR " + data.queryResult);
+				Feedback.getInstance().rpcError(data.queryResult);
 			} else {
 				setLogEntry("SOM overlay: Received " + data.id.length);
+				Feedback.getInstance().rpcReceived("Overlay: " + data.id.length);
 				if ( som != null ) {
 					som.addOverlay(data.name, data.variant, data.id, null);
 					// Activate all newly received overlays - should be by request from slider/checkbox only

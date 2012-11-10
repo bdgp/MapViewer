@@ -333,6 +333,7 @@ public class CanvasComposite extends Composite {
 			return;
 		}
 		
+		Feedback.getInstance().startDraw();
 		
 		int x,y;
 		float xf, yf;
@@ -390,6 +391,9 @@ public class CanvasComposite extends Composite {
 				canvas.add(grp_txt);
 		}
 		drawTreasure();
+		
+		Feedback.getInstance().finishDraw();
+		
 	}
 	
 	
