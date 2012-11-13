@@ -22,7 +22,7 @@ public class Feedback {
 	protected HTML status = null;
 	protected HTML info = null;
 	
-	protected String req = "Requested data from server";
+	protected String req = "Requesting data from server";
 	protected HTML req_title = new HTML(req);
 	protected HTML req_progress = new HTML();
 	protected int counter = 0;
@@ -127,7 +127,7 @@ public class Feedback {
 	
     public interface StatusCellSafeHTMLTemplate extends SafeHtmlTemplates {
         @Template("<div><div style=\"font-size:medium;height:1.2em;width:100%;cursor:default;border:thin #7ba5d5 solid;\">"
-                        + "<div style=\"height:1.2em;width:{0}%; background:#8cb6e6; background-image: url('progress_background.png');\">"
+                        + "<div style=\"height:1.2em;width:{0}%; background:#8cb6e6; background-image: url('images/progress_background.png');\">"
 						//+ "<div style=\"height:1.2em;width:{0}%; background:#8cb6e6;\">"
                         + "</div><div style=\"height:1.2em; margin:-1.2em;font-weight:bold;color:#4e7fba;\">"
                         + "<center>{0}%</center></div></div></div>")

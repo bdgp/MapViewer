@@ -57,6 +57,8 @@ import com.kiouri.sliderbar.client.event.BarValueChangedEvent;
 import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.Image;
 
 public class MainComposite extends ResizeComposite {
 
@@ -70,7 +72,7 @@ public class MainComposite extends ResizeComposite {
 	
 	protected SOMData som = null;
 
-	protected Button but_zplus, but_zone, but_zminus;
+	protected PushButton but_zplus, but_zone, but_zminus;
 	protected ListBox avail_somBox;
 	protected VerticalPanel catPanel;
 	protected VariationSelectWidget varMain;
@@ -92,14 +94,16 @@ public class MainComposite extends ResizeComposite {
 	protected final static boolean TEST_CANV = true;
 	private HorizontalPanel findPanel;
 	private TextBox findBox;
-	private Button btnFind;
-	private Button btnClear;
+	// private Button btnFind;
+	// private Button btnClear;
 	private HorizontalPanel horizontalPanel;
 	private HorizontalPanel horizontalPanel_1;
 	private Grid grid;
 	private HTML titleHtml;
 	private HTML statusHtml;
 	private HTML infoHtml;
+	private PushButton btnFind;
+	private PushButton btnClear;
 	
 	public MainComposite(RootLayoutPanel parentPanel) {
 		
@@ -107,20 +111,31 @@ public class MainComposite extends ResizeComposite {
 		// mainPanel.setSize("100%", "100%");
 		initWidget(mainPanel);
 		
-		grid = new Grid(1, 3);
+		grid = new Grid(1, 4);
 		grid.setStyleName("titleBar");
 		mainPanel.addNorth(grid, 25.0);
 		grid.setWidth("100%");
 		
-		titleHtml = new HTML("2D Map viewer", true);
+		titleHtml = new HTML("2D Map viewer:", true);
 		grid.setWidget(0, 0, titleHtml);
 		
+		avail_somBox = new ListBox();
+		avail_somBox.addItem("Select map from list...");
+		grid.setWidget(0, 1, avail_somBox);
+		avail_somBox.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				int selected_map = avail_somBox.getSelectedIndex();
+				if ( selected_map > 0 )
+					getSOM(avail_somBox.getValue(selected_map));
+			}
+		});
+		
 		statusHtml = new HTML();
-		grid.setWidget(0, 1, statusHtml);
+		grid.setWidget(0, 2, statusHtml);
 		statusHtml.setWidth("200px");
 		
 		infoHtml = new HTML();
-		grid.setWidget(0, 2, infoHtml);
+		grid.setWidget(0, 3, infoHtml);
 		infoHtml.setWidth("200px");
 		
 		// FlowPanel flowPanel = new FlowPanel();
@@ -132,18 +147,22 @@ public class MainComposite extends ResizeComposite {
 		
 		//Label lblNewLabel_2 = new Label("Select:");
 		//ctrlPanel.add(lblNewLabel_2);
-		ctrlPanel.add(new HTML("<b>List of maps:</b>"));
-		
-		avail_somBox = new ListBox();
-		ctrlPanel.add(avail_somBox);
-		avail_somBox.setWidth("100%");
-		avail_somBox.setVisibleItemCount(3);
-		avail_somBox.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				int selected_map = avail_somBox.getSelectedIndex();
-				getSOM(avail_somBox.getValue(selected_map));
-			}
-		});
+		HTML navTitle = new HTML("<b>Navigation</b>");
+		navTitle.setStyleName("ctrlTitle");
+		ctrlPanel.add(navTitle);
+		// ctrlPanel.add(new HTML("<b>Navigation</b>"));
+	
+		// First iteration list box
+//		avail_somBox = new ListBox();
+//		ctrlPanel.add(avail_somBox);
+//		avail_somBox.setWidth("100%");
+//		avail_somBox.setVisibleItemCount(3);
+//		avail_somBox.addClickHandler(new ClickHandler() {
+//			public void onClick(ClickEvent event) {
+//				int selected_map = avail_somBox.getSelectedIndex();
+//				getSOM(avail_somBox.getValue(selected_map));
+//			}
+//		});
 		
 		//
 		// Search field
@@ -153,19 +172,39 @@ public class MainComposite extends ResizeComposite {
 		findPanel.setWidth("100%");
 		
 		findBox = new TextBox();
+		findBox.setStyleName("find-TextBox");
 		findPanel.add(findBox);
 		findBox.setSize("60px", "12px");
 		
 		horizontalPanel = new HorizontalPanel();
+		horizontalPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		horizontalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		findPanel.add(horizontalPanel);
+		horizontalPanel.setHeight("24px");
 		findPanel.setCellHorizontalAlignment(horizontalPanel, HasHorizontalAlignment.ALIGN_RIGHT);
 		
-		btnFind = new Button("Find");
-		horizontalPanel.add(btnFind);
+//		btnFind = new Button("Find");
+//		horizontalPanel.add(btnFind);
+//		btnClear = new Button("Clear");
+//		horizontalPanel.add(btnClear);
+
 		
-		btnClear = new Button("Clear");
+		btnFind = new PushButton(new Image("images/find-normal.png"));
+		btnFind.setStyleName("imageButton");
+		btnFind.getDownFace().setImage(new Image("images/find-pressed.png"));
+		btnFind.getUpHoveringFace().setImage(new Image("images/find-pressed.png"));
+		btnFind.getUpFace().setImage(new Image("images/find-normal.png"));
+		horizontalPanel.add(btnFind);
+//		btnFind.setSize("45px", "24px");
+		
+		btnClear = new PushButton(new Image("images/clear-normal.png"));
+		btnClear.setStyleName("imageButton");
+		btnClear.getDownFace().setImage(new Image("images/clear-pressed.png"));
+		btnClear.getUpHoveringFace().setImage(new Image("images/clear-pressed.png"));
+		btnClear.getUpFace().setImage(new Image("images/clear-normal.png"));
 		horizontalPanel.add(btnClear);
+//		btnClear.setSize("45px", "24px");
+		
 		btnClear.addClickHandler( new ClickHandler() {
 			public void onClick(ClickEvent sender) {
 				findBox.setText("");
@@ -199,18 +238,35 @@ public class MainComposite extends ResizeComposite {
 		zoomPanel.add(lblNewLabel_1);
 		
 		horizontalPanel_1 = new HorizontalPanel();
+		horizontalPanel_1.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		horizontalPanel_1.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		zoomPanel.add(horizontalPanel_1);
 		zoomPanel.setCellVerticalAlignment(horizontalPanel_1, HasVerticalAlignment.ALIGN_MIDDLE);
 		zoomPanel.setCellHorizontalAlignment(horizontalPanel_1, HasHorizontalAlignment.ALIGN_RIGHT);
 		
-		but_zplus = new Button("+");
+//		but_zplus = new Button("+");				
+//		but_zone = new Button("1:1");
+//		but_zminus = new Button("-");		
+
+		but_zplus = new PushButton(new Image("images/plus-normal.png"));
+		but_zplus.setStyleName("imageButton");
+		but_zplus.getDownFace().setImage(new Image("images/plus-pressed.png"));
+		but_zplus.getUpHoveringFace().setImage(new Image("images/plus-pressed.png"));
+		but_zplus.getUpFace().setImage(new Image("images/plus-normal.png"));
+		but_zone = new PushButton(new Image("images/one-normal.png"));
+		but_zone.setStyleName("imageButton");
+		but_zone.getDownFace().setImage(new Image("images/one-pressed.png"));
+		but_zone.getUpHoveringFace().setImage(new Image("images/one-pressed.png"));
+		but_zone.getUpFace().setImage(new Image("images/one-normal.png"));
+		but_zminus = new PushButton(new Image("images/minus-normal.png"));
+		but_zminus.setStyleName("imageButton");
+		but_zminus.getDownFace().setImage(new Image("images/minus-pressed.png"));
+		but_zminus.getUpHoveringFace().setImage(new Image("images/minus-pressed.png"));
+		but_zminus.getUpFace().setImage(new Image("images/minus-normal.png"));
+
+		
 		horizontalPanel_1.add(but_zplus);
-		
-		but_zone = new Button("1:1");
-		horizontalPanel_1.add(but_zone);
-		
-		but_zminus = new Button("-");
+		horizontalPanel_1.add(but_zone);		
 		horizontalPanel_1.add(but_zminus);
 		but_zminus.addClickHandler(new ZoomHandler());
 		but_zone.addClickHandler(new ZoomHandler());
@@ -297,9 +353,10 @@ public class MainComposite extends ResizeComposite {
 		}
 		
 		SOMpt pt = som.search(search_text);
-		if ( pt != null )
+		if ( pt != null ) {
+			canvPanel.unsetMark();
 			canvPanel.setMark(pt);
-		
+		}
 	}
 
 	
@@ -352,7 +409,7 @@ public class MainComposite extends ResizeComposite {
 
 	public class ZoomHandler implements ClickHandler {
 	      public void onClick(ClickEvent event) {
-	          Button bzoom = ((Button) event.getSource());
+	          PushButton bzoom = ((PushButton) event.getSource());
 	          if ( bzoom == but_zplus ) {
 	        	  canvPanel.zoomIncrease();
 	        	  zoom *= 1.5;

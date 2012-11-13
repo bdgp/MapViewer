@@ -34,10 +34,43 @@ h1 {
 }
 
 .titleBar {
-	 background-image: url('titlebar_background.png');
+	background-image: url('images/titlebar_background.png');
+	font-family:arial;
+	font-size:18px;
+	font-weight:bold;
+	color: #FFFFFF;
+	vertical-align: middle;
+}
+
+.ctrlTitle {
+	background-image: url('images/ctrltitle-background.png');
+	font-family:arial;
+	font-size:12px;
+	font-weight:bold;
+	color: #FFFFFF;
+}
+
+.ctrlSubTitle {
+	background-image: url('images/ctrlsubtitle-background.png');
+	font-family:arial;
+	font-size:12px;
+	font-weight:normal;
+	color: #000000;
+}
+
+.imageButton {
 }
 
 
+.find-TextBox {
+  padding: 1px 1px;
+  border: 1px solid #ccc;
+  border-top: 1px solid #999;
+  font-size: small;
+  font-family: Arial Unicode MS, Arial, sans-serif;
+}
+
+/*
 .gwt-Button {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -69,3 +102,4 @@ h1 {
 	position:relative;
 	top:1px;
 }
+*/

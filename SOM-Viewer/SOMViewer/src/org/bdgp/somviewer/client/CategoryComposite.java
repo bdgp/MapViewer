@@ -47,7 +47,9 @@ public class CategoryComposite extends Composite {
 
 		// catPanel.clear();
 
-		catPanel.add(new HTML("<b>Overlays:</b>"));
+		HTML titleText = new HTML("Overlays");
+		titleText.setStyleName("ctrlTitle");
+		catPanel.add(titleText);
 		
 		CheckBox circCheckBox = new CheckBox();
 		catPanel.add(circCheckBox);
@@ -91,6 +93,7 @@ public class CategoryComposite extends Composite {
 		int max_variant = som.getMaxVariantByType(type);
 		
 		Label lblNewLabel = new Label(type);
+		lblNewLabel.setStyleName("ctrlSubTitle");
 		catPanel.add(lblNewLabel);
 		
 		VarBarHandler globalSliderHandler = null;
