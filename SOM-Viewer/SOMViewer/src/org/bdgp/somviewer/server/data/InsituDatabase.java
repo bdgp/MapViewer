@@ -13,9 +13,10 @@ public class InsituDatabase implements SOMinfo {
 	
 	private final String st_im_info = "select image.image_path from som2main, annot, image where annot.main_id = som2main.main_id and image.annot_id = annot.id and annot.stage = __STAGE and som2main.somstruct_id = __ID";
 	private final String st_term_info = "select term.go_term from som2main, annot, annot_term, term where annot.main_id = som2main.main_id and annot_term.annot_id = annot.id and annot.stage = __STAGE and annot_term.term_id = term.id and som2main.somstruct_id = __ID";
-	private final String st_id2name = "select main.flybase_name, main.flybase_id, main.est_id from main, som2main where som2main.main_id = main.id and som2main.somstruct_id = __ID";
+	private final String st_id2name = "select main.flybase_name, main.flybase_id, main.est_id, main.cgname from main, som2main where som2main.main_id = main.id and som2main.somstruct_id = __ID";
 	
 	private final String im_url = "http://insitu.fruitfly.org/insitu_image_storage/thumbnails/";
+	private final String bdgp_url = "http://insitu.fruitfly.org/cgi-bin/ex/report.pl?ftype=1&ftext=";
 
 	protected DBbase db;
 	
@@ -57,7 +58,7 @@ public class InsituDatabase implements SOMinfo {
 		Vector<String> impaths = new Vector<String>(5);
 		Vector<String> terms = new Vector<String>(5);
 		
-		String sym, fbgn, est_id;
+		String sym, fbgn, est_id, cgname;
 		
 		String html = new String();
 		
@@ -77,6 +78,7 @@ public class InsituDatabase implements SOMinfo {
 				sym = new String();
 				fbgn = new String();
 				est_id = new String();
+				cgname = new String();
 				db.logEvent(this, LogSeverity.WARN, "No gene information result set returned");
 			}
 			else
@@ -85,6 +87,7 @@ public class InsituDatabase implements SOMinfo {
 				sym = rs.getString(1);
 				fbgn = rs.getString(2);
 				est_id = rs.getString(3);
+				cgname = rs.getString(4);
 				db.logEvent(this, LogSeverity.INFO, "impath=" + rs.getString(1));								
 						
 			}
@@ -127,8 +130,10 @@ public class InsituDatabase implements SOMinfo {
 		}
 		
 		
-		html += "<h3>" + sym + " (Stage " + resolveStage(variant) + ")</h3>";
-		html += "<a href=\"http://flybase.org/reports/" + fbgn + ".html\" target=\"_blank\">" + fbgn + "</a>";
+		// html += sym + " (Stage " + resolveStage(variant) + ")<BR>";
+		html += "<a href=\"" + bdgp_url + cgname + "\" target=\"_blank\">" + "Insitu</a> ";
+		html += "<a href=\"http://flybase.org/reports/" + fbgn + ".html\" target=\"_blank\">" + fbgn + "</a><br>";
+		html += "Stage " + resolveStage(variant);
 		html += "<P>";
 		if ( variant > 0 ) {
 			for ( String im : impaths )

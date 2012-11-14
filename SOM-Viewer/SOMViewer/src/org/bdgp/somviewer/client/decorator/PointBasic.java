@@ -94,7 +94,7 @@ public class PointBasic implements PointDecorator {
 	}
 	
 	
-	public void infoQuick(Integer id, int variant, int x ,int y) {
+	public void infoQuick(String title, Integer id, int variant ,int x, int y) {
 	}
 
 	public void infoLong(Integer id) {

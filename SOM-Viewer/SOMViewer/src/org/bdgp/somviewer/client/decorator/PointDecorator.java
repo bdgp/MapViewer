@@ -17,7 +17,7 @@ public interface PointDecorator {
 	
 	VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick);
 	
-	void infoQuick(Integer id, int variant, int x, int y);
+	void infoQuick(String title, Integer id, int variant, int x, int y);
 	
 	void infoLong(Integer id);
 	

@@ -361,7 +361,7 @@ public class CanvasComposite extends Composite {
 				p.setInfo(som_pt.getId(), som_pt.getName(), som_pt.getIdenticalPt());
 				ClickHandler onclick = null;
 				if ( pt_info != null ) {
-					onclick = new InfoClick(som_pt.getId(), som_pt.getVariant());
+					onclick = new InfoClick(som_pt.getName(), som_pt.getId(), som_pt.getVariant());
 				}
 				if ( doLabels == true) {
 					VectorObject txt = p.drawLabel(som_pt.getName(), onclick);
@@ -536,15 +536,17 @@ public class CanvasComposite extends Composite {
 	protected class InfoClick implements ClickHandler {
 		protected Integer id;
 		protected int variant;
+		protected String title;
 		
-		public InfoClick(Integer id, int variant) {
+		public InfoClick(String title, Integer id, int variant) {
+			this.title = title;
 			this.id = id;
 			this.variant = variant;
 		}
 		
 		public void onClick(ClickEvent event) {
 			if ( pt_info != null ) {
-				pt_info.infoQuick(id, variant, event.getClientX(), event.getClientY());
+				pt_info.infoQuick(title, id, variant, event.getClientX(), event.getClientY());
 			}
 			
 		}

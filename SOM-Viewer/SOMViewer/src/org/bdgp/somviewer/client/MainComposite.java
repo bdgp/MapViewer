@@ -116,7 +116,7 @@ public class MainComposite extends ResizeComposite {
 		mainPanel.addNorth(grid, 25.0);
 		grid.setWidth("100%");
 		
-		titleHtml = new HTML("2D Map viewer:", true);
+		titleHtml = new HTML("Map viewer:", true);
 		grid.setWidget(0, 0, titleHtml);
 		
 		avail_somBox = new ListBox();

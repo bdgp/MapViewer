@@ -24,6 +24,7 @@ public class PointInfo implements PointDecorator {
 	protected final static int uuid = 12347;
 	int x,y;
 	int click_x, click_y; // Last click position
+	String title;
 
 	protected HashMap<Integer,String> contents;
 	protected String label;
@@ -58,9 +59,10 @@ public class PointInfo implements PointDecorator {
 		return null;
 	}
 
-	public void infoQuick(Integer id, int variant, int x, int y) {
+	public void infoQuick(String title, Integer id, int variant, int x, int y) {
 		
 		click_x = x; click_y = y;
+		this.title = title;
 		
 		if ( infoCache.containsKey(id) )
 			infoDialog(infoCache.get(id));
@@ -81,13 +83,15 @@ public class PointInfo implements PointDecorator {
 		
 		if ( dialogBox == null ) {
 			dialogBox = new DialogBoxClosable();
-			dialogBox.setText("Information");
+			//dialogBox.setText("Information");
 			// dialogBox.setText(label);
 			dialogBox.setAnimationEnabled(true);
 			dialogVPanel = new VerticalPanel();
 		} else {
 			dialogVPanel.clear();
 		}
+
+		dialogBox.setText(title);
 
 		final Button closeButton = new Button("Close");
 		// We can set the id of a widget by accessing its Element
