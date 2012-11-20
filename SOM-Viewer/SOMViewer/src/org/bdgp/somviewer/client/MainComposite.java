@@ -85,7 +85,7 @@ public class MainComposite extends ResizeComposite {
 	protected float zoom = 1;
 	protected float base_zoom = 1;
 	
-	protected final int ctrlPanelSize = 180;
+	protected final int ctrlPanelSize = 200;
 	protected int canv_gapx = 0, canv_gapy = 0;
 	
 	protected final static int GRP_TXT = 0;

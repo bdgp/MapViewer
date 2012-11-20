@@ -85,7 +85,7 @@ public class CanvasComposite extends Composite {
 		canv_gapx = fw;
 		canv_gapy = fh > DEFAULT_CIRC_RAD ? fh : DEFAULT_CIRC_RAD;
 		
-		t = new Text(win_w/2, win_h/2, "Select SOM from list");
+		t = new Text(win_w/2, win_h/2, "Select map from list");
 		t.setFontSize(36);
 		fw = t.getTextWidth() / 2;
 		fh = t.getTextHeight() / 2;
@@ -105,6 +105,9 @@ public class CanvasComposite extends Composite {
 //		addDecorator(new PointVenn(som.getColorMap()));
 //		setDecorator(new PointInfo());
 
+		win_w = Window.getClientWidth() - xPanelSize;
+		win_h = Window.getClientHeight()- yPanelSize;
+				
 		float maxx = -1, maxy = -1;
 		
 		// find max/min x/y values for setting zoom & canvas
@@ -136,6 +139,8 @@ public class CanvasComposite extends Composite {
 		if ( pd == null )
 			return;
 		
+		pd.setViewPortSize(win_w, win_h);
+		
 		if ( pd.isInfo() )
 			pt_info = pd;
 		else {
@@ -153,6 +158,8 @@ public class CanvasComposite extends Composite {
 		
 		if ( pd == null )
 			return;
+		
+		pd.setViewPortSize(win_w, win_h);
 		
 		if ( pd.isInfo() ) {
 			// at this time we can only have one info

@@ -62,6 +62,11 @@ h1 {
 }
 
 
+.verboseLabel {
+	font-size: xx-small;
+	font-family: Arial Unicode MS, Arial, sans-serif;
+}
+
 .find-TextBox {
   padding: 1px 1px;
   border: 1px solid #ccc;

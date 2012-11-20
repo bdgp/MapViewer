@@ -3,6 +3,7 @@ package org.bdgp.somviewer.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Timer;
@@ -26,6 +27,9 @@ public class Feedback {
 	protected HTML req_title = new HTML(req);
 	protected HTML req_progress = new HTML();
 	protected int counter = 0;
+	
+	protected String last_error = null;
+	HandlerRegistration error_handler;
 	
 	protected Timer discardDelayTimer = null;
 
@@ -68,6 +72,14 @@ public class Feedback {
 
 	public void rpcError(String error) {
 		finishOp();
+		status.setText("ERROR, click for more info");
+		last_error = error;
+//		status.addClickHandler( new ClickHandler() {
+//			public void onClick(ClickEvent sender) {
+//				Window.alert(last_error);
+//			}
+//			});
+		
 	}
 
 	
@@ -86,6 +98,7 @@ public class Feedback {
 		setProgress(100/(counter + 1));
 		status.setText(req);
 		
+		last_error = null;
 	}
 	
 	
@@ -116,8 +129,9 @@ public class Feedback {
 	
 	
 	protected void discard() {
-		status.setText("");
 		info.setText("");
+		if ( last_error == null )
+			status.setText("");
 		discardDelayTimer = null;
 	}
 	

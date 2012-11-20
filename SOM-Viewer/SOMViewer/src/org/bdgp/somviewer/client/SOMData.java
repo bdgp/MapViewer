@@ -60,6 +60,7 @@ public class SOMData {
 			Library l = new Library();
 			l.color = a.color;
 			l.max = a.variant;
+			l.variant_names = a.variant_names;
 			l.type = a.type;
 			un_type.addTerm(a.type);
 			l.decorator = a.decorator;
@@ -215,6 +216,15 @@ public class SOMData {
 		}
 		
 		return max;
+	}
+	
+	
+	public String [] getVariantNames(String name) {
+		Library l = library.get(name);
+		if ( l == null ) {
+			throw new NoSuchElementException();
+		}
+		return l.variant_names;
 	}
 	
 	
@@ -699,6 +709,7 @@ public class SOMData {
 	
 	protected class Library {
 		int max;
+		String [] variant_names;
 		String color;
 		String type;
 		String decorator;

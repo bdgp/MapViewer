@@ -11,6 +11,8 @@ public interface PointDecorator {
 
 	void setPoint(int x, int y);
 	
+	void setViewPortSize(int w, int h);
+	
 	void setInfo(Integer id, String name, HashMap<Integer,String> others);
 
 	VectorObject drawLabel(String label, ClickHandler onclick);

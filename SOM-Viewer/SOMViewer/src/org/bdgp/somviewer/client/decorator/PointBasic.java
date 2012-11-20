@@ -26,6 +26,8 @@ public class PointBasic implements PointDecorator {
 	protected String label;
 	protected Integer id;
 	int x,y;
+	int view_w, view_h;
+	
 	
 	public PointBasic(HashMap<String,String> colormap) {
 		this.colormap = colormap;
@@ -41,6 +43,12 @@ public class PointBasic implements PointDecorator {
 		this.id = id;
 		this.label = name;
 		this.contents = others;
+	}
+	
+	
+	public void setViewPortSize(int w, int h) {
+		this.view_h = h;
+		this.view_w = w;
 	}
 	
 

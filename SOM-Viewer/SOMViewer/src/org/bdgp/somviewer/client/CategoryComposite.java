@@ -96,27 +96,32 @@ public class CategoryComposite extends Composite {
 		lblNewLabel.setStyleName("ctrlSubTitle");
 		catPanel.add(lblNewLabel);
 		
-		VarBarHandler globalSliderHandler = null;
-		VarBoxHandler globalBoxHandler = null;
+		CatVariantHandler globalCatHandler = null;
+		String [] globalVarNames = null;
+
 		if ( max_variant > 1 ) {
 			HorizontalPanel global_varPanel = new HorizontalPanel();
 			global_varPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 			catPanel.add(global_varPanel);
 
+			VerticalPanel globalVPan = new VerticalPanel();
+			Label globalLabel = new Label("Stage 13-16");
+			globalLabel.setStyleName("verboseLabel");
+			globalVPan.add(globalLabel);
 			VariationSelectWidget globalSlider = new VariationSelectWidget(max_variant,"60px",true);
-			global_varPanel.add(globalSlider.asWidget());
 			globalSlider.setValue(som.getMaxVariant());
-
+			globalVPan.add(globalSlider.asWidget());
+			global_varPanel.add(globalVPan);
+			
 			IntegerBox globalInt = new IntegerBox();
 			global_varPanel.add(globalInt);
 			globalInt.setValue(som.getMaxVariant());
 			globalInt.setMaxLength(2);
 			globalInt.setWidth("10px");
 
-			globalSliderHandler = new VarBarHandler(null, dsync, null, globalInt, globalSlider);
-			globalBoxHandler = new VarBoxHandler(null, dsync, null, globalInt, globalSlider);
-			globalSlider.addBarValueChangedHandler(globalSliderHandler);
-			globalInt.addChangeHandler(globalBoxHandler);
+			globalCatHandler = new CatVariantHandler(null, null, globalInt, globalSlider, globalLabel);
+			globalSlider.addBarValueChangedHandler(globalCatHandler);
+			globalInt.addChangeHandler(globalCatHandler);
 		}
 		
 		Vector<String> ovnames = som.getOverlayNames(type);				
@@ -139,10 +144,16 @@ public class CategoryComposite extends Composite {
 			if ( max_variant > 1 ) {
 				// Create sliders and value box and link them to each other
 				
-				// overlay Slider
+				// overlay Slider & Label
+				VerticalPanel vPan = new VerticalPanel();
+				Label osLab = new Label("Stage 13-16");
+				osLab.setStyleName("verboseLabel");
+				vPan.add(osLab);
 				VariationSelectWidget osVarSlider = new VariationSelectWidget(max_variant,"60px",true);
-				osGrid.setWidget(row, 1, osVarSlider);
-				osVarSlider.setValue(max_variant);
+				osVarSlider.setValue(max_variant);				
+				vPan.add(osVarSlider.asWidget());				
+				osGrid.setWidget(row, 1, vPan);
+				
 
 				// overlay numeric box
 				IntegerBox osInt = new IntegerBox();
@@ -153,11 +164,15 @@ public class CategoryComposite extends Composite {
 
 				// Handlers, link them together
 				osCheckBox.addClickHandler(new CatHandler(ovn, osInt));
-				osVarSlider.addBarValueChangedHandler(new VarBarHandler(ovn, dsync, osCheckBox, osInt, osVarSlider));
-				VarBoxHandler osBoxHandler = new VarBoxHandler(ovn, dsync, osCheckBox, osInt, osVarSlider);
-				osInt.addChangeHandler(osBoxHandler);
+				CatVariantHandler catVHandler = new CatVariantHandler(ovn, osCheckBox, osInt, osVarSlider, osLab);
+				osVarSlider.addBarValueChangedHandler(catVHandler);
+				osInt.addChangeHandler(catVHandler);
+				catVHandler.setVariantNames(som.getVariantNames(ovn));
+				// Set global variant names to first one
+				if ( globalVarNames == null )
+					globalVarNames = som.getVariantNames(ovn);
 
-				os_handlers.add(osBoxHandler);
+				os_handlers.add(catVHandler);
 			}
 			else
 			{
@@ -169,10 +184,10 @@ public class CategoryComposite extends Composite {
 
 		}
 		
-		if ( globalSliderHandler != null )
-			globalSliderHandler.setChildHandlers(os_handlers);
-		if ( globalBoxHandler != null )
-			globalBoxHandler.setChildHandlers(os_handlers);
+		if ( globalCatHandler != null ) {
+			globalCatHandler.setChildHandlers(os_handlers);
+			globalCatHandler.setVariantNames(globalVarNames);
+		}
 		
 	}
 	
@@ -279,23 +294,56 @@ public class CategoryComposite extends Composite {
 	 * Keeps checkbox, slider and textbox synchronized
 	 * Updates all sliders/textboxes with the master slider/textbox is changed
 	 */
-	public class CatVariantHandler {
+	public class CatVariantHandler implements BarValueChangedHandler, ChangeHandler {
 		protected DrawSync sync;
 		private String name;
 		private CheckBox cb;
 		protected IntegerBox numBox;
 		private VariationSelectWidget var;
+		private Label lab;
 		private Vector<CatVariantHandler> others = null;
+		private String [] variant_names = null;
 		protected boolean change_req = false;
 		
-		public CatVariantHandler(String name, DrawSync sync, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
+		public CatVariantHandler(String name, CheckBox cb, IntegerBox box, VariationSelectWidget var, Label lab) {
 			this.name = name;
 			this.cb = cb;
 			this.numBox = box;
 			this.var = var;
-			this.sync = sync;
+			this.lab = lab;
+			this.sync = dsync;
 		}
-				
+		
+		
+		public void setVariantNames(String [] variant_names) {
+			this.variant_names = variant_names;
+			if ( variant_names.length >= numBox.getValue() )
+				lab.setText(variant_names[numBox.getValue()]);
+		}
+		
+
+        public void onBarValueChanged(BarValueChangedEvent event) {
+        	sync.noDraw();
+        	// This prevents the handler from running two simultaneous RPC requests/redraws
+        	if ( change_req == false ) {
+        		change_req = true;
+        		change(event.getValue());
+        		change_req = false;
+        	}
+            sync.draw();
+         }
+
+		public void onChange(ChangeEvent event) {
+			sync.noDraw();
+			// This prevents the handler from running two simultaneous RPC requests/redraws
+        	if ( change_req == false ) {
+        		change_req = true;
+        		change(numBox.getValue());
+        		change_req = false;
+        	}
+			sync.draw();
+		}
+		
 		public void setChildHandlers(Vector<CatVariantHandler> others) {
 			this.others = others;
 		}
@@ -305,8 +353,14 @@ public class CategoryComposite extends Composite {
 			// Synchronize the two
 			// The if statements shouldn't be necessary but GWT goes into infinite loop otherwise
 			// The infinite loop happens because changing the value apparently triggers an event
-			if ( numBox.getValue() != variant ) 
+			if ( numBox.getValue() != variant ) {
 				numBox.setValue(variant);
+
+				if ( variant_names != null ) {
+					if ( variant_names.length >= numBox.getValue() )
+						lab.setText(variant_names[numBox.getValue()]);
+				}
+			}
 			if ( var.getValue() != variant )
 				var.setValue(variant);
 			
@@ -329,41 +383,6 @@ public class CategoryComposite extends Composite {
 		}		
 	}
 		
-	public class VarBarHandler extends CatVariantHandler implements BarValueChangedHandler {
-		
-		public VarBarHandler(String name, DrawSync sync, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
-			super(name, sync, cb, box, var);
-		}
-		
-        public void onBarValueChanged(BarValueChangedEvent event) {
-        	sync.noDraw();
-        	// This prevents the handler from running two simultaneous RPC requests/redraws
-        	if ( change_req == false ) {
-        		change_req = true;
-        		change(event.getValue());
-        		change_req = false;
-        	}
-            sync.draw();
-         }
-	}
-	
-	public class VarBoxHandler extends CatVariantHandler implements ChangeHandler {
-		
-		public VarBoxHandler(String name, DrawSync sync, CheckBox cb, IntegerBox box, VariationSelectWidget var) {
-			super(name, sync, cb, box, var);
-		}
-
-		public void onChange(ChangeEvent event) {
-			sync.noDraw();
-			// This prevents the handler from running two simultaneous RPC requests/redraws
-        	if ( change_req == false ) {
-        		change_req = true;
-        		change(numBox.getValue());
-        		change_req = false;
-        	}
-			sync.draw();
-		}
-	}
 	
 	/**
 	 * @author erwin
