@@ -8,6 +8,7 @@ public class SOMOverlaysAvailable implements IsSerializable {
 	public int variant;
 	public String [] variant_names;
 	public String color;
+	public String [] color_similar;
 	public String type;
 	public String decorator;
 

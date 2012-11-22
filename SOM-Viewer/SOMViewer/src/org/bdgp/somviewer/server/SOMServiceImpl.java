@@ -151,6 +151,7 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 			}
 			
 			so.id = overlay.queryOverlay(name, variant);
+			so.values = overlay.queryOverlayValues(name, variant);
 			
 		}
 		catch (Exception e) {

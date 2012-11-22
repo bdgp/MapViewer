@@ -16,12 +16,15 @@ public class SOMoverlay {
 	private final String st_availvariants = "select distinct(variant), variant_name, type from somoverlay_info where somtitle_id = __ID order by variant";
 	private final String st_overlay = "select somstruct_id, value from somoverlay so, somoverlay_info si where so.somoverlay_info_id = si.id and si.name = '__NAME' and si.variant = __VAR and si.somtitle_id = __ID";
 	
+	protected final double COLOR_THRESHOLD = 30;
+	
 	protected DBbase db;
 	
 	protected String somtitle = null;
 	protected int som_id = 0;
 	protected Vector<Available> available = null;
 	protected HashMap<String, Vector<String>> variants = null;
+	protected Overlay last_query = null;
 	
 	public SOMoverlay(DBbase db, String title) throws Exception {
 		this.db = db;
@@ -100,7 +103,25 @@ public class SOMoverlay {
 				db.logEvent(this, LogSeverity.INFO, "Name=" + av.name + ", Variant=" + av.variant + ", Colormap=" + av.color);
 				
 				if ( av.name != null ) {
+					
+					// See if any color is similar
+					if ( av.color != null && av.color.length() > 0 ) {
+						Color col_av = new Color(av.color);
+						for ( Available a_comp : available ) {
+							Color col_comp = new Color(a_comp.color);
+							if ( col_av.distance(col_comp) <= COLOR_THRESHOLD ) {
+								if ( av.color_similar == null )
+									av.color_similar = new Vector<String>(5);
+								if ( a_comp.color_similar == null )
+									a_comp.color_similar = new Vector<String>(5);
+								av.color_similar.add(a_comp.name);
+								a_comp.color_similar.add(av.name);
+							}
+						}
+					}
+					
 					available.add(av);
+
 				}
 				
 			}
@@ -181,6 +202,8 @@ public class SOMoverlay {
 			throw new Exception("Overlay doesn't exist: " + name);
 		}
 		
+		boolean has_values = true;
+		
 		String fquery = st_overlay.replace("__NAME", name);
 		fquery = fquery.replace("__VAR", new Integer(variant).toString());
 		fquery = fquery.replace("__ID", new Integer(som_id).toString());
@@ -193,26 +216,62 @@ public class SOMoverlay {
 		}
 		
 		Vector<Integer> ov_id = new Vector<Integer>(50);
+		Vector<Float> ov_val = new Vector<Float>(50);
 		
 		while (rs.next()) {
 			
 			ov_id.add(new Integer(rs.getInt(1)));
+			float val = rs.getFloat(2);
+			if ( rs.wasNull() == true || val != 0.0f )
+				has_values = true;
+			ov_val.add(new Float(val));
 						
 		}
 		
 		db.logEvent(this, LogSeverity.INFO, "Received " + ov_id.size() + " overlays");
 		
-		int [] ov = new int[ov_id.size()];
-		
+		int [] ov = new int[ov_id.size()];		
 		for ( int i = 0; i < ov_id.size(); i++ ) {
 			ov[i] = ov_id.get(i);
 		}
+		
+		float [] vals = null;
+		if ( has_values == true ) {
+			vals = new float[ov_val.size()];
+			for ( int i = 0; i < ov_val.size(); i++ ) {
+				vals[i] = ov_val.get(i);
+			}
+			
+		}
+		
+		if ( last_query == null )
+			last_query = new Overlay();
+		
+		last_query.name = name;
+		last_query.variant = variant;
+		last_query.ids = ov;
+		last_query.values = vals;
 		
 		return ov;
 		
 	}
 	
 
+	public float [] queryOverlayValues(String name, int variant) throws Exception {
+		
+		// Find out if we have a last query and it was done with same params
+		if ( last_query != null ) {
+			if ( last_query.name.compareTo(name) == 0 && last_query.variant == variant ) {
+				return last_query.values;
+			}
+		}
+		
+		// if not, run query and return result
+		queryOverlay(name, variant);
+		return last_query.values;
+		
+	}
+	
 	
 	public SOMDataPts availData(SOMDataPts pts) {
 		if ( available == null || pts == null )
@@ -221,13 +280,30 @@ public class SOMoverlay {
 		pts.available = new Vector<SOMOverlaysAvailable>(available.size());
 		
 		for ( int i=0; i < available.size(); i++ ) {
+			
+			// Convert strings to arrays
 			String [] var_array  =  new String[ available.get(i).variant_names.size() ];
 			for ( int j = 0; j < available.get(i).variant_names.size(); j++ )
 					var_array[j] = available.get(i).variant_names.get(j);
-			pts.available.add(pts.CreateAvailable(available.get(i).name, available.get(i).variant, var_array, available.get(i).color, available.get(i).type, available.get(i).decorator));
+			String [] cs_array = null;
+			if ( available.get(i).color_similar != null ) {
+				cs_array = new String[ available.get(i).color_similar.size() ];
+				for ( int j = 0; j < available.get(i).color_similar.size(); j++ )
+					cs_array[j] = available.get(i).color_similar.get(j);				
+			}
+			
+			pts.available.add(pts.CreateAvailable(available.get(i).name, available.get(i).variant, var_array, available.get(i).color, cs_array, available.get(i).type, available.get(i).decorator));
 		}
 		
 		return pts;
+	}
+	
+	
+	protected class Overlay {
+		String name;
+		int variant;
+		int [] ids;
+		float [] values;
 	}
 	
 	
@@ -236,8 +312,41 @@ public class SOMoverlay {
 		int variant;
 		Vector<String> variant_names;
 		String color;
+		Vector<String> color_similar;
 		String type;
 		String decorator;
+	}
+	
+	protected class Color {
+		protected int r, g, b;
+		
+		public Color(int r, int g, int b ) {
+			this.r = r;
+			this.g = g;
+			this.b = b;
+		}
+		
+		public Color(String colorStr) {
+			
+			if ( colorStr.startsWith("#") ) {			
+				r = Integer.valueOf( colorStr.substring( 1, 3 ), 16 );
+				g = Integer.valueOf( colorStr.substring( 3, 5 ), 16 );
+				b = Integer.valueOf( colorStr.substring( 5, 7 ), 16 );
+			} else {
+				r = Integer.valueOf( colorStr.substring( 0, 2 ), 16 );
+				g = Integer.valueOf( colorStr.substring( 2, 4 ), 16 );
+				b = Integer.valueOf( colorStr.substring( 4, 6 ), 16 );				
+			}
+		}			
+		
+		public double distance(Color o) {
+		    double aa = r - o.r;
+		    double bb = g - o.g;
+		    double cc = b - o.b;
+		    
+		    return Math.sqrt (aa*aa + bb*bb + cc*cc);
+		}
+		
 	}
 	
 }

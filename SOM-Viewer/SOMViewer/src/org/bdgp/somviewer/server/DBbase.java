@@ -220,7 +220,7 @@ public abstract class DBbase {
 	}
 	
 	public String flatLog(LogSeverity severity) {
-		String log_entries = new String("Database query log:\n");
+		String log_entries = new String("\nDatabase query log:\n");
 		
 		for (int i=0; i < query_log.size(); i++ ) {
 			DBLog log = (DBLog) query_log.elementAt(i);
