@@ -91,7 +91,9 @@ public class CategoryComposite extends Composite {
 	
 	protected void populateCatGroup(String type) {
 		int max_variant = som.getMaxVariantByType(type);
-		
+	
+		Vector<String> ovnames = som.getOverlayNames(type);				
+
 		Label lblNewLabel = new Label(type);
 		lblNewLabel.setStyleName("ctrlSubTitle");
 		catPanel.add(lblNewLabel);
@@ -99,7 +101,7 @@ public class CategoryComposite extends Composite {
 		CatVariantHandler globalCatHandler = null;
 		String [] globalVarNames = null;
 
-		if ( max_variant > 1 ) {
+		if ( max_variant > 1 && ovnames.size() > 1 ) {
 			HorizontalPanel global_varPanel = new HorizontalPanel();
 			global_varPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 			catPanel.add(global_varPanel);
@@ -124,7 +126,6 @@ public class CategoryComposite extends Composite {
 			globalInt.addChangeHandler(globalCatHandler);
 		}
 		
-		Vector<String> ovnames = som.getOverlayNames(type);				
 		Grid osGrid = new Grid(ovnames.size(), 3);
 		catPanel.add(osGrid);
 		

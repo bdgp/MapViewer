@@ -14,7 +14,7 @@ public class SOMoverlay {
 	private final String st_title_id = "select id from somtitle where name = ";
 	private final String st_availoverlays = "select distinct(name), max(variant), color, type, decorator from somoverlay_info where somtitle_id = __ID  group by name";	
 	private final String st_availvariants = "select distinct(variant), variant_name, type from somoverlay_info where somtitle_id = __ID order by variant";
-	private final String st_overlay = "select somstruct_id from somoverlay so, somoverlay_info si where so.somoverlay_info_id = si.id and si.name = '__NAME' and si.variant = __VAR and si.somtitle_id = __ID";
+	private final String st_overlay = "select somstruct_id, value from somoverlay so, somoverlay_info si where so.somoverlay_info_id = si.id and si.name = '__NAME' and si.variant = __VAR and si.somtitle_id = __ID";
 	
 	protected DBbase db;
 	

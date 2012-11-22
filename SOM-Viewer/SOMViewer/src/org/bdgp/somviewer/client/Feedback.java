@@ -74,11 +74,11 @@ public class Feedback {
 		finishOp();
 		status.setText("ERROR, click for more info");
 		last_error = error;
-//		status.addClickHandler( new ClickHandler() {
-//			public void onClick(ClickEvent sender) {
-//				Window.alert(last_error);
-//			}
-//			});
+		error_handler = status.addClickHandler( new ClickHandler() {
+			public void onClick(ClickEvent sender) {
+				Window.alert(last_error);
+			}
+			});
 		
 	}
 
@@ -99,6 +99,10 @@ public class Feedback {
 		status.setText(req);
 		
 		last_error = null;
+		if ( error_handler != null ) {
+			error_handler.removeHandler();
+			error_handler = null;
+		}
 	}
 	
 	

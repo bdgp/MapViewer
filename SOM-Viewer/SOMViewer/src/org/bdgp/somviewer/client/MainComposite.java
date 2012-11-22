@@ -86,6 +86,7 @@ public class MainComposite extends ResizeComposite {
 	protected float base_zoom = 1;
 	
 	protected final int ctrlPanelSize = 200;
+	protected final int titlePanelSize = 25;
 	protected int canv_gapx = 0, canv_gapy = 0;
 	
 	protected final static int GRP_TXT = 0;
@@ -104,6 +105,7 @@ public class MainComposite extends ResizeComposite {
 	private HTML infoHtml;
 	private PushButton btnFind;
 	private PushButton btnClear;
+	private PushButton btnPrint;
 	
 	public MainComposite(RootLayoutPanel parentPanel) {
 		
@@ -111,9 +113,9 @@ public class MainComposite extends ResizeComposite {
 		// mainPanel.setSize("100%", "100%");
 		initWidget(mainPanel);
 		
-		grid = new Grid(1, 4);
+		grid = new Grid(1, 5);
 		grid.setStyleName("titleBar");
-		mainPanel.addNorth(grid, 25.0);
+		mainPanel.addNorth(grid, titlePanelSize);
 		grid.setWidth("100%");
 		
 		titleHtml = new HTML("Map viewer:", true);
@@ -130,20 +132,38 @@ public class MainComposite extends ResizeComposite {
 			}
 		});
 		
+		btnPrint = new PushButton(new Image("images/print_map-normal.png"));
+		btnPrint.setStyleName("imageButton");
+		btnPrint.getDownFace().setImage(new Image("images/print_map-pressed.png"));
+		btnPrint.getUpHoveringFace().setImage(new Image("images/print_map-pressed.png"));
+		btnPrint.getUpFace().setImage(new Image("images/print_map-normal.png"));
+		grid.setWidget(0, 2, btnPrint);
+		btnPrint.addClickHandler( new ClickHandler() {
+			public void onClick(ClickEvent sender) {
+				Print.it(canvPanel);
+			}
+		});
+		
+		
 		statusHtml = new HTML();
-		grid.setWidget(0, 2, statusHtml);
+		grid.setWidget(0, 3, statusHtml);
 		statusHtml.setWidth("200px");
 		
 		infoHtml = new HTML();
-		grid.setWidget(0, 3, infoHtml);
+		grid.setWidget(0, 4, infoHtml);
 		infoHtml.setWidth("200px");
 		
 		// FlowPanel flowPanel = new FlowPanel();
 		// mainPanel.addNorth(flowPanel, 20);
 
+		
+		ScrollPanel scrollCtrlPanel = new ScrollPanel();
+		mainPanel.addWest(scrollCtrlPanel,ctrlPanelSize);
+		
 		VerticalPanel ctrlPanel = new VerticalPanel();
-		mainPanel.addWest(ctrlPanel,ctrlPanelSize);
+		// mainPanel.addWest(ctrlPanel,ctrlPanelSize);
 		ctrlPanel.setWidth("100%");
+		scrollCtrlPanel.add(ctrlPanel);
 		
 		//Label lblNewLabel_2 = new Label("Select:");
 		//ctrlPanel.add(lblNewLabel_2);
@@ -152,17 +172,6 @@ public class MainComposite extends ResizeComposite {
 		ctrlPanel.add(navTitle);
 		// ctrlPanel.add(new HTML("<b>Navigation</b>"));
 	
-		// First iteration list box
-//		avail_somBox = new ListBox();
-//		ctrlPanel.add(avail_somBox);
-//		avail_somBox.setWidth("100%");
-//		avail_somBox.setVisibleItemCount(3);
-//		avail_somBox.addClickHandler(new ClickHandler() {
-//			public void onClick(ClickEvent event) {
-//				int selected_map = avail_somBox.getSelectedIndex();
-//				getSOM(avail_somBox.getValue(selected_map));
-//			}
-//		});
 		
 		//
 		// Search field
@@ -272,12 +281,12 @@ public class MainComposite extends ResizeComposite {
 		but_zone.addClickHandler(new ZoomHandler());
 		but_zplus.addClickHandler(new ZoomHandler());
 		
-		//ScrollPanel scrollCatPanel = new ScrollPanel();
-		ScrollPanel scrollCatPanel = new ScrollPanel();
-		ctrlPanel.add(scrollCatPanel);
+//		ScrollPanel scrollCatPanel = new ScrollPanel();
+//		ctrlPanel.add(scrollCatPanel);
 		
 		catPanel = new VerticalPanel();
-		scrollCatPanel.setWidget(catPanel);
+		ctrlPanel.add(catPanel);
+//		scrollCatPanel.setWidget(catPanel);
 		//catPanel.setSize("100%", "100%");
 		
 		canvPanel = new CanvasComposite(ctrlPanelSize,0);
