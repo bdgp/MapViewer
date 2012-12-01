@@ -5,10 +5,20 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.OverlayDrawMap;
+import org.bdgp.somviewer.client.SOMData;
+
 public class DecoratorFactory {
 	
+	SOMData som;
+	OverlayDrawMap overlay_map;
 	Vector<Decorator> content = new Vector<Decorator>(2);
 
+	public DecoratorFactory(SOMData som) {
+		this.som = som;
+		overlay_map = new OverlayDrawMap(som);
+		addOverlays();
+	}
 	
 	protected PointDecorator toPointDecorator(Decorator d) {
 		
@@ -23,19 +33,30 @@ public class DecoratorFactory {
 	}
 	
 	
-	public void addOverlayType(String name, String decorator, String color) {
+	protected void addOverlays() {
+		Iterator<String> map_it = overlay_map.libraryIterator();
+		
+		while (map_it.hasNext()) {
+			addOverlayType(map_it.next());
+		}
+	}
+	
+	
+	public void addOverlayType(String name) {
+		
+		String decorator = overlay_map.getDecorator(name);
 		
 		for ( Decorator d : content ) {
 			if ( d.decorator.compareTo(decorator) == 0 ) {
-				 d.colormap.put(name, color);
+				 d.colormap.add(name);
 				 return;
 			}
 		}
 		
 		Decorator d = new Decorator();
 		d.decorator = decorator;
-		d.colormap = new HashMap<String,String>();
-		d.colormap.put(name, color);
+		d.colormap = new OverlayDrawMap(som);
+		d.colormap.add(name);
 		content.add(d);
 	}
 
@@ -73,7 +94,7 @@ public class DecoratorFactory {
 	
 	protected class Decorator {
 		public String decorator;
-		public HashMap<String,String> colormap;
+		public OverlayDrawMap colormap;
 	}
 
 }

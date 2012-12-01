@@ -3,6 +3,7 @@ package org.bdgp.somviewer.client.decorator;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.OverlayDrawMap;
 import org.vaadin.gwtgraphics.client.Group;
 import org.vaadin.gwtgraphics.client.VectorObject;
 import org.vaadin.gwtgraphics.client.shape.Circle;
@@ -21,7 +22,7 @@ public class PointBasic implements PointDecorator {
 	protected final static int MARKER_CIRC_RAD = 2;
 	protected final static int OVERLAY_CIRC_RAD = 7;
 	
-	protected HashMap<String,String> colormap;
+	protected OverlayDrawMap colormap;
 	protected HashMap<Integer,String> contents;
 	protected String label;
 	protected Integer id;
@@ -29,7 +30,7 @@ public class PointBasic implements PointDecorator {
 	int view_w, view_h;
 	
 	
-	public PointBasic(HashMap<String,String> colormap) {
+	public PointBasic(OverlayDrawMap colormap) {
 		this.colormap = colormap;
 	}
 
@@ -70,7 +71,7 @@ public class PointBasic implements PointDecorator {
 		return t;
 	}
 
-	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick) {
+	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, OverlayDrawMap overlay_map, ClickHandler onclick) {
 
 		if ( colors == null ) {
 			if ( showMarker == true )

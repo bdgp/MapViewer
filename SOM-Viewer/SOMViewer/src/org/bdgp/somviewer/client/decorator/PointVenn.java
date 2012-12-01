@@ -1,8 +1,9 @@
 package org.bdgp.somviewer.client.decorator;
 
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.OverlayDrawMap;
 import org.vaadin.gwtgraphics.client.Group;
 import org.vaadin.gwtgraphics.client.VectorObject;
 import org.vaadin.gwtgraphics.client.shape.Circle;
@@ -19,7 +20,7 @@ public class PointVenn extends PointBasic {
 	protected static final int ShiftVal = 4;
 	protected Vector<PtShifts> shifts = new Vector<PtShifts>(10);
 		
-	public PointVenn(HashMap<String,String> colormap) {
+	public PointVenn(OverlayDrawMap colormap) {
 		super(colormap);
 		
 		add(-1,0);
@@ -33,13 +34,8 @@ public class PointVenn extends PointBasic {
 	}
 	
 	
-	protected void add(int xs, int ys) {
-		int x, y;
-		
-		x = xs != 0 ? ShiftVal * xs : 0;
-		y = ys != 0 ? ShiftVal * ys : 0;
-				
-		shifts.add(new PtShifts(x,y));
+	protected void add(int xs, int ys) {				
+		shifts.add(new PtShifts(xs,ys));
 	}
 	
 	
@@ -51,29 +47,25 @@ public class PointVenn extends PointBasic {
 		return null;
 	}
 	
-	public VectorObject drawMarker(boolean showMarker, Vector<String> colormap_ids, ClickHandler onclick) {
+	public VectorObject drawMarker(boolean showMarker, Vector<String> colormap_ids, OverlayDrawMap overlay_map, ClickHandler onclick) {
 
 //		VectorObject vo = null;
 		
-		// TODO: This will be handled by PointMarker
-		if ( colormap_ids == null ) {
+		if ( overlay_map == null ) {
 			return null;
-//			if ( showMarker == true ) {
-//				vo = drawCircle(MARKER_CIRC_RAD, 0.5f, "fuchsia");
-//				if ( onclick != null) 
-//					vo.addClickHandler(onclick);
-//				return vo;
-//			} else
-//				return null;
 		}
 
 				
 		int x_save, y_save;
 		int ct = 0;
+		int max_dec = 0;
 		
 		Circle c = null;
 		Group g = new Group();
-		for ( String col : colormap_ids ) {
+		Iterator<String> ov_it = overlay_map.mapIterator();
+		while ( ov_it.hasNext() ) {
+			String col = ov_it.next();
+			
 			if ( ct >= shifts.size() )
 				ct = 0;
 
@@ -81,9 +73,17 @@ public class PointVenn extends PointBasic {
 				continue;
 			
 			x_save = x; y_save = y;
-			x += shifts.get(ct).xs;
-			y += shifts.get(ct).ys;
-			c = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.get(col));
+			int [] values = overlay_map.getValues(col);
+			if ( values == null ) {
+				x += shifts.get(ct).xsc;
+				y += shifts.get(ct).ysc;
+				c = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.getColor(col));
+			} else {
+				max_dec = values.length - 1;
+				x += shifts.get(ct).xs * values[max_dec];
+				y += shifts.get(ct).ys * values[max_dec];
+				c = drawCircle(values[max_dec], 0.9f, "#" + colormap.getColor(col));
+			}
 			g.add(c);
 			if ( onclick != null )
 				c.addClickHandler(onclick);
@@ -107,13 +107,20 @@ public class PointVenn extends PointBasic {
 
 	
 	protected class PtShifts {
+		// original factors
 		public int xs;
 		public int ys;
+		// factors multiplied by const value
+		public int xsc;
+		public int ysc;
 		
 		public PtShifts(int xs, int ys) {
 			this.xs = xs;
 			this.ys = ys;
+			this.xsc = xs != 0 ? ShiftVal * xs : 0;
+			this.ysc = ys != 0 ? ShiftVal * ys : 0;
 		}
+		
 	}
 
 }

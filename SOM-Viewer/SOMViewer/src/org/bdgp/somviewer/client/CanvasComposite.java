@@ -376,7 +376,8 @@ public class CanvasComposite extends Composite {
 						grp_txt.add(txt);
 
 				}
-				VectorObject m = p.drawMarker(showCircles, som_pt.getColorMapNames(), onclick);
+				// VectorObject m = p.drawMarker(showCircles, som_pt.getColorMapNames(), null, onclick);
+				VectorObject m = p.drawMarker(showCircles, null, som_pt.getDrawMap(), onclick);
 				if ( m != null ) {
 					overlay_markers.add(m);
 				}

@@ -8,14 +8,16 @@ import java.util.NoSuchElementException;
 import java.util.Vector;
 
 import org.bdgp.somviewer.client.decorator.DecoratorFactory;
+import org.bdgp.somviewer.rpc.data.SOMDataOverlay;
 import org.bdgp.somviewer.rpc.data.SOMDataPts;
 import org.bdgp.somviewer.rpc.data.SOMOverlaysAvailable;
 import org.vaadin.gwtgraphics.client.Group;
 
 public class SOMData {
 	
-	protected static final int MAX_OVERLAY = 30;
-	protected static final float ZOOM_INC = 100;
+	protected static final int MAX_OVERLAY = 30; // max. number of overlays cached
+	protected static final float ZOOM_INC = 100; // Increment for zoom
+	protected static final int VALUE_RANGE = 100; // Integer range for point values
 	
 	protected String map_name;
 	protected HashMap<String,Overlay> overlay;
@@ -57,8 +59,10 @@ public class SOMData {
 		
 		Vector<SOMOverlaysAvailable> av = pts.available;
 		for ( SOMOverlaysAvailable a : av ) {
+			// Fill in library
 			Library l = new Library();
 			l.color = a.color;
+			l.color_similar = a.color_similar;
 			l.max = a.variant;
 			l.variant_names = a.variant_names;
 			l.type = a.type;
@@ -160,12 +164,25 @@ public class SOMData {
 		
 		return colormap;
 	}
-	
 
+	// Delete
+	public OverlayDrawMap getDrawMap() {
+		OverlayDrawMap overlay_draw = new OverlayDrawMap(this);
+		
+		for (Map.Entry<String, Library> entry : library.entrySet()) {
+			overlay_draw.add(entry.getKey());
+		}
+		
+		return overlay_draw;
+	}
+
+	
+	// Delete
 	public DecoratorFactory setDecorators(DecoratorFactory df) {
 
 		for (Map.Entry<String, Library> entry : library.entrySet()) {
-			df.addOverlayType(entry.getKey(), entry.getValue().decorator, entry.getValue().color);
+			// df.addOverlayType(entry.getKey(), entry.getValue().decorator, entry.getValue().color);
+			df.addOverlayType(entry.getKey());
 		}
 		
 		return df;
@@ -312,30 +329,44 @@ public class SOMData {
 		return oi;
 	}
 	
-	public void addOverlay(String name, int variant, int [] id, String col) {
+	public void addOverlay(SOMDataOverlay data, String col) {
 		if ( overlay == null ) {
 			overlay = new HashMap<String,Overlay>();
 		}
 		
-		String uuid = overlay2uuid(name, variant);
+		String uuid = overlay2uuid(data.name, data.variant);
 		
 		if ( overlay.containsKey(uuid) ) {
 			overlay.remove(uuid);
 		}
 		
-		Library l = library.get(name);
+		Library l = library.get(data.name);
 		if ( l == null ) {
 			throw new NoSuchElementException();
 		}
 		
 		Overlay ovn = new Overlay();
 		ovn.active = true;
-		ovn.name = name;
-		ovn.variant = variant;
-		ovn.ids = id;
+		ovn.name = data.name;
+		ovn.variant = data.variant;
+		ovn.ids = data.id;
 		ovn.vectorGroup = null;
 		ovn.color = col != null? col : l.color;
 		ovn.zoom = zoom;
+		
+		// TODO: Deal with values
+		// Find min/max value and calculate int for each value
+		if ( data.values != null ) {
+			ovn.values = new int[data.values.length];
+			float val_scaled;
+			float scale = Math.abs(data.val_max - data.val_min);
+			for ( int i= 0; i < data.values.length; i++ ) {
+				float val = data.values[i];
+				// TODO:
+				val_scaled = val - data.val_min + Math.abs(val) * VALUE_RANGE / scale;
+				ovn.values[i] = (int) val_scaled;
+			}
+		}
 		
 		overlay.put(uuid, ovn);
 		
@@ -362,7 +393,7 @@ public class SOMData {
 		if ( overlay == null )
 			return;
 		
-		overlay.get(overlay2uuid(name, variant)).active = true;
+		setOverlayActive(overlay.get(overlay2uuid(name, variant)));
 	}
 
 	
@@ -381,7 +412,7 @@ public class SOMData {
 			Overlay ov = (Overlay) entry.getValue();
 			
 			if ( ov.variant == variant )
-				ov.active = true;
+				setOverlayActive(ov);
 		}
 
 	}
@@ -401,11 +432,18 @@ public class SOMData {
 			Overlay ov = (Overlay) entry.getValue();
 			
 			if ( ov.name.compareTo(name) == 0 )
-				ov.active = true;
+				setOverlayActive(ov);
 		}
 
 	}
 
+	
+	protected void setOverlayActive(Overlay ov) {
+		ov.active = true;
+		// setColorRank(ov,false);
+	}
+	
+	
 	public void setOverlayInactive(String name) {
 		Library l = library.get(name);
 		if ( l == null ) {
@@ -424,21 +462,71 @@ public class SOMData {
 		if ( overlay == null )
 			return;
 
-		overlay.get(overlay2uuid(name, variant)).active = false;
+		Overlay ov = overlay.get(overlay2uuid(name, variant));
+		ov.active = false;
+		// setColorRank(ov,true);
 	}
+	
+	
+	protected void setColorRank(String name, boolean rm) {
+		int rank = 0;
+		Library l = library.get(name);
+		HashMap<String, Integer> similar = new HashMap<String,Integer>(l.color_similar.length);
+		HashMap<String, Library> adjust = new HashMap<String, Library>(library.size());
+		
+		for ( String ss : l.color_similar ) {
+			similar.put(ss, 1);
+		}
+		
+		Iterator<Map.Entry<String, Overlay>> alloverlays = overlay.entrySet().iterator();
+		while (alloverlays.hasNext()) {
+			Map.Entry<String, Overlay> entry = (Map.Entry<String, Overlay>) alloverlays.next();
+			Overlay ovc = (Overlay) entry.getValue();
+			
+			if ( ovc.active == true && similar.containsKey(ovc.name) ) {
+				Library la = library.get(ovc.name);
+				if ( l == la )
+					continue;
+				if ( ! adjust.containsKey(ovc.name) ) {
+					adjust.put(ovc.name, la);
+					rank++;
+				}
+			}
+		}
+		
+		
+		if ( rm == true) {
+			if ( adjust.size() == 0 )
+				return;
+			Iterator<Map.Entry<String, Library>> adj_libs = adjust.entrySet().iterator();
+			while (adj_libs.hasNext()) {
+				Library la = library.get(adj_libs.next());
+				if ( la.color_rank > l.color_rank )
+					la.color_rank--;
+			}
+		} else {
+			l.color_rank = rank;
+		}
+	}
+	
 	
 	// Get rid of all inactive overlays
 	protected void pruneOverlays() {
 		if ( overlay == null )
 			return;
 		
+		Vector<Overlay> killme = new Vector<Overlay>(30);
 		Iterator<Map.Entry<String, Overlay>> alloverlays = overlay.entrySet().iterator();
 		
 		while (alloverlays.hasNext()) {
 			Map.Entry<String, Overlay> entry = (Map.Entry<String, Overlay>) alloverlays.next();
 			Overlay ov = (Overlay) entry.getValue();
 			if ( ov.active == false )
-				alloverlays.remove();
+				killme.add(ov);
+		}
+		
+		for ( Overlay ov : killme ) {
+			overlay.remove(ov);
 		}
 	}
 	
@@ -532,6 +620,7 @@ public class SOMData {
 			
 			for ( int i = 0; i < ov.ids.length; i++ ) {
 				SOMpt pt;
+				int ov_value = 0;
 								
 				if ( seldata.containsKey(ov.ids[i]) ) {
 					pt = seldata.get(ov.ids[i]);
@@ -552,11 +641,11 @@ public class SOMData {
 					pt = new SOMpt(ov.ids[i], value.x, value.y, value.name);
 					seldata.put(ov.ids[i], pt);
 				}
-				if ( library.get(ov.name).max == 1 )
-					pt.addDrawDescription(ov.variant, ov.color, null);
-				else
-					pt.addDrawDescription(ov.variant, ov.color, null);
-				pt.addColorMapName(ov.name);
+				if ( ov.values != null )
+					ov_value = ov.values[i];
+				// pt.addDrawDescription(ov.variant, ov.color, library.get(ov.name).color_rank, null); // Draw description is not really used right now?
+				pt.addDrawMap(SOMData.this, ov.name, ov_value);
+				//pt.addColorMapName(ov.name, ov_value);
 			}
 		}
 		
@@ -711,6 +800,8 @@ public class SOMData {
 		int max;
 		String [] variant_names;
 		String color;
+		int color_rank;
+		String [] color_similar;
 		String type;
 		String decorator;
 	}
@@ -721,6 +812,7 @@ public class SOMData {
 		String name;
 		int variant;
 		int [] ids;
+		int [] values;
 		String color;
 		Group vectorGroup;
 		float zoom; 

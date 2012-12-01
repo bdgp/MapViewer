@@ -246,7 +246,7 @@ public class CategoryComposite extends Composite {
 				setLogEntry("SOM overlay: Received " + data.id.length);
 				Feedback.getInstance().rpcReceived("Overlay: " + data.id.length);
 				if ( som != null ) {
-					som.addOverlay(data.name, data.variant, data.id, null);
+					som.addOverlay(data, null);
 					// Activate all newly received overlays - should be by request from slider/checkbox only
 					activateOverlay(data.name, data.variant);
 					canvasOwner.draw();

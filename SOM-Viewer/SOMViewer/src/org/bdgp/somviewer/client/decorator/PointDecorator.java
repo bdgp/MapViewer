@@ -3,6 +3,7 @@ package org.bdgp.somviewer.client.decorator;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.OverlayDrawMap;
 import org.vaadin.gwtgraphics.client.VectorObject;
 
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -17,7 +18,7 @@ public interface PointDecorator {
 
 	VectorObject drawLabel(String label, ClickHandler onclick);
 	
-	VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick);
+	VectorObject drawMarker(boolean showMarker, Vector<String> colors, OverlayDrawMap overlay_map, ClickHandler onclick);
 	
 	void infoQuick(String title, Integer id, int variant, int x, int y);
 	

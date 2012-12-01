@@ -289,7 +289,7 @@ public class MainComposite extends ResizeComposite {
 //		scrollCatPanel.setWidget(catPanel);
 		//catPanel.setSize("100%", "100%");
 		
-		canvPanel = new CanvasComposite(ctrlPanelSize,0);
+		canvPanel = new CanvasComposite(ctrlPanelSize, titlePanelSize);
 		mainPanel.add(canvPanel);
 		
 		Feedback.getInstance().setInfoWidget(infoHtml);
@@ -329,13 +329,17 @@ public class MainComposite extends ResizeComposite {
 
 		som = new SOMData(pts);
 
-		DecoratorFactory df = new DecoratorFactory();
-		som.setDecorators(df);
+		DecoratorFactory df = new DecoratorFactory(som);
+		// som.setDecorators(df);
 		
 		canvPanel.updateCanvas(false);
 		canvPanel.setSOM(som);
 		
-		canvPanel.addDecorator(new PointMarker(som.getColorMap()));
+		// Add all available Overlays to PointMarker
+		OverlayDrawMap om_all = new OverlayDrawMap(som);
+		om_all.addAll();
+		canvPanel.addDecorator(new PointMarker(om_all));
+		// Use DecoratorFactory for the decorators
 		Iterator<PointDecorator> it_df = df.getDecorators();
 		while ( it_df.hasNext() )
 			canvPanel.addDecorator(it_df.next());

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.OverlayDrawMap;
 import org.vaadin.gwtgraphics.client.VectorObject;
 import org.vaadin.gwtgraphics.client.shape.Text;
 
@@ -13,7 +14,7 @@ public class PointMarker extends PointBasic {
 
 	protected int uuid = 12348;
 	
-	public PointMarker(HashMap<String,String> colormap) {
+	public PointMarker(OverlayDrawMap colormap) {
 		super(colormap);
 	}
 
@@ -44,11 +45,11 @@ public class PointMarker extends PointBasic {
 		return t;
 	}
 
-	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick) {
+	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, OverlayDrawMap overlay_map, ClickHandler onclick) {
 
 		VectorObject vo = null;
 		
-		if ( colors == null ) {
+		if ( colors == null && overlay_map == null ) {
 			if ( showMarker == true ) {
 				vo = drawCircle(markerSize(), 0.5f, "fuchsia");
 				if ( onclick != null) 

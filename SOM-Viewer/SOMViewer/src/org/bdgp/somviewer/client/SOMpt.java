@@ -13,6 +13,7 @@ public class SOMpt {
 	public Vector<DrawHints> draw = new Vector<DrawHints>(2);
 	public Vector<String> overlay_names = new Vector<String>(2);
 	protected HashMap<String,Integer> overlay_unique = new HashMap<String,Integer>();
+	protected OverlayDrawMap overlay_map = null;
 	protected Integer dummy  = new Integer(1);
 	protected HashMap<Integer,String> identical_pts;
 	
@@ -72,18 +73,25 @@ public class SOMpt {
 	}
 	
 	
-	public Vector<String> getColorMapNames() {
-		if ( overlay_unique.size() == 0 )
-			return null;
-		
-		if ( overlay_names.size() == 0 ) {
-			for (Map.Entry<String, Integer> entry : overlay_unique.entrySet()) {
-				overlay_names.add(entry.getKey());
-			}
-		}
-		return overlay_names;
-	}
+//	public Vector<String> getColorMapNames() {
+//		if ( overlay_unique.size() == 0 )
+//			return null;
+//		
+//		// Lazy generation of Vector for colormap names
+//		// Generating them upon get call instead of add prevents duplicates (HashMap in addColorMap makes sure about that)
+//		if ( overlay_names.size() == 0 ) {
+//			for (Map.Entry<String, Integer> entry : overlay_unique.entrySet()) {
+//				overlay_names.add(entry.getKey());
+//			}
+//		}
+//		return overlay_names;
+//	}
 	
+	
+	public OverlayDrawMap getDrawMap() {
+		return overlay_map;
+	}
+		
 	
 	public int getVariant() {
 		//TODO: This shouldn't return a fixed value!!!
@@ -95,18 +103,26 @@ public class SOMpt {
 	}
 	
 	
-	public void addDrawDescription(int var, String color, String shape) {
+	public void addDrawDescription(int var, String color, int color_rank, String shape) {
 		DrawHints dh = new DrawHints();
 		dh.variant = var;
 		dh.color = color;
+		dh.color_rank = color_rank;
 		dh.shape = shape;
 		draw.add(dh);
 	}
 	
 	// Colormaps, by definition, have to be unique
-	public void addColorMapName(String n) {
-		//overlay_names.add(n);
-		overlay_unique.put(n, dummy);
+//	public void addColorMapName(String n,  int value) {
+//		//overlay_names.add(n);
+//		overlay_unique.put(n, dummy);
+//	}
+	
+	
+	public void addDrawMap(SOMData som, String n, int value) {
+		if ( overlay_map == null )
+			overlay_map = new OverlayDrawMap(som);
+		overlay_map.add(n);
 	}
 	
 
@@ -130,6 +146,7 @@ public class SOMpt {
 	protected class DrawHints {
 		public int variant;
 		public String color;
+		public int color_rank;
 		public String shape;
 	}
 	

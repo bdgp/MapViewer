@@ -15,6 +15,8 @@ public class SOMoverlay {
 	private final String st_availoverlays = "select distinct(name), max(variant), color, type, decorator from somoverlay_info where somtitle_id = __ID  group by name";	
 	private final String st_availvariants = "select distinct(variant), variant_name, type from somoverlay_info where somtitle_id = __ID order by variant";
 	private final String st_overlay = "select somstruct_id, value from somoverlay so, somoverlay_info si where so.somoverlay_info_id = si.id and si.name = '__NAME' and si.variant = __VAR and si.somtitle_id = __ID";
+	private final String st_overlayrange = "select i1.type, min(somoverlay.value), max(somoverlay.value) from somoverlay, somoverlay_info i1, somoverlay_info i2 where " + 
+											"i1.name = '__NAME' and i1.somtitle_id = __ID and i2.somtitle_id = __ID and i1.type = i2.type and somoverlay.somoverlay_info_id = i2.id order by somoverlay.value";
 	
 	protected final double COLOR_THRESHOLD = 30;
 	
@@ -202,13 +204,33 @@ public class SOMoverlay {
 			throw new Exception("Overlay doesn't exist: " + name);
 		}
 		
-		boolean has_values = true;
+		ResultSet rs;
+
+		// Query if any values are associated with the overlay and find global (!) min/max for all values of type
+		// TODO: This query is fast but can be cached if necessary
+		boolean has_values = false;
+		float min, max;
+		String fquery = st_overlayrange.replace("__NAME", name);
+		fquery = fquery.replace("__ID", new Integer(som_id).toString());
 		
-		String fquery = st_overlay.replace("__NAME", name);
+		rs = db.query(fquery);
+		if ( rs == null ) {
+			db.logEvent(this, LogSeverity.WARN, "No result set returned");
+			return null;
+		}
+		rs.next();
+		min = rs.getFloat(2);
+		max = rs.getFloat(3);
+		if ( rs.wasNull() == true || min == max ) {
+			has_values = true;
+		}
+		
+		// Query the overlay and the values
+		fquery = st_overlay.replace("__NAME", name);
 		fquery = fquery.replace("__VAR", new Integer(variant).toString());
 		fquery = fquery.replace("__ID", new Integer(som_id).toString());
 		
-		ResultSet rs = db.query(fquery);
+		rs = db.query(fquery);
 
 		if ( rs == null ) {
 			db.logEvent(this, LogSeverity.WARN, "No result set returned");
@@ -221,10 +243,10 @@ public class SOMoverlay {
 		while (rs.next()) {
 			
 			ov_id.add(new Integer(rs.getInt(1)));
-			float val = rs.getFloat(2);
-			if ( rs.wasNull() == true || val != 0.0f )
-				has_values = true;
-			ov_val.add(new Float(val));
+			if ( has_values == true ) {
+				float val = rs.getFloat(2);
+				ov_val.add(new Float(val));
+			}
 						
 		}
 		
@@ -251,6 +273,8 @@ public class SOMoverlay {
 		last_query.variant = variant;
 		last_query.ids = ov;
 		last_query.values = vals;
+		last_query.val_min = min;
+		last_query.val_max = max;
 		
 		return ov;
 		
@@ -271,6 +295,19 @@ public class SOMoverlay {
 		return last_query.values;
 		
 	}
+
+	
+	public float queryOverlayMinValue(String name, int variant) throws Exception {
+		// Make sure we have an active query (should be a cheap call if we have)
+		queryOverlayValues(name, variant);
+		return last_query.val_min;
+	}
+	
+	public float queryOverlayMaxValue(String name, int variant) throws Exception {
+		// Make sure we have an active query (should be a cheap call if we have)
+		queryOverlayValues(name, variant);
+		return last_query.val_max;
+	}
 	
 	
 	public SOMDataPts availData(SOMDataPts pts) {
@@ -285,7 +322,7 @@ public class SOMoverlay {
 			String [] var_array  =  new String[ available.get(i).variant_names.size() ];
 			for ( int j = 0; j < available.get(i).variant_names.size(); j++ )
 					var_array[j] = available.get(i).variant_names.get(j);
-			String [] cs_array = null;
+			String [] cs_array = null; // cs_array can be null if we don't have any values
 			if ( available.get(i).color_similar != null ) {
 				cs_array = new String[ available.get(i).color_similar.size() ];
 				for ( int j = 0; j < available.get(i).color_similar.size(); j++ )
@@ -304,6 +341,7 @@ public class SOMoverlay {
 		int variant;
 		int [] ids;
 		float [] values;
+		float val_min, val_max;
 	}
 	
 	

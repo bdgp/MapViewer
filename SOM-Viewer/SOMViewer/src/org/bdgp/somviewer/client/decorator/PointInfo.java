@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import org.bdgp.somviewer.client.DialogBoxClosable;
 import org.bdgp.somviewer.client.CategoryComposite.SomOverlayUpdater;
+import org.bdgp.somviewer.client.OverlayDrawMap;
 import org.bdgp.somviewer.rpc.AbstractLoggingAsyncHandler;
 import org.bdgp.somviewer.rpc.ServerService;
 import org.bdgp.somviewer.rpc.data.SOMDataOverlay;
@@ -62,7 +63,7 @@ public class PointInfo implements PointDecorator {
 		return null;
 	}
 
-	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, ClickHandler onclick) {
+	public VectorObject drawMarker(boolean showMarker, Vector<String> colors, OverlayDrawMap overlay_map, ClickHandler onclick) {
 		return null;
 	}
 
