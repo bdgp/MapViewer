@@ -34,6 +34,11 @@ public class OverlayDrawMap {
 		return library.get(id).color;
 	}
 	
+	public int getColorRank(String id) {
+		return library.get(id).color_rank;
+	}
+	
+	
 	public String getDecorator(String id) {
 		return library.get(id).decorator;
 	}

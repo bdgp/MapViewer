@@ -440,7 +440,7 @@ public class SOMData {
 	
 	protected void setOverlayActive(Overlay ov) {
 		ov.active = true;
-		// setColorRank(ov,false);
+		setColorRank(ov.name,false);
 	}
 	
 	
@@ -464,7 +464,7 @@ public class SOMData {
 
 		Overlay ov = overlay.get(overlay2uuid(name, variant));
 		ov.active = false;
-		// setColorRank(ov,true);
+		setColorRank(ov.name,true);
 	}
 	
 	
@@ -500,7 +500,8 @@ public class SOMData {
 				return;
 			Iterator<Map.Entry<String, Library>> adj_libs = adjust.entrySet().iterator();
 			while (adj_libs.hasNext()) {
-				Library la = library.get(adj_libs.next());
+				Map.Entry<String, Library> entry = (Map.Entry<String, Library>) adj_libs.next();
+				Library la = entry.getValue();
 				if ( la.color_rank > l.color_rank )
 					la.color_rank--;
 			}
@@ -520,7 +521,7 @@ public class SOMData {
 		
 		while (alloverlays.hasNext()) {
 			Map.Entry<String, Overlay> entry = (Map.Entry<String, Overlay>) alloverlays.next();
-			Overlay ov = (Overlay) entry.getValue();
+			Overlay ov = entry.getValue();
 			if ( ov.active == false )
 				killme.add(ov);
 		}

@@ -59,7 +59,7 @@ public class CanvasComposite extends Composite {
 	public CanvasComposite(int reduce_x, int reduce_y) {
 		
 		xPanelSize = reduce_x;
-		yPanelSize = 0;
+		yPanelSize = reduce_y;
 		
 		ScrollPanel scrollCanvasPanel = new ScrollPanel();
 		scrollCanvasPanel.setAlwaysShowScrollBars(false);
