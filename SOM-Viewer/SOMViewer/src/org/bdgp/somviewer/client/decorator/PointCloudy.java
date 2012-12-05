@@ -14,8 +14,8 @@ public class PointCloudy extends PointBasic {
 
 	protected static final int BIGCIRC_RAD = 10;
 	
-	public PointCloudy(OverlayDrawMap colormap) {
-		super(colormap);
+	public PointCloudy(OverlayDrawMap colormap, ColorRank col_rank) {
+		super(colormap, col_rank);
 		// TODO Auto-generated constructor stub
 	}
 

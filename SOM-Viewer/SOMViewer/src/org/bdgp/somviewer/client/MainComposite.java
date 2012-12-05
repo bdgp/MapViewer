@@ -3,6 +3,8 @@ package org.bdgp.somviewer.client;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.decorator.ColorRank;
+import org.bdgp.somviewer.client.decorator.ColorRankBasicCSS;
 import org.bdgp.somviewer.client.decorator.DecoratorFactory;
 import org.bdgp.somviewer.client.decorator.PointDecorator;
 import org.bdgp.somviewer.client.decorator.PointInfo;
@@ -329,7 +331,6 @@ public class MainComposite extends ResizeComposite {
 
 		som = new SOMData(pts);
 
-		DecoratorFactory df = new DecoratorFactory(som);
 		// som.setDecorators(df);
 		
 		canvPanel.updateCanvas(false);
@@ -338,8 +339,12 @@ public class MainComposite extends ResizeComposite {
 		// Add all available Overlays to PointMarker
 		OverlayDrawMap om_all = new OverlayDrawMap(som);
 		om_all.addAll();
-		canvPanel.addDecorator(new PointMarker(om_all));
+		ColorRank rank = new ColorRankBasicCSS();
+
+		canvPanel.addDecorator(new PointMarker(om_all, rank));
+
 		// Use DecoratorFactory for the decorators
+		DecoratorFactory df = new DecoratorFactory(som, rank);
 		Iterator<PointDecorator> it_df = df.getDecorators();
 		while ( it_df.hasNext() )
 			canvPanel.addDecorator(it_df.next());
@@ -349,6 +354,7 @@ public class MainComposite extends ResizeComposite {
 		CategoryComposite cat = new CategoryComposite(canvPanel,som);
 		catPanel.clear();
 		catPanel.add(cat);
+		cat.setColorRank(rank);
 
 		canvPanel.updateCanvas(true);
 	}

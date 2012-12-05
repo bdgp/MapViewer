@@ -23,6 +23,7 @@ public class PointBasic implements PointDecorator {
 	protected final static int OVERLAY_CIRC_RAD = 7;
 	
 	protected OverlayDrawMap colormap;
+	protected ColorRank colrank;
 	protected HashMap<Integer,String> contents;
 	protected String label;
 	protected Integer id;
@@ -30,8 +31,9 @@ public class PointBasic implements PointDecorator {
 	int view_w, view_h;
 	
 	
-	public PointBasic(OverlayDrawMap colormap) {
+	public PointBasic(OverlayDrawMap colormap, ColorRank col_rank) {
 		this.colormap = colormap;
+		this.colrank = col_rank;
 	}
 
 	public void setPoint(int x, int y) {

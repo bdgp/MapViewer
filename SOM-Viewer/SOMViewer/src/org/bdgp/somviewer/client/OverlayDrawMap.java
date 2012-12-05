@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.bdgp.somviewer.client.SOMData.Library;
+import org.bdgp.somviewer.client.decorator.ColorRank;
 
 public class OverlayDrawMap {
 	private HashMap<String,SOMData.Library> entries;
@@ -34,6 +35,7 @@ public class OverlayDrawMap {
 		return library.get(id).color;
 	}
 	
+
 	public int getColorRank(String id) {
 		return library.get(id).color_rank;
 	}

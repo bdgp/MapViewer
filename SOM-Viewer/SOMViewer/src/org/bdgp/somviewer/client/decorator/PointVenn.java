@@ -19,10 +19,9 @@ public class PointVenn extends PointBasic {
 	protected int uuid = 12346;
 	protected static final int ShiftVal = 4;
 	protected Vector<PtShifts> shifts = new Vector<PtShifts>(10);
-	protected Vector<ColorShifts> col_shifts = new Vector<ColorShifts>(10);
 		
-	public PointVenn(OverlayDrawMap colormap) {
-		super(colormap);
+	public PointVenn(OverlayDrawMap colormap, ColorRank col_rank) {
+		super(colormap, col_rank);
 		
 		// Add "Venn" like shifts of the point into 8 possible directions
 		add(-1,0);
@@ -34,29 +33,13 @@ public class PointVenn extends PointBasic {
 		add(-1,1);
 		add(1,1);
 		
-		// Add colors if ranks are too similar
-		addcolor("DarkGreen", "006400");
-		addcolor("DarkKhaki", "BDB76B");
-		addcolor("DarkMagenta","8B008B");
-		addcolor("DarkOliveGreen", "556B2F");
-		addcolor("Darkorange","FF8C00");
-		addcolor("DarkOrchid","9932CC");
-		addcolor("DarkRed","8B0000");
-		addcolor("DarkSalmon", "E9967A");
-		addcolor("DarkSeaGreen", "8FBC8F");
-		addcolor("DarkSlateBlue","483D8B");
 	}
 	
 	
 	protected void add(int xs, int ys) {				
 		shifts.add(new PtShifts(xs,ys));
 	}
-	
-	
-	protected void addcolor(String name, String value) {
-		col_shifts.add(new ColorShifts(name, value));
-	}
-	
+		
 	
 	/* (non-Javadoc)
 	 * @see org.bdgp.somviewer.client.PointBasic#drawLabel(java.lang.String, com.google.gwt.event.dom.client.ClickHandler)
@@ -129,11 +112,9 @@ public class PointVenn extends PointBasic {
 	protected Circle drawDistinctCircle(int radius, float opacy, String color, int col_rank) {
 		Circle c = new Circle(x, y, radius);
 		c.setFillOpacity(opacy);
-		if ( col_rank != 0 ) {
-			if ( col_rank >= col_shifts.size() )
-				col_rank = 0;
-			c.setStrokeWidth(2);
-			c.setStrokeColor(col_shifts.get(col_rank).getColor());			
+		if ( col_rank != 0 && colrank != null ) {
+			c.setStrokeWidth(3);
+			c.setStrokeColor(colrank.getColor(col_rank));			
 		} else {
 			c.setStrokeWidth(0);
 			c.setStrokeColor("white");
@@ -158,19 +139,4 @@ public class PointVenn extends PointBasic {
 		}
 		
 	}
-	
-	protected class ColorShifts {
-		public String css_name;
-		public String hex_value;
-		
-		public ColorShifts(String n, String v) {
-			css_name = n;
-			hex_value = v;
-		}
-		
-		public String getColor() {
-			return css_name;
-		}
-	}
-
 }

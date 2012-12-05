@@ -101,9 +101,6 @@ public class CanvasComposite extends Composite {
 		this.som = som;
 		
 		resetDecorators();
-//		addDecorator(new PointMarker(som.getColorMap()));
-//		addDecorator(new PointVenn(som.getColorMap()));
-//		setDecorator(new PointInfo());
 
 		win_w = Window.getClientWidth() - xPanelSize;
 		win_h = Window.getClientHeight()- yPanelSize;

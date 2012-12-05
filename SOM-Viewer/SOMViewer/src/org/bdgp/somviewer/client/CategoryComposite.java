@@ -1,11 +1,14 @@
 package org.bdgp.somviewer.client;
 
+import java.util.HashMap;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.decorator.ColorRank;
 import org.bdgp.somviewer.rpc.AbstractLoggingAsyncHandler;
 import org.bdgp.somviewer.rpc.ServerService;
 import org.bdgp.somviewer.rpc.data.SOMDataOverlay;
 
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -26,8 +29,10 @@ public class CategoryComposite extends Composite {
 
 	protected SOMData som;
 	protected CanvasComposite canvasOwner;
+	protected ColorRank col_rank = null;
 	protected VerticalPanel catPanel  = new VerticalPanel();
 	protected DrawSync dsync;
+	protected HashMap<String, CheckBox> changed_boxes = new HashMap<String, CheckBox>(2);
 
 	protected boolean showCircles = true, showLabels = true;
 
@@ -40,6 +45,11 @@ public class CategoryComposite extends Composite {
 		
 		dsync = new DrawSync(canvasOwner);
 		populatePanel();	
+	}
+	
+	
+	public void setColorRank(ColorRank col_rank) {
+		this.col_rank = col_rank;
 	}
 	
 	
@@ -138,8 +148,10 @@ public class CategoryComposite extends Composite {
 			osGrid.setWidget(row, 0, osCheckBox);
 			osCheckBox.setText(ovn);
 			String col = som.getOverlayColor(ovn);
-			if ( col != null)
-				osCheckBox.getElement().getStyle().setProperty("backgroundColor", "#" + col);
+			if ( col != null) {
+//				osCheckBox.getElement().getStyle().setProperty("backgroundColor", "#" + col);
+				osCheckBox.getElement().getStyle().setBackgroundColor("#" + col);
+			}
 			
 			
 			if ( max_variant > 1 ) {
@@ -203,12 +215,32 @@ public class CategoryComposite extends Composite {
 			getOverlay(name, variant); // launch RPC request
 		} else {
 			som.setOverlayActive(name, variant);
+			// and change checkbox if necessary
+			if ( changed_boxes.containsKey(name) ) {					
+				CheckBox cb = changed_boxes.get(name);
+				changed_boxes.remove(cb);
+				if (som.getColorRank(name) != 0 ) {
+					String frame_col = col_rank.getColor(som.getColorRank(name));
+					cb.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
+					cb.getElement().getStyle().setBorderColor(frame_col);
+					//					cb.getElement().getStyle().setProperty("border-style", "solid");
+					//					cb.getElement().getStyle().setProperty("border-color", "#" + frame_col);
+				}
+			}
 		}
 	}
 	
 	protected void inactivateOverlay(String name) {
 		// inactivate all overlays with name
 		som.setOverlayInactive(name);
+		if ( changed_boxes.containsKey(name) ) {					
+			CheckBox cb = changed_boxes.get(name);
+			changed_boxes.remove(cb);
+			if (som.getColorRank(name) != 0 ) {
+				cb.getElement().getStyle().clearBorderStyle();
+//				cb.getElement().getStyle().setProperty("border-style", "none");
+			}
+		}
 	}
 
 	
@@ -276,13 +308,20 @@ public class CategoryComposite extends Composite {
 		public void onClick(ClickEvent event) {
 			// updateOverlays();
 			
-			boolean checked = ((CheckBox) event.getSource()).getValue();
+			CheckBox cb = ((CheckBox) event.getSource());
+			boolean checked = cb.getValue();
 			if ( checked == true ) {
 				if ( varBox != null )
 					activateOverlay(name, varBox.getValue());
 				else
 					activateOverlay(name, const_value);
+				if ( col_rank != null ) {
+					// if RPC requested, the overlay is not active at this point -> put it on "todo" list
+					changed_boxes.put(name, cb);
+				}
 			} else {
+				if ( col_rank != null )
+					changed_boxes.put(name, cb);
 				inactivateOverlay(name);
 			}
 			canvasOwner.draw();

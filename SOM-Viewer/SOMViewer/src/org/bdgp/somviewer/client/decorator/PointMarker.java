@@ -14,8 +14,8 @@ public class PointMarker extends PointBasic {
 
 	protected int uuid = 12348;
 	
-	public PointMarker(OverlayDrawMap colormap) {
-		super(colormap);
+	public PointMarker(OverlayDrawMap colormap, ColorRank col_rank) {
+		super(colormap, col_rank);
 	}
 
 	public VectorObject drawLabel(String label, ClickHandler onclick) {

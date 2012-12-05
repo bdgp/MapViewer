@@ -12,10 +12,12 @@ public class DecoratorFactory {
 	
 	SOMData som;
 	OverlayDrawMap overlay_map;
+	ColorRank col_rank;
 	Vector<Decorator> content = new Vector<Decorator>(2);
 
-	public DecoratorFactory(SOMData som) {
+	public DecoratorFactory(SOMData som, ColorRank col_rank) {
 		this.som = som;
+		this.col_rank = col_rank;
 		overlay_map = new OverlayDrawMap(som);
 		addOverlays();
 	}
@@ -23,11 +25,11 @@ public class DecoratorFactory {
 	protected PointDecorator toPointDecorator(Decorator d) {
 		
 		if ( d.decorator.compareTo("Basic") == 0 )
-			return new PointBasic(d.colormap);
+			return new PointBasic(d.colormap, col_rank);
 		else if ( d.decorator.compareTo("Venn") == 0 )
-			return new PointVenn(d.colormap);
+			return new PointVenn(d.colormap, col_rank);
 		else if ( d.decorator.compareTo("Cloudy") == 0 )
-			return new PointCloudy(d.colormap);
+			return new PointCloudy(d.colormap, col_rank);
 		
 		return null;
 	}

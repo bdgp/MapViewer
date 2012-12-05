@@ -11,8 +11,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 public class PointSized extends PointBasic {
 
-	public PointSized(OverlayDrawMap colormap) {
-		super(colormap);
+	public PointSized(OverlayDrawMap colormap, ColorRank col_rank) {
+		super(colormap, col_rank);
 		// TODO Auto-generated constructor stub
 	}
 

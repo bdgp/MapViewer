@@ -164,29 +164,6 @@ public class SOMData {
 		
 		return colormap;
 	}
-
-	// Delete
-	public OverlayDrawMap getDrawMap() {
-		OverlayDrawMap overlay_draw = new OverlayDrawMap(this);
-		
-		for (Map.Entry<String, Library> entry : library.entrySet()) {
-			overlay_draw.add(entry.getKey());
-		}
-		
-		return overlay_draw;
-	}
-
-	
-	// Delete
-	public DecoratorFactory setDecorators(DecoratorFactory df) {
-
-		for (Map.Entry<String, Library> entry : library.entrySet()) {
-			// df.addOverlayType(entry.getKey(), entry.getValue().decorator, entry.getValue().color);
-			df.addOverlayType(entry.getKey());
-		}
-		
-		return df;
-	}
 	
 	
 	public String getOverlayColor(String name) {
@@ -196,6 +173,13 @@ public class SOMData {
 		
 		return null;
 		
+	}
+	
+	
+	public int getColorRank(String id) {
+		if ( library.containsKey(id) )
+			return library.get(id).color_rank;
+		return 0;
 	}
 	
 	
