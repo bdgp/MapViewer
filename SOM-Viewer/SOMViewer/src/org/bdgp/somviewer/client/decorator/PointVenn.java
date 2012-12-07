@@ -18,6 +18,7 @@ public class PointVenn extends PointBasic {
 	
 	protected int uuid = 12346;
 	protected static final int ShiftVal = 4;
+	protected static final int DistinctCircleWidth = 2;
 	protected Vector<PtShifts> shifts = new Vector<PtShifts>(10);
 		
 	public PointVenn(OverlayDrawMap colormap, ColorRank col_rank) {
@@ -75,17 +76,17 @@ public class PointVenn extends PointBasic {
 				continue;
 			
 			x_save = x; y_save = y;
-			int [] values = overlay_map.getValues(col);
+			Vector<Integer> values = overlay_map.getValues(col);
 			if ( values == null ) {
 				x += shifts.get(ct).xsc;
 				y += shifts.get(ct).ysc;
 				// c = drawCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.getColor(col));
 				c = drawDistinctCircle(OVERLAY_CIRC_RAD, 0.9f, "#" + colormap.getColor(col), overlay_map.getColorRank(col));
 			} else {
-				max_dec = values.length - 1;
-				x += shifts.get(ct).xs * values[max_dec];
-				y += shifts.get(ct).ys * values[max_dec];
-				c = drawCircle(values[max_dec], 0.9f, "#" + colormap.getColor(col));
+				max_dec = values.size() - 1;
+				x += shifts.get(ct).xs * values.get(max_dec);
+				y += shifts.get(ct).ys * values.get(max_dec);
+				c = drawCircle(values.get(max_dec), 0.9f, "#" + colormap.getColor(col));
 			}
 			g.add(c);
 			if ( onclick != null )
@@ -113,8 +114,8 @@ public class PointVenn extends PointBasic {
 		Circle c = new Circle(x, y, radius);
 		c.setFillOpacity(opacy);
 		if ( col_rank != 0 && colrank != null ) {
-			c.setStrokeWidth(3);
-			c.setStrokeColor(colrank.getColor(col_rank));			
+			c.setStrokeWidth(DistinctCircleWidth);
+			c.setStrokeColor(colrank.getColor(col_rank, color));			
 		} else {
 			c.setStrokeWidth(0);
 			c.setStrokeColor("white");

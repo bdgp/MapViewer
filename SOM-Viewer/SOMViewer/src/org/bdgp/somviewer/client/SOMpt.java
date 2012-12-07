@@ -123,6 +123,8 @@ public class SOMpt {
 		if ( overlay_map == null )
 			overlay_map = new OverlayDrawMap(som);
 		overlay_map.add(n);
+		if ( value != 0 )
+			overlay_map.addValue(value);
 	}
 	
 

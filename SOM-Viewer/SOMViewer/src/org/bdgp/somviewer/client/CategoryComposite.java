@@ -216,33 +216,37 @@ public class CategoryComposite extends Composite {
 		} else {
 			som.setOverlayActive(name, variant);
 			// and change checkbox if necessary
-			if ( changed_boxes.containsKey(name) ) {					
-				CheckBox cb = changed_boxes.get(name);
-				changed_boxes.remove(cb);
-				if (som.getColorRank(name) != 0 ) {
-					String frame_col = col_rank.getColor(som.getColorRank(name));
-					cb.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
-					cb.getElement().getStyle().setBorderColor(frame_col);
-					//					cb.getElement().getStyle().setProperty("border-style", "solid");
-					//					cb.getElement().getStyle().setProperty("border-color", "#" + frame_col);
-				}
-			}
+			adjustColorRank(name);
 		}
 	}
 	
 	protected void inactivateOverlay(String name) {
 		// inactivate all overlays with name
 		som.setOverlayInactive(name);
-		if ( changed_boxes.containsKey(name) ) {					
-			CheckBox cb = changed_boxes.get(name);
-			changed_boxes.remove(cb);
-			if (som.getColorRank(name) != 0 ) {
-				cb.getElement().getStyle().clearBorderStyle();
-//				cb.getElement().getStyle().setProperty("border-style", "none");
-			}
-		}
+		// and change checkbox if necessary
+		adjustColorRank(name);
 	}
 
+	
+	protected void adjustColorRank(String name) {
+		if ( changed_boxes.containsKey(name) ) {					
+			CheckBox cb = changed_boxes.get(name);
+			if ( cb.getValue() == false )
+				changed_boxes.remove(cb);
+			if (som.getColorRank(name) != 0 ) {
+				String frame_col = col_rank.getColor(som.getColorRank(name));
+				cb.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
+				cb.getElement().getStyle().setBorderColor(frame_col);
+				// cb.getElement().getStyle().setProperty("border-style", "solid");
+				// cb.getElement().getStyle().setProperty("border-color", "#" + frame_col);
+			} else {
+				cb.getElement().getStyle().clearBorderStyle();
+				// cb.getElement().getStyle().setProperty("border-style", "none");			
+			}
+		}		
+	}
+	
+	
 	
 	/**
 	 * Request the overlay data from the server

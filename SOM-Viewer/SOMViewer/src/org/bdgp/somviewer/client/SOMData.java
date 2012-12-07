@@ -451,10 +451,13 @@ public class SOMData {
 		setColorRank(ov.name,true);
 	}
 	
-	
+	// TODO: still buggy (creates color rank when switching stages)
 	protected void setColorRank(String name, boolean rm) {
-		int rank = 0;
 		Library l = library.get(name);
+		if ( l.color_similar == null )
+			return;
+		int rank = 0;
+		boolean add_rank = false;
 		HashMap<String, Integer> similar = new HashMap<String,Integer>(l.color_similar.length);
 		HashMap<String, Library> adjust = new HashMap<String, Library>(library.size());
 		
@@ -473,7 +476,9 @@ public class SOMData {
 					continue;
 				if ( ! adjust.containsKey(ovc.name) ) {
 					adjust.put(ovc.name, la);
-					rank++;
+					if ( l.color_rank == la.color_rank )
+						add_rank = true;
+					rank = rank <= la.color_rank ? la.color_rank + 1 : rank;
 				}
 			}
 		}
@@ -490,7 +495,8 @@ public class SOMData {
 					la.color_rank--;
 			}
 		} else {
-			l.color_rank = rank;
+			if ( add_rank )
+				l.color_rank = rank;
 		}
 	}
 	

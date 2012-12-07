@@ -3,15 +3,16 @@ package org.bdgp.somviewer.client;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Vector;
 
 import org.bdgp.somviewer.client.SOMData.Library;
-import org.bdgp.somviewer.client.decorator.ColorRank;
 
 public class OverlayDrawMap {
+	private Vector<Integer> values;
 	private HashMap<String,SOMData.Library> entries;
 	final private HashMap<String,SOMData.Library> library;
 	
-	public OverlayDrawMap(SOMData som) {
+	public OverlayDrawMap(final SOMData som) {
 		library = som.library;
 		entries = new HashMap<String,SOMData.Library>(library.size());
 	}
@@ -19,6 +20,13 @@ public class OverlayDrawMap {
 	public void add(String id) {
 		entries.put(id,library.get(id));
 	}
+	
+	public void addValue(int val) {
+		if ( values == null )
+			values = new Vector<Integer>(2);
+		values.add(val);
+	}
+	
 	
 	public void addAll() {
 		// essentially just duplicate the entire map
@@ -46,8 +54,8 @@ public class OverlayDrawMap {
 	}
 	
 	
-	public int [] getValues(String id) {
-		return null;
+	public Vector<Integer> getValues(String id) {
+		return values;
 	}
 	
 	public Iterator<String> libraryIterator() {
