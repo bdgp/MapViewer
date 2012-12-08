@@ -1,14 +1,18 @@
 package org.bdgp.somviewer.client;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
+import org.bdgp.somviewer.client.SOMData.Library;
 import org.bdgp.somviewer.client.decorator.ColorRank;
+import org.bdgp.somviewer.client.decorator.ColorSimpleCalc;
 import org.bdgp.somviewer.rpc.AbstractLoggingAsyncHandler;
 import org.bdgp.somviewer.rpc.ServerService;
 import org.bdgp.somviewer.rpc.data.SOMDataOverlay;
 
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -145,12 +149,17 @@ public class CategoryComposite extends Composite {
 
 			// overlay Checkbox - always there
 			CheckBox osCheckBox = new CheckBox();
+			// osCheckBox.getElement().getStyle().setWidth(100, Unit.PCT);
 			osGrid.setWidget(row, 0, osCheckBox);
 			osCheckBox.setText(ovn);
 			String col = som.getOverlayColor(ovn);
 			if ( col != null) {
 //				osCheckBox.getElement().getStyle().setProperty("backgroundColor", "#" + col);
 				osCheckBox.getElement().getStyle().setBackgroundColor("#" + col);
+				// Check if colors for text (default black) & background are sufficiently different
+				if ( ColorSimpleCalc.isDiff("000000", col) == false ) {
+					osCheckBox.getElement().getStyle().setColor("#FFFFFF");
+				}
 			}
 			
 			
@@ -216,7 +225,7 @@ public class CategoryComposite extends Composite {
 		} else {
 			som.setOverlayActive(name, variant);
 			// and change checkbox if necessary
-			adjustColorRank(name);
+			adjustColorRank();
 		}
 	}
 	
@@ -224,17 +233,20 @@ public class CategoryComposite extends Composite {
 		// inactivate all overlays with name
 		som.setOverlayInactive(name);
 		// and change checkbox if necessary
-		adjustColorRank(name);
+		adjustColorRank();
 	}
 
 	
-	protected void adjustColorRank(String name) {
-		if ( changed_boxes.containsKey(name) ) {					
-			CheckBox cb = changed_boxes.get(name);
+	protected void adjustColorRank() {
+		// TODO: Change changed_boxes to Vector and iterate through all of them - checked ones may have changed 
+		
+		for (Map.Entry<String, CheckBox> entry : changed_boxes.entrySet()) {
+			String name = entry.getKey();
+			CheckBox cb = entry.getValue();
 			if ( cb.getValue() == false )
 				changed_boxes.remove(cb);
 			if (som.getColorRank(name) != 0 ) {
-				String frame_col = col_rank.getColor(som.getColorRank(name));
+				String frame_col = col_rank.getColor(som.getColorRank(name), som.getOverlayColor(name));
 				cb.getElement().getStyle().setBorderStyle(Style.BorderStyle.SOLID);
 				cb.getElement().getStyle().setBorderColor(frame_col);
 				// cb.getElement().getStyle().setProperty("border-style", "solid");

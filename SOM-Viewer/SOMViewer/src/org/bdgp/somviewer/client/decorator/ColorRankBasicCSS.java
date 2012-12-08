@@ -68,7 +68,7 @@ public class ColorRankBasicCSS implements ColorRank {
 			c = col_shifts.get(i);
 			diff = ColorSimpleCalc.colorDiff(color, c.r, c.g, c.b);
 			for ( j = 0; j < cs_val.size(); j++ ) {
-				if ( diff <= cs_val.get(j) ) {
+				if ( diff >= cs_val.get(j) ) {
 					break;
 				}					
 			}

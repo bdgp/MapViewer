@@ -1,6 +1,7 @@
 package org.bdgp.somviewer.client.decorator;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.bdgp.somviewer.client.OverlayDrawMap;
@@ -26,23 +27,29 @@ public class PointSized extends PointBasic {
 			// radius = overlay_map[0];
 		}
 		
-		if ( colors == null ) {
-			if ( showMarker == true )
-				return drawCircle(MARKER_CIRC_RAD, 0.5f, "fuchsia");
-			else
-				return null;
-		}
+		Group g = new Group();		
+		Iterator<String> ov_it = overlay_map.mapIterator();
+		while ( ov_it.hasNext() ) {
+			String col = ov_it.next();
+			
+			if ( ! colormap.containsKey(col) )
+				continue;
 
-		if ( colors.size() == 1 ) {
-			return drawCircle(radius, 0.9f, "#" + colors.get(1));
+			Vector<Integer> values = overlay_map.getValues(col);
+			
+			if ( values.size() == 0 )
+				return null;
+			else if ( values.size() == 1 ) {
+				g.add(drawCircle(values.get(0), 0.2f, "#" + colormap.getColor(col)));
+			} else {
+				for ( Integer v : values ) {
+					g.add(drawCircle(v, 0.2f, "#" + colormap.getColor(col)));
+				}
+			}
 		}
 		
-		Group g = new Group();
-		for ( String col : colors ) {
-			g.add(drawCircle(radius, 0.9f, "#" + col));
-		}
-
-		return g;		
+		return g;
+		
 	}
 
 }
