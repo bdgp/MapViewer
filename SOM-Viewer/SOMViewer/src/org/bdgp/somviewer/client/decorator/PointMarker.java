@@ -22,12 +22,12 @@ public class PointMarker extends PointBasic {
 		
 		String draw = new String(label);
 		
-		if ( contents != null ) {
-			draw += "+";
+//		if ( contents != null ) {
+//			draw += "+";
 //			for (Map.Entry<Integer, String> entry : contents.entrySet()) {
 //				draw += "\n" + entry.getValue();
 //			}
-		}
+//		}
 		
 		Text t = new Text(x, y, draw);
 		t.setFontFamily("Arial");
@@ -42,6 +42,8 @@ public class PointMarker extends PointBasic {
 		if (onclick != null)
 			t.addClickHandler(onclick);
 		
+		addExtendedInfoPruned(t);
+		
 		return t;
 	}
 
@@ -54,6 +56,7 @@ public class PointMarker extends PointBasic {
 				vo = drawCircle(markerSize(), 0.5f, "fuchsia");
 				if ( onclick != null) 
 					vo.addClickHandler(onclick);
+				addExtendedInfo(vo);
 				return vo;
 			} 
 		}

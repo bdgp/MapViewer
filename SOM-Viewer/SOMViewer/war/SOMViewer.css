@@ -75,6 +75,15 @@ h1 {
   font-family: Arial Unicode MS, Arial, sans-serif;
 }
 
+.info-PopupPanel {
+  border: 2px solid #e7e7e7;
+  padding: 2px;
+  background: white;
+  font-size: xx-small;
+  font-family: Arial Unicode MS, Arial, sans-serif;
+}
+
+
 /*
 .gwt-Button {
 	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;

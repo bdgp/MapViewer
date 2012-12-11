@@ -28,6 +28,4 @@ public interface PointDecorator {
 	
 	boolean isInfo();
 	
-	int uuid();
-	
 }

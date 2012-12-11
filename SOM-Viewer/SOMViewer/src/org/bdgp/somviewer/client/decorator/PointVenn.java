@@ -47,6 +47,7 @@ public class PointVenn extends PointBasic {
 	 * We don't draw any text in this class
 	 */
 	public VectorObject drawLabel(String label, ClickHandler onclick) {
+		addExtendedInfoPruned(null); // make sure info is only added if this function is never called
 		return null;
 	}
 	
@@ -91,6 +92,7 @@ public class PointVenn extends PointBasic {
 			g.add(c);
 			if ( onclick != null )
 				c.addClickHandler(onclick);
+			addExtendedInfo(c);
 			x = x_save;
 			y = y_save;
 			

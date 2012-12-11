@@ -192,9 +192,9 @@ public class CanvasComposite extends Composite {
 	public void rmDecorator(int uuid) {
 		if ( pt_draw.size() > 0 ) {
 			for ( PointDecorator p : pt_draw ) {
-				if ( p.uuid() == uuid ) {
-					pt_draw.remove(p);
-				}
+//				if ( p.uuid() == uuid ) {
+//					pt_draw.remove(p);
+//				}
 			}
 		}		
 	}

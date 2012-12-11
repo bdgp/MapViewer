@@ -1,6 +1,7 @@
 package org.bdgp.somviewer.client.decorator;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.bdgp.somviewer.client.OverlayDrawMap;
@@ -10,6 +11,13 @@ import org.vaadin.gwtgraphics.client.shape.Circle;
 import org.vaadin.gwtgraphics.client.shape.Text;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author erwin
@@ -22,6 +30,7 @@ public class PointBasic implements PointDecorator {
 	protected final static int MARKER_CIRC_RAD = 2;
 	protected final static int OVERLAY_CIRC_RAD = 7;
 	
+	protected ExtendedInfoHandler info_handler;
 	protected OverlayDrawMap colormap;
 	protected ColorRank colrank;
 	protected HashMap<Integer,String> contents;
@@ -29,6 +38,7 @@ public class PointBasic implements PointDecorator {
 	protected Integer id;
 	int x,y;
 	int view_w, view_h;
+	boolean label_drawn = false;
 	
 	
 	public PointBasic(OverlayDrawMap colormap, ColorRank col_rank) {
@@ -123,5 +133,116 @@ public class PointBasic implements PointDecorator {
 	public boolean isInfo() {
 		return false;
 	}
+	
+	
+	protected void addExtendedInfoPruned(VectorObject vo) {
+		label_drawn = true;
+		if ( vo != null )
+			processExtendedInfo(vo);
+	}
+	
+	
+	protected void addExtendedInfo(VectorObject vo) {
+		if ( label_drawn == true) {
+			label_drawn = false;
+		}
+		processExtendedInfo(vo);
+	}
+	
+	protected void processExtendedInfo(VectorObject vo) {
+		
+		// Label has been drawn - skip info if that happened
+		if ( label_drawn == true ) {
+			if ( contents == null || contents.size() == 0 )
+				return;
+		}
+		
+		int req_size = 1;
+		if ( contents != null ) {
+			req_size += contents.size();
+		}
+				
+		ExtendedInfoHandler eih = null;
+		
+		if ( info_handler != null )
+			if ( info_handler.isSame(x, y) ) {
+				eih = info_handler;
+			} 
+		
+		if ( eih == null ) {
+			eih = new ExtendedInfoHandler(x, y, req_size);
+			eih.addItem(label);
+			info_handler = eih;
+		}
+				
+		if ( contents != null && contents.size() > 0 ) {
+			for ( Map.Entry<Integer, String> entry : contents.entrySet() ) {
+				String c = entry.getValue();
+				eih.addItem(c);
+			}
+		}
+		vo.addMouseOverHandler(eih);
+		vo.addMouseOutHandler(eih);
+	}
+	
+	
+	protected class ExtendedInfoHandler implements MouseOverHandler, MouseOutHandler {
+		protected Vector<String> ext_info;
+		protected HTML html_info;
+		protected PopupPanel popup;
+		protected int x, y;
+		
+		public ExtendedInfoHandler(int x, int y, int infoSize) {
+			ext_info = new Vector<String>(infoSize);
+			this.x = x;
+			this.y = y;
+		}
+		
+		public void addItem(String item) {
+			ext_info.add(item);
+			html_info = null;
+		}
+		
+		
+		public boolean isSame(int xc, int yc) {
+			if ( xc == x && yc == y )
+				return true;
+			return false;
+		}
+		
+		
+		public void onMouseOver(MouseOverEvent event) {
+			if ( ext_info.size() == 0 )
+				return;
+			
+            if ( html_info == null ) {
+            	String info = new String();
+            	info += ext_info.get(0);
+            	for ( int i=1; i < ext_info.size(); i++ ) {
+            		info += "<BR>" + ext_info.get(i);
+            	}
+            	html_info = new HTML(info);
+            }
+			if ( popup == null ) {
+				popup = new PopupPanel();
+				popup.setStyleName("info-PopupPanel");
+	            popup.add(html_info); 
+			}
+            Widget source = (Widget) event.getSource();
+            int xc = source.getAbsoluteLeft() + 5;
+            int yc = source.getAbsoluteTop() + 5;
+            popup.setPopupPosition(xc, yc);
+            popup.show();
+		}
+
+		public void onMouseOut(MouseOutEvent event) {
+			if ( popup != null ) {
+				popup.hide();
+			}
+		}
+
+		
+	}
+	
 
 }
