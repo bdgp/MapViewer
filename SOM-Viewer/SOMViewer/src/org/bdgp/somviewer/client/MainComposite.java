@@ -302,6 +302,7 @@ public class MainComposite extends ResizeComposite {
 
 	
 	protected void getSOMlist() {
+		Feedback.getInstance().rpcRequested(null);
 		ServerService.getInstance().getSOMmaps(new SomMapUpdater());
 	}
 	
@@ -414,8 +415,10 @@ public class MainComposite extends ResizeComposite {
 			SOMList data = (SOMList) result;
 			
 			if ( data.queryResult != null ) {
+				Feedback.getInstance().rpcError(data.queryResult);
 				setLogEntry("Available SOM maps: ERROR " + data.queryResult);
 			} else {
+				Feedback.getInstance().rpcReceived("Received " + data.entries.size());
 				setLogEntry("Available SOM maps: Received " + data.entries.size());
 				setMaps(data.entries);
 			}
