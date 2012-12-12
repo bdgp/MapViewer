@@ -221,7 +221,7 @@ public class PointBasic implements PointDecorator {
             if ( html_info == null ) {
             	String info = new String();
             	info += ext_info.get(0);
-            	for ( int i=1; i < ext_info.size(); i++ ) {
+            	for ( int i=1; i < ext_info.size()/2+1; i++ ) {
             		info += "<BR>" + ext_info.get(i);
             	}
             	html_info = new HTML(info);

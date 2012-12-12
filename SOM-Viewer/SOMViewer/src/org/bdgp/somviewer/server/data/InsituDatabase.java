@@ -133,7 +133,7 @@ public class InsituDatabase implements SOMinfo {
 		
 		
 		// html += sym + " (Stage " + resolveStage(variant) + ")<BR>";
-		html += "<a href=\"" + bdgp_url + cgname + "\" target=\"_blank\">" + "Insitu</a> ";
+		html += "<a href=\"" + bdgp_url + cgname + "\" target=\"_blank\">" + cgname + ":insitu</a> ";
 		html += "<a href=\"http://flybase.org/reports/" + fbgn + ".html\" target=\"_blank\">" + fbgn + "</a><br>";
 		html += "Stage " + resolveStage(variant);
 		html += "<P>";

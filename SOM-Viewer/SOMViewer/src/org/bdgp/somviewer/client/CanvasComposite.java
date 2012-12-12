@@ -1,5 +1,6 @@
 package org.bdgp.somviewer.client;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -365,7 +366,9 @@ public class CanvasComposite extends Composite {
 				p.setInfo(som_pt.getId(), som_pt.getName(), som_pt.getIdenticalPt());
 				ClickHandler onclick = null;
 				if ( pt_info != null ) {
-					onclick = new InfoClick(som_pt.getName(), som_pt.getId(), som_pt.getVariant());
+					InfoClick ic = new InfoClick(som_pt.getName(), som_pt.getId(), som_pt.getVariant());
+					ic.setOtherEntries(som_pt.getIdenticalPt());
+					onclick = ic;
 				}
 				if ( doLabels == true) {
 					VectorObject txt = p.drawLabel(som_pt.getName(), onclick);
@@ -542,6 +545,7 @@ public class CanvasComposite extends Composite {
 		protected Integer id;
 		protected int variant;
 		protected String title;
+		protected HashMap<Integer,String> others = null;
 		
 		public InfoClick(String title, Integer id, int variant) {
 			this.title = title;
@@ -549,9 +553,14 @@ public class CanvasComposite extends Composite {
 			this.variant = variant;
 		}
 		
+		public void setOtherEntries(HashMap<Integer,String> others) {
+			this.others = others;
+		}
+		
 		public void onClick(ClickEvent event) {
 			if ( pt_info != null ) {
 				pt_info.infoQuick(title, id, variant, event.getClientX(), event.getClientY());
+				pt_info.setInfo(id, title, others);
 			}
 			
 		}

@@ -17,7 +17,7 @@ h1 {
 
 /** Most GWT widgets already have a style name defined */
 .gwt-DialogBox {
-  width: 250px;
+/*  width: 250px; */
   overflow: scroll;
 }
 
@@ -60,6 +60,15 @@ h1 {
 }
 
 .imageButton {
+}
+
+.dlgOtherGeneButton {
+   font-size:10px;
+   font-family:Arial,sans-serif;
+   width:100px;
+   height:20px;
+/*   background-color:#66FF99; */
+   border-style:inset;	
 }
 
 
