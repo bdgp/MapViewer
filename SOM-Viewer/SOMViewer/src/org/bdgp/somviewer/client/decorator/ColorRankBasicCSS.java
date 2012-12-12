@@ -10,7 +10,7 @@ public class ColorRankBasicCSS implements ColorRank {
 	
 	public ColorRankBasicCSS() {
 		// Add colors if ranks are too similar
-		addcolor("White", "FFFFFF"); // 0 = no color
+//		addcolor("White", "FFFFFF"); // 0 = no color
 		addcolor("DarkGreen", "006400");
 		addcolor("DarkKhaki", "BDB76B");
 		addcolor("DarkMagenta","8B008B");

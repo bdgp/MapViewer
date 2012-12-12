@@ -16,10 +16,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PointInfo implements PointDecorator {
 
+	protected final static int DLG_MINH = 200;
+	protected final static int DLG_BUFFER = 50;
+	
 	protected final static int uuid = 12347;
 	int x,y;
 	int view_h, view_w;
@@ -35,6 +39,7 @@ public class PointInfo implements PointDecorator {
 	
 	DialogBox dialogBox = null;
 	VerticalPanel dialogVPanel = null;
+	ScrollPanel scrollDlgPanel = null;
 	
 	public PointInfo() {
 		// TODO Auto-generated constructor stub
@@ -95,6 +100,7 @@ public class PointInfo implements PointDecorator {
 		pos_x = click_x; pos_y = click_y;
 		
 		int win_w = Window.getClientWidth();
+		int win_h = Window.getClientHeight();
 		
 		if ( dialogBox == null ) {
 			dialogBox = new DialogBoxClosable();
@@ -102,6 +108,9 @@ public class PointInfo implements PointDecorator {
 			// dialogBox.setText(label);
 			dialogBox.setAnimationEnabled(true);
 			dialogVPanel = new VerticalPanel();
+			scrollDlgPanel = new ScrollPanel();
+			dialogBox.setWidget(scrollDlgPanel);
+			scrollDlgPanel.add(dialogVPanel);
 		} else {
 			dialogVPanel.clear();
 		}
@@ -115,14 +124,17 @@ public class PointInfo implements PointDecorator {
 		dialogVPanel.add(new HTML(html));
 		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
 		dialogVPanel.add(closeButton);
-		dialogBox.setWidget(dialogVPanel);
+		// dialogBox.setWidget(dialogVPanel);
+
+		// Set sizes
+		int height = win_h - pos_y - DLG_BUFFER;
+		height = height < DLG_MINH ? DLG_MINH : height;
 		dialogBox.setWidth(info_data.sinfo_w + "px");
-		// dialogBox.setPopupPosition(Window.getClientWidth()/2, Window.getClientHeight()/2);
+		scrollDlgPanel.setHeight(height + "px");
 		
 		if ( pos_x > win_w / 2 ) {
 			pos_x -= info_data.sinfo_w;
-		}
-		
+		}		
 		dialogBox.setPopupPosition(pos_x, pos_y);
 		
 		dialogBox.show();

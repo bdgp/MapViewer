@@ -128,8 +128,9 @@ public class MainComposite extends ResizeComposite {
 				// dialogBox.setText(label);
 				aboutBox.setAnimationEnabled(true);
 				VerticalPanel aboutVPanel = new VerticalPanel();
+				aboutVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 				aboutVPanel.add(new Image("images/bdgp_logo.png"));
-				aboutVPanel.add(new HTML("Map<I>Explorer</I><P>Exploring dimensionality reduction of complex datasets and relationship to other data.<P>Written by Erwin Frise, BDGP, 2012"));
+				aboutVPanel.add(new HTML("Map<I>Explorer</I><P>Exploring 2D maps of complex datasets and relationship to other data.<P>Written by Erwin Frise, BDGP, 2012"));
 				aboutBox.setWidget(aboutVPanel);
 				aboutBox.show();
 			}			
