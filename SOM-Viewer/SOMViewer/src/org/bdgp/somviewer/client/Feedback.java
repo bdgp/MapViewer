@@ -32,6 +32,7 @@ public class Feedback {
 	HandlerRegistration error_handler;
 	
 	protected Timer discardDelayTimer = null;
+	private final static int DISCARD_DELAY = 5000;
 
 	private Feedback() {
 	}
@@ -125,7 +126,7 @@ public class Feedback {
 		      };
 
 		      // Schedule the timer to run once in 5 seconds.
-		      discardDelayTimer.schedule(5000);
+		      discardDelayTimer.schedule(DISCARD_DELAY);
 
 			
 		}		

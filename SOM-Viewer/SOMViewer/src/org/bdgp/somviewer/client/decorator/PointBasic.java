@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,10 +37,12 @@ public class PointBasic implements PointDecorator {
 	protected HashMap<Integer,String> contents;
 	protected String label;
 	protected Integer id;
-	int x,y;
-	int view_w, view_h;
-	boolean label_drawn = false;
+	protected int x,y;
+	protected int view_w, view_h;
+	protected boolean label_drawn = false;
 	
+	private Timer cleanupDelayTimer = null;
+	private final static int CLEANUP_DELAY = 10000;
 	
 	public PointBasic(OverlayDrawMap colormap, ColorRank col_rank) {
 		this.colormap = colormap;
@@ -233,6 +236,16 @@ public class PointBasic implements PointDecorator {
             int yc = source.getAbsoluteTop() + 5;
             popup.setPopupPosition(xc, yc);
             popup.show();
+            
+            // Schedule a timer to make sure we won't have any leftover popups
+		    cleanupDelayTimer = new Timer() {
+		        public void run() {
+		        	popup.hide();
+		        }
+		      };
+		      // Schedule the timer to run once in 30 seconds.
+		      cleanupDelayTimer.schedule(CLEANUP_DELAY);
+
 		}
 
 		public void onMouseOut(MouseOutEvent event) {

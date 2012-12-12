@@ -135,6 +135,9 @@ public class PointInfo implements PointDecorator {
 		if ( pos_x > win_w / 2 ) {
 			pos_x -= info_data.sinfo_w;
 		}		
+		if ( pos_y + height > win_h ) {
+			pos_y -= height;
+		}
 		dialogBox.setPopupPosition(pos_x, pos_y);
 		
 		dialogBox.show();
