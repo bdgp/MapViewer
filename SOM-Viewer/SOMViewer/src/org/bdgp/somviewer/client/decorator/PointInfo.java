@@ -25,6 +25,7 @@ public class PointInfo implements PointDecorator {
 	protected final static int uuid = 12347;
 	int x,y;
 	int view_h, view_w;
+	int dialog_w = -1;
 	int click_x, click_y; // Last click position
 	String title;
 
@@ -93,6 +94,8 @@ public class PointInfo implements PointDecorator {
 		
 		pos_x = click_x; pos_y = click_y;
 		
+		int win_w = Window.getClientWidth();
+		
 		if ( dialogBox == null ) {
 			dialogBox = new DialogBoxClosable();
 			//dialogBox.setText("Information");
@@ -115,9 +118,22 @@ public class PointInfo implements PointDecorator {
 		dialogBox.setWidget(dialogVPanel);
 		// dialogBox.setPopupPosition(Window.getClientWidth()/2, Window.getClientHeight()/2);
 		
-		if ( pos_x > view_w / 2 ) {
+		if ( pos_x > win_w / 2 ) {
 			//TODO
-			String dw = dialogBox.getElement().getStyle().getProperty("width");
+			// 
+			if ( dialog_w < 0 ) {
+				if ( dialog_w == - 1 ) {
+					String dw = dialogBox.getElement().getStyle().getProperty("width");
+					// String dw = dialogBox.getElement().getStyle().getWidth();
+					if ( dw.length() > 2 && dw.substring(dw.length()-2, dw.length()).compareTo("px") == 0 ) {
+						dialog_w = Integer.valueOf( dw.substring(0,dw.length()-2) );
+					} else {
+						dialog_w = -2;
+					}
+				}
+			} else {
+				pos_x -= dialog_w;
+			}
 		}
 		
 		dialogBox.setPopupPosition(pos_x, pos_y);

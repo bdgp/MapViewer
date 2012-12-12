@@ -88,7 +88,7 @@ public class MainComposite extends ResizeComposite {
 	protected float base_zoom = 1;
 	
 	protected final int ctrlPanelSize = 200;
-	protected final int titlePanelSize = 25;
+	protected final int titlePanelSize = 30;
 	protected int canv_gapx = 0, canv_gapy = 0;
 	
 	protected final static int GRP_TXT = 0;
@@ -120,7 +120,20 @@ public class MainComposite extends ResizeComposite {
 		mainPanel.addNorth(grid, titlePanelSize);
 		grid.setWidth("100%");
 		
-		titleHtml = new HTML("Map viewer:", true);
+		titleHtml = new HTML("Map<I>Explorer</I> ", true);
+		titleHtml.addClickHandler( new ClickHandler() {
+			public void onClick(ClickEvent sender) {
+				DialogBoxClosable aboutBox = new DialogBoxClosable();
+				aboutBox.setText("About MapExplorer");
+				// dialogBox.setText(label);
+				aboutBox.setAnimationEnabled(true);
+				VerticalPanel aboutVPanel = new VerticalPanel();
+				aboutVPanel.add(new Image("images/bdgp_logo.png"));
+				aboutVPanel.add(new HTML("Map<I>Explorer</I><P>Exploring dimensionality reduction of complex datasets and relationship to other data.<P>Written by Erwin Frise, BDGP, 2012"));
+				aboutBox.setWidget(aboutVPanel);
+				aboutBox.show();
+			}			
+		});
 		grid.setWidget(0, 0, titleHtml);
 		
 		avail_somBox = new ListBox();
@@ -349,7 +362,9 @@ public class MainComposite extends ResizeComposite {
 		Iterator<PointDecorator> it_df = df.getDecorators();
 		while ( it_df.hasNext() )
 			canvPanel.addDecorator(it_df.next());
-		canvPanel.setDecorator(new PointInfo());
+		PointInfo pti = new PointInfo();
+		// pti.setViewPortSize(win_w, win_h);
+		canvPanel.setDecorator(pti);
 		
 				
 		CategoryComposite cat = new CategoryComposite(canvPanel,som);
