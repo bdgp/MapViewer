@@ -178,7 +178,8 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 	
 	public SOMPtInfo getPtInfo(int id, int variant) {
 		SOMPtInfo pti = new SOMPtInfo();
-		String html = new String(); 
+		String html = new String();
+		int info_width = 0;
 		
 		// Avoid injection attacks by making sure name exists in database
 		// String map = verifyMapname(datasrc);
@@ -187,6 +188,7 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 		
 		try {
 			html = info.shortInfo(id, variant);
+			info_width = info.getShortInfoWidth();
 		}
 		catch (Exception e) {
 			pti.queryResult = "Exception: " + e.getMessage() + db.flatLog(LogSeverity.ALL);
@@ -195,6 +197,7 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 		manageQuery(false);
 		
 		pti.html_Sinfo = html;
+		pti.width_Sinfo = info_width;
 		pti.req_id = id;
 		pti.req_variant = variant;
 		

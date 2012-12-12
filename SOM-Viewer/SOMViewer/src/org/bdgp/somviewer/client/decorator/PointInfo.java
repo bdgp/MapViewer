@@ -4,11 +4,9 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.bdgp.somviewer.client.DialogBoxClosable;
-import org.bdgp.somviewer.client.CategoryComposite.SomOverlayUpdater;
 import org.bdgp.somviewer.client.OverlayDrawMap;
 import org.bdgp.somviewer.rpc.AbstractLoggingAsyncHandler;
 import org.bdgp.somviewer.rpc.ServerService;
-import org.bdgp.somviewer.rpc.data.SOMDataOverlay;
 import org.bdgp.somviewer.rpc.data.SOMPtInfo;
 import org.vaadin.gwtgraphics.client.VectorObject;
 
@@ -33,7 +31,7 @@ public class PointInfo implements PointDecorator {
 	protected String label;
 	protected Integer id;
 
-	HashMap<Integer,String> infoCache = new HashMap<Integer,String>();
+	HashMap<Integer,InfoData> infoCache = new HashMap<Integer,InfoData>();
 	
 	DialogBox dialogBox = null;
 	VerticalPanel dialogVPanel = null;
@@ -87,8 +85,10 @@ public class PointInfo implements PointDecorator {
 	}
 
 
-	protected void infoDialog(String html) {
+	protected void infoDialog(InfoData info_data) {
 		// Create the popup dialog box
+		
+		String html = info_data.sinfo;
 		
 		int pos_x, pos_y;
 		
@@ -116,24 +116,11 @@ public class PointInfo implements PointDecorator {
 		dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_LEFT);
 		dialogVPanel.add(closeButton);
 		dialogBox.setWidget(dialogVPanel);
+		dialogBox.setWidth(info_data.sinfo_w + "px");
 		// dialogBox.setPopupPosition(Window.getClientWidth()/2, Window.getClientHeight()/2);
 		
 		if ( pos_x > win_w / 2 ) {
-			//TODO
-			// 
-			if ( dialog_w < 0 ) {
-				if ( dialog_w == - 1 ) {
-					String dw = dialogBox.getElement().getStyle().getProperty("width");
-					// String dw = dialogBox.getElement().getStyle().getWidth();
-					if ( dw.length() > 2 && dw.substring(dw.length()-2, dw.length()).compareTo("px") == 0 ) {
-						dialog_w = Integer.valueOf( dw.substring(0,dw.length()-2) );
-					} else {
-						dialog_w = -2;
-					}
-				}
-			} else {
-				pos_x -= dialog_w;
-			}
+			pos_x -= info_data.sinfo_w;
 		}
 		
 		dialogBox.setPopupPosition(pos_x, pos_y);
@@ -171,8 +158,12 @@ public class PointInfo implements PointDecorator {
 				setLogEntry("Pt Info: ERROR " + data.queryResult);
 			} else {
 				setLogEntry("Pt Info: Received " + data.req_id);
-				infoCache.put(data.req_id, data.html_Sinfo);
-				infoDialog(data.html_Sinfo);
+				InfoData id = new InfoData();
+				id.sinfo = data.html_Sinfo;
+				id.sinfo_w = data.width_Sinfo;
+				id.linfo = data.html_Linfo;
+				infoCache.put(data.req_id, id);
+				infoDialog(id);
 			}
 		}
 		
@@ -186,6 +177,12 @@ public class PointInfo implements PointDecorator {
 		return true;
 	}
 
+	
+	public class InfoData {
+		public String sinfo;
+		public int sinfo_w;
+		public String linfo;
+	}
 	
 	
 }

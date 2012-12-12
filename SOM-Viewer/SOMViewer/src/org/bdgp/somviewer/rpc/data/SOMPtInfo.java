@@ -9,6 +9,7 @@ public class SOMPtInfo implements IsSerializable {
 	public int req_variant;
 	
 	public String html_Sinfo;
+	public int width_Sinfo;
 	public String html_Linfo;
 
 }

@@ -18,6 +18,8 @@ public class InsituDatabase implements SOMinfo {
 	private final String im_url = "http://insitu.fruitfly.org/insitu_image_storage/thumbnails/";
 	private final String bdgp_url = "http://insitu.fruitfly.org/cgi-bin/ex/report.pl?ftype=1&ftext=";
 
+	private final int THUMBNAIL_WIDTH = 250;
+	
 	protected DBbase db;
 	
 	public InsituDatabase(DBbase db) {
@@ -149,6 +151,10 @@ public class InsituDatabase implements SOMinfo {
 		return html;
 	}
 
+	public int getShortInfoWidth() {
+		return THUMBNAIL_WIDTH;
+	}
+	
 	
 	public String longInfo(int id, int variant) {
 		return null;
