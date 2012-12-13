@@ -281,7 +281,7 @@ public class CategoryComposite extends Composite {
 	public class SomOverlayUpdater extends AbstractLoggingAsyncHandler {
 		
 		public void handleFailure(Throwable caught) {
-			
+			Feedback.getInstance().rpcError("RPC Failure for getting data: " + caught.getMessage());
 		}
 		
 		public void handleSuccess(Object result) {
@@ -373,6 +373,8 @@ public class CategoryComposite extends Composite {
 		
 		public void setVariantNames(String [] variant_names) {
 			this.variant_names = variant_names;
+			if ( variant_names == null )
+				return;
 			if ( variant_names.length >= numBox.getValue() )
 				lab.setText(variant_names[numBox.getValue()]);
 		}

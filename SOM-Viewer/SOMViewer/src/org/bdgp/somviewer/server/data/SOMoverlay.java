@@ -314,7 +314,7 @@ public class SOMoverlay {
 		if ( available == null || pts == null )
 			return null;
 		
-		pts.available = new Vector<SOMOverlaysAvailable>(available.size());
+		pts.available = new SOMOverlaysAvailable[available.size()];
 		
 		for ( int i=0; i < available.size(); i++ ) {
 			
@@ -329,7 +329,7 @@ public class SOMoverlay {
 					cs_array[j] = available.get(i).color_similar.get(j);				
 			}
 			
-			pts.available.add(pts.CreateAvailable(available.get(i).name, available.get(i).variant, var_array, available.get(i).color, cs_array, available.get(i).type, available.get(i).decorator));
+			pts.available[i] = pts.CreateAvailable(available.get(i).name, available.get(i).variant, var_array, available.get(i).color, cs_array, available.get(i).type, available.get(i).decorator);
 		}
 		
 		return pts;

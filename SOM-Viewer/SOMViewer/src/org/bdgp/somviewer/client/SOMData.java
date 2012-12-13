@@ -57,7 +57,7 @@ public class SOMData {
 		Unique un_type = new Unique();
 		Unique un_decorator = new Unique();
 		
-		Vector<SOMOverlaysAvailable> av = pts.available;
+		SOMOverlaysAvailable [] av = pts.available;
 		for ( SOMOverlaysAvailable a : av ) {
 			// Fill in library
 			Library l = new Library();

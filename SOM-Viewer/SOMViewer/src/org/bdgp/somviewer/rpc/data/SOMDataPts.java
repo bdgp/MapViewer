@@ -14,7 +14,7 @@ public class SOMDataPts implements IsSerializable {
 	public float [] x, y;
 	public String [] names;
 	
-	public Vector<SOMOverlaysAvailable> available;
+	public SOMOverlaysAvailable [] available;
 	
 	public SOMOverlaysAvailable CreateAvailable(String name, int variant, String [] variant_names, String color, String[] color_similar, String type, String decorator) {
 		SOMOverlaysAvailable oa = new SOMOverlaysAvailable();

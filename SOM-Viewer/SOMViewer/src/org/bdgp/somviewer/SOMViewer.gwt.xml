@@ -27,4 +27,9 @@
   <source path='server'/>
   <source path='server/data'/>
 
+<!-- Debugging: allows for seeing a stracktrace in JavaScript console if something goes wrong -->
+<set-property name="compiler.stackMode" value="emulated"/>
+<set-configuration-property name="compiler.emulatedStack.recordLineNumbers" value="true"/> 
+<set-configuration-property name="compiler.emulatedStack.recordFileNames" value="true"/> 
+
 </module>

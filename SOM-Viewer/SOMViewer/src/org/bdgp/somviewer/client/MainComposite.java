@@ -400,7 +400,14 @@ public class MainComposite extends ResizeComposite {
 	public class SomUpdater extends AbstractLoggingAsyncHandler {
 		
 		public void handleFailure(Throwable caught) {
-			
+//			String stack = new String();
+//			StackTraceElement [] stes = caught.getStackTrace();
+//			for ( int i = stes.length-1; i >=0; i-- ) {
+//				StackTraceElement s = stes[i];
+//				stack += "\n" + s.toString();
+//			}
+//			Feedback.getInstance().rpcError("RPC Failure for getting map data: " + caught.getMessage() + "\n" + stack);
+			Feedback.getInstance().rpcError("RPC Failure for getting data: " + caught.getMessage());
 		}
 		
 		public void handleSuccess(Object result) {
@@ -424,7 +431,7 @@ public class MainComposite extends ResizeComposite {
 	public class SomMapUpdater extends AbstractLoggingAsyncHandler {
 		
 		public void handleFailure(Throwable caught) {
-			
+			Feedback.getInstance().rpcError("RPC Failure for getting data: " + caught.getMessage());
 		}
 		
 		public void handleSuccess(Object result) {
