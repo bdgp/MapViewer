@@ -1,7 +1,5 @@
 package org.bdgp.somviewer.client.decorator;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 import org.bdgp.somviewer.client.OverlayDrawMap;

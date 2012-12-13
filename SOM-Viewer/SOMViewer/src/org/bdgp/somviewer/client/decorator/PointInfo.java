@@ -231,13 +231,13 @@ public class PointInfo implements PointDecorator {
 	 * @author erwin
 	 * RPC incoming data for the overlays
 	 */
-	public class SomPtInfoUpdater extends AbstractLoggingAsyncHandler {
+	public class SomPtInfoUpdater extends AbstractLoggingAsyncHandler<SOMPtInfo> {
 		
 		public void handleFailure(Throwable caught) {
 			
 		}
 		
-		public void handleSuccess(Object result) {
+		public void handleSuccess(SOMPtInfo result) {
 			SOMPtInfo data = (SOMPtInfo) result;
 			
 			if ( data.queryResult != null ) {
@@ -260,14 +260,14 @@ public class PointInfo implements PointDecorator {
 	 * @author erwin
 	 * RPC incoming data for the overlays
 	 */
-	public class SomAltInfoUpdater extends AbstractLoggingAsyncHandler {
+	public class SomAltInfoUpdater extends AbstractLoggingAsyncHandler<SOMPtInfo> {
 		
 		public void handleFailure(Throwable caught) {
 			
 		}
 		
-		public void handleSuccess(Object result) {
-			SOMPtInfo data = (SOMPtInfo) result;
+		public void handleSuccess(SOMPtInfo result) {
+			SOMPtInfo data = result;
 			
 			if ( data.queryResult != null ) {
 				setLogEntry("Pt Info: ERROR " + data.queryResult);

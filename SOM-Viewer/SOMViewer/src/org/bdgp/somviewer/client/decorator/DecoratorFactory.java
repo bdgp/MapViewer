@@ -1,6 +1,5 @@
 package org.bdgp.somviewer.client.decorator;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Vector;

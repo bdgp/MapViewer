@@ -389,7 +389,7 @@ public class MainComposite extends ResizeComposite {
 
 	
 	
-	public class SomUpdater extends AbstractLoggingAsyncHandler {
+	public class SomUpdater extends AbstractLoggingAsyncHandler<SOMDataPts> {
 		
 		@SuppressWarnings("unused")
 		public void handleFailure(Throwable caught) {
@@ -408,8 +408,8 @@ public class MainComposite extends ResizeComposite {
 			}
 		}
 		
-		public void handleSuccess(Object result) {
-			SOMDataPts data = (SOMDataPts) result;
+		public void handleSuccess(SOMDataPts result) {
+			SOMDataPts data = result;
 						
 			if ( data.queryResult != null ) {
 				Feedback.getInstance().rpcError(data.queryResult);
@@ -426,14 +426,14 @@ public class MainComposite extends ResizeComposite {
 	}
 	
 	
-	public class SomMapUpdater extends AbstractLoggingAsyncHandler {
+	public class SomMapUpdater extends AbstractLoggingAsyncHandler<SOMList> {
 		
 		public void handleFailure(Throwable caught) {
 			Feedback.getInstance().rpcError("RPC Failure for getting data: " + caught.getMessage());
 		}
 		
-		public void handleSuccess(Object result) {
-			SOMList data = (SOMList) result;
+		public void handleSuccess(SOMList result) {
+			SOMList data = result;
 			
 			if ( data.queryResult != null ) {
 				Feedback.getInstance().rpcError(data.queryResult);

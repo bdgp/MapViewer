@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @author erwin
  *
  */
-public abstract class AbstractBaseAsyncHandler implements AsyncCallback, AsyncHandler {
+public abstract class AbstractBaseAsyncHandler<T> implements AsyncCallback<T>, AsyncHandler<T> {
 
 	public AbstractBaseAsyncHandler()
 	{
@@ -27,7 +27,7 @@ public abstract class AbstractBaseAsyncHandler implements AsyncCallback, AsyncHa
 	/* (non-Javadoc)
 	 * @see com.google.gwt.user.client.rpc.AsyncCallback#onSuccess(java.lang.Object)
 	 */
-	public void onSuccess(Object result) {
+	public void onSuccess(T result) {
 		// Call the derived class implementation
 		handleSuccess(result);
 	}
@@ -40,5 +40,5 @@ public abstract class AbstractBaseAsyncHandler implements AsyncCallback, AsyncHa
 	/* (non-Javadoc)
 	 * @see org.gwtbook.client.AsyncHandler#handleSuccess(java.lang.Object)
 	 */
-	public abstract void handleSuccess(Object result); 
+	public abstract void handleSuccess(T result); 
 }

@@ -278,14 +278,14 @@ public class CategoryComposite extends Composite {
 	 * @author erwin
 	 * RPC incoming data for the overlays
 	 */
-	public class SomOverlayUpdater extends AbstractLoggingAsyncHandler {
+	public class SomOverlayUpdater extends AbstractLoggingAsyncHandler<SOMDataOverlay> {
 		
 		public void handleFailure(Throwable caught) {
 			Feedback.getInstance().rpcError("RPC Failure for getting data: " + caught.getMessage());
 		}
 		
-		public void handleSuccess(Object result) {
-			SOMDataOverlay data = (SOMDataOverlay) result;
+		public void handleSuccess(SOMDataOverlay result) {
+			SOMDataOverlay data = result;
 			
 			if ( data.queryResult != null ) {
 				setLogEntry("SOM overlay: ERROR " + data.queryResult);

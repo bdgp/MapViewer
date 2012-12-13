@@ -1,21 +1,20 @@
 function somviewer(){
-  var $intern_0 = '', $intern_35 = '" for "gwt:onLoadErrorFn"', $intern_33 = '" for "gwt:onPropertyErrorFn"', $intern_21 = '"><\/script>', $intern_10 = '#', $intern_64 = '.cache.html', $intern_12 = '/', $intern_57 = '2192B6199B563C28ACE44E20E4DD238B', $intern_58 = '5FA8C04390400C1E2BA87A842CDAA053', $intern_59 = '6C4B694CA98A301508983C432B1829DA', $intern_63 = ':', $intern_27 = '::', $intern_73 = '<script defer="defer">somviewer.onInjectionDone(\'somviewer\')<\/script>', $intern_20 = '<script id="', $intern_30 = '=', $intern_11 = '?', $intern_60 = 'ADC4DC10F6A1956A8B647BDB4ABD5C72', $intern_44 = 'ActiveXObject', $intern_32 = 'Bad handler "', $intern_45 = 'ChromeTab.ChromeFrame', $intern_61 = 'D8D57229B1B6F78F4EF3E12EBE79ACE8', $intern_72 = 'DOMContentLoaded', $intern_62 = 'F619AF224B1DEE3CBA9814D5A5A74342', $intern_22 = 'SCRIPT', $intern_19 = '__gwt_marker_somviewer', $intern_23 = 'base', $intern_15 = 'baseUrl', $intern_4 = 'begin', $intern_3 = 'bootstrap', $intern_43 = 'chromeframe', $intern_14 = 'clear.cache.gif', $intern_29 = 'content', $intern_71 = 'css/style.css', $intern_9 = 'end', $intern_51 = 'gecko', $intern_52 = 'gecko1_8', $intern_5 = 'gwt.codesvr=', $intern_6 = 'gwt.hosted=', $intern_7 = 'gwt.hybrid', $intern_65 = 'gwt/clean/clean.css', $intern_34 = 'gwt:onLoadErrorFn', $intern_31 = 'gwt:onPropertyErrorFn', $intern_28 = 'gwt:property', $intern_70 = 'head', $intern_55 = 'hosted.html?somviewer', $intern_69 = 'href', $intern_50 = 'ie6', $intern_49 = 'ie8', $intern_48 = 'ie9', $intern_36 = 'iframe', $intern_13 = 'img', $intern_37 = "javascript:''", $intern_66 = 'link', $intern_54 = 'loadExternalRefs', $intern_24 = 'meta', $intern_39 = 'moduleRequested', $intern_8 = 'moduleStartup', $intern_47 = 'msie', $intern_25 = 'name', $intern_41 = 'opera', $intern_38 = 'position:absolute;width:0;height:0;border:none', $intern_67 = 'rel', $intern_46 = 'safari', $intern_16 = 'script', $intern_56 = 'selectingPermutation', $intern_1 = 'somviewer', $intern_17 = 'somviewer.nocache.js', $intern_26 = 'somviewer::', $intern_2 = 'startup', $intern_68 = 'stylesheet', $intern_18 = 'undefined', $intern_53 = 'unknown', $intern_40 = 'user.agent', $intern_42 = 'webkit';
-  var $wnd = window, $doc = document, $stats = $wnd.__gwtStatsEvent?function(a){
-    return $wnd.__gwtStatsEvent(a);
+  var $wnd_0 = window, $doc_0 = document, $stats = $wnd_0.__gwtStatsEvent?function(a){
+    return $wnd_0.__gwtStatsEvent(a);
   }
-  :null, $sessionId = $wnd.__gwtStatsSessionId?$wnd.__gwtStatsSessionId:null, scriptsDone, loadDone, bodyDone, base = $intern_0, metaProps = {}, values = [], providers = [], answers = [], softPermutationId = 0, onLoadErrorFunc, propertyErrorFunc;
-  $stats && $stats({moduleName:$intern_1, sessionId:$sessionId, subSystem:$intern_2, evtGroup:$intern_3, millis:(new Date).getTime(), type:$intern_4});
-  if (!$wnd.__gwt_stylesLoaded) {
-    $wnd.__gwt_stylesLoaded = {};
+  :null, $sessionId_0 = $wnd_0.__gwtStatsSessionId?$wnd_0.__gwtStatsSessionId:null, scriptsDone, loadDone, bodyDone, base = '', metaProps = {}, values = [], providers = [], answers = [], softPermutationId = 0, onLoadErrorFunc, propertyErrorFunc;
+  $stats && $stats({moduleName:'somviewer', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'bootstrap', millis:(new Date).getTime(), type:'begin'});
+  if (!$wnd_0.__gwt_stylesLoaded) {
+    $wnd_0.__gwt_stylesLoaded = {};
   }
-  if (!$wnd.__gwt_scriptsLoaded) {
-    $wnd.__gwt_scriptsLoaded = {};
+  if (!$wnd_0.__gwt_scriptsLoaded) {
+    $wnd_0.__gwt_scriptsLoaded = {};
   }
   function isHostedMode(){
     var result = false;
     try {
-      var query = $wnd.location.search;
-      return (query.indexOf($intern_5) != -1 || (query.indexOf($intern_6) != -1 || $wnd.external && $wnd.external.gwtOnLoad)) && query.indexOf($intern_7) == -1;
+      var query = $wnd_0.location.search;
+      return (query.indexOf('gwt.codesvr=') != -1 || (query.indexOf('gwt.hosted=') != -1 || $wnd_0.external && $wnd_0.external.gwtOnLoad)) && query.indexOf('gwt.hybrid') == -1;
     }
      catch (e) {
     }
@@ -28,72 +27,72 @@ function somviewer(){
 
   function maybeStartModule(){
     if (scriptsDone && loadDone) {
-      var iframe = $doc.getElementById($intern_1);
+      var iframe = $doc_0.getElementById('somviewer');
       var frameWnd = iframe.contentWindow;
       if (isHostedMode()) {
-        frameWnd.__gwt_getProperty = function(name){
-          return computePropValue(name);
+        frameWnd.__gwt_getProperty = function(name_0){
+          return computePropValue(name_0);
         }
         ;
       }
       somviewer = null;
-      frameWnd.gwtOnLoad(onLoadErrorFunc, $intern_1, base, softPermutationId);
-      $stats && $stats({moduleName:$intern_1, sessionId:$sessionId, subSystem:$intern_2, evtGroup:$intern_8, millis:(new Date).getTime(), type:$intern_9});
+      frameWnd.gwtOnLoad(onLoadErrorFunc, 'somviewer', base, softPermutationId);
+      $stats && $stats({moduleName:'somviewer', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'moduleStartup', millis:(new Date).getTime(), type:'end'});
     }
   }
 
   function computeScriptBase(){
     function getDirectoryOfFile(path){
-      var hashIndex = path.lastIndexOf($intern_10);
+      var hashIndex = path.lastIndexOf('#');
       if (hashIndex == -1) {
         hashIndex = path.length;
       }
-      var queryIndex = path.indexOf($intern_11);
+      var queryIndex = path.indexOf('?');
       if (queryIndex == -1) {
         queryIndex = path.length;
       }
-      var slashIndex = path.lastIndexOf($intern_12, Math.min(queryIndex, hashIndex));
-      return slashIndex >= 0?path.substring(0, slashIndex + 1):$intern_0;
+      var slashIndex = path.lastIndexOf('/', Math.min(queryIndex, hashIndex));
+      return slashIndex >= 0?path.substring(0, slashIndex + 1):'';
     }
 
     function ensureAbsoluteUrl(url){
       if (url.match(/^\w+:\/\//)) {
       }
        else {
-        var img = $doc.createElement($intern_13);
-        img.src = url + $intern_14;
+        var img = $doc_0.createElement('img');
+        img.src = url + 'clear.cache.gif';
         url = getDirectoryOfFile(img.src);
       }
       return url;
     }
 
     function tryMetaTag(){
-      var metaVal = __gwt_getMetaProperty($intern_15);
+      var metaVal = __gwt_getMetaProperty('baseUrl');
       if (metaVal != null) {
         return metaVal;
       }
-      return $intern_0;
+      return '';
     }
 
     function tryNocacheJsTag(){
-      var scriptTags = $doc.getElementsByTagName($intern_16);
+      var scriptTags = $doc_0.getElementsByTagName('script');
       for (var i = 0; i < scriptTags.length; ++i) {
-        if (scriptTags[i].src.indexOf($intern_17) != -1) {
+        if (scriptTags[i].src.indexOf('somviewer.nocache.js') != -1) {
           return getDirectoryOfFile(scriptTags[i].src);
         }
       }
-      return $intern_0;
+      return '';
     }
 
     function tryMarkerScript(){
       var thisScript;
-      if (typeof isBodyLoaded == $intern_18 || !isBodyLoaded()) {
-        var markerId = $intern_19;
+      if (typeof isBodyLoaded == 'undefined' || !isBodyLoaded()) {
+        var markerId = '__gwt_marker_somviewer';
         var markerScript;
-        $doc.write($intern_20 + markerId + $intern_21);
-        markerScript = $doc.getElementById(markerId);
+        $doc_0.write('<script id="' + markerId + '"><\/script>');
+        markerScript = $doc_0.getElementById(markerId);
         thisScript = markerScript && markerScript.previousSibling;
-        while (thisScript && thisScript.tagName != $intern_22) {
+        while (thisScript && thisScript.tagName != 'SCRIPT') {
           thisScript = thisScript.previousSibling;
         }
         if (markerScript) {
@@ -103,29 +102,29 @@ function somviewer(){
           return getDirectoryOfFile(thisScript.src);
         }
       }
-      return $intern_0;
+      return '';
     }
 
     function tryBaseTag(){
-      var baseElements = $doc.getElementsByTagName($intern_23);
+      var baseElements = $doc_0.getElementsByTagName('base');
       if (baseElements.length > 0) {
         return baseElements[baseElements.length - 1].href;
       }
-      return $intern_0;
+      return '';
     }
 
     var tempBase = tryMetaTag();
-    if (tempBase == $intern_0) {
+    if (tempBase == '') {
       tempBase = tryNocacheJsTag();
     }
-    if (tempBase == $intern_0) {
+    if (tempBase == '') {
       tempBase = tryMarkerScript();
     }
-    if (tempBase == $intern_0) {
+    if (tempBase == '') {
       tempBase = tryBaseTag();
     }
-    if (tempBase == $intern_0) {
-      tempBase = getDirectoryOfFile($doc.location.href);
+    if (tempBase == '') {
+      tempBase = getDirectoryOfFile($doc_0.location.href);
     }
     tempBase = ensureAbsoluteUrl(tempBase);
     base = tempBase;
@@ -133,48 +132,48 @@ function somviewer(){
   }
 
   function processMetas(){
-    var metas = document.getElementsByTagName($intern_24);
+    var metas = document.getElementsByTagName('meta');
     for (var i = 0, n = metas.length; i < n; ++i) {
-      var meta = metas[i], name = meta.getAttribute($intern_25), content;
-      if (name) {
-        name = name.replace($intern_26, $intern_0);
-        if (name.indexOf($intern_27) >= 0) {
+      var meta = metas[i], name_0 = meta.getAttribute('name'), content_0;
+      if (name_0) {
+        name_0 = name_0.replace('somviewer::', '');
+        if (name_0.indexOf('::') >= 0) {
           continue;
         }
-        if (name == $intern_28) {
-          content = meta.getAttribute($intern_29);
-          if (content) {
-            var value, eq = content.indexOf($intern_30);
+        if (name_0 == 'gwt:property') {
+          content_0 = meta.getAttribute('content');
+          if (content_0) {
+            var value, eq = content_0.indexOf('=');
             if (eq >= 0) {
-              name = content.substring(0, eq);
-              value = content.substring(eq + 1);
+              name_0 = content_0.substring(0, eq);
+              value = content_0.substring(eq + 1);
             }
              else {
-              name = content;
-              value = $intern_0;
+              name_0 = content_0;
+              value = '';
             }
-            metaProps[name] = value;
+            metaProps[name_0] = value;
           }
         }
-         else if (name == $intern_31) {
-          content = meta.getAttribute($intern_29);
-          if (content) {
+         else if (name_0 == 'gwt:onPropertyErrorFn') {
+          content_0 = meta.getAttribute('content');
+          if (content_0) {
             try {
-              propertyErrorFunc = eval(content);
+              propertyErrorFunc = eval(content_0);
             }
              catch (e) {
-              alert($intern_32 + content + $intern_33);
+              alert('Bad handler "' + content_0 + '" for "gwt:onPropertyErrorFn"');
             }
           }
         }
-         else if (name == $intern_34) {
-          content = meta.getAttribute($intern_29);
-          if (content) {
+         else if (name_0 == 'gwt:onLoadErrorFn') {
+          content_0 = meta.getAttribute('content');
+          if (content_0) {
             try {
-              onLoadErrorFunc = eval(content);
+              onLoadErrorFunc = eval(content_0);
             }
              catch (e) {
-              alert($intern_32 + content + $intern_35);
+              alert('Bad handler "' + content_0 + '" for "gwt:onLoadErrorFn"');
             }
           }
         }
@@ -182,8 +181,8 @@ function somviewer(){
     }
   }
 
-  function __gwt_getMetaProperty(name){
-    var value = metaProps[name];
+  function __gwt_getMetaProperty(name_0){
+    var value = metaProps[name_0];
     return value == null?null:value;
   }
 
@@ -214,36 +213,36 @@ function somviewer(){
   function maybeInjectFrame(){
     if (!frameInjected) {
       frameInjected = true;
-      var iframe = $doc.createElement($intern_36);
-      iframe.src = $intern_37;
-      iframe.id = $intern_1;
-      iframe.style.cssText = $intern_38;
+      var iframe = $doc_0.createElement('iframe');
+      iframe.src = "javascript:''";
+      iframe.id = 'somviewer';
+      iframe.style.cssText = 'position:absolute;width:0;height:0;border:none';
       iframe.tabIndex = -1;
-      $doc.body.appendChild(iframe);
-      $stats && $stats({moduleName:$intern_1, sessionId:$sessionId, subSystem:$intern_2, evtGroup:$intern_8, millis:(new Date).getTime(), type:$intern_39});
+      $doc_0.body.appendChild(iframe);
+      $stats && $stats({moduleName:'somviewer', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'moduleStartup', millis:(new Date).getTime(), type:'moduleRequested'});
       iframe.contentWindow.location.replace(base + initialHtml);
     }
   }
 
-  providers[$intern_40] = function(){
+  providers['user.agent'] = function(){
     var ua = navigator.userAgent.toLowerCase();
     var makeVersion = function(result){
       return parseInt(result[1]) * 1000 + parseInt(result[2]);
     }
     ;
     if (function(){
-      return ua.indexOf($intern_41) != -1;
+      return ua.indexOf('opera') != -1;
     }
     ())
-      return $intern_41;
+      return 'opera';
     if (function(){
-      return ua.indexOf($intern_42) != -1 || function(){
-        if (ua.indexOf($intern_43) != -1) {
+      return ua.indexOf('webkit') != -1 || function(){
+        if (ua.indexOf('chromeframe') != -1) {
           return true;
         }
-        if (typeof window[$intern_44] != $intern_18) {
+        if (typeof window['ActiveXObject'] != 'undefined') {
           try {
-            var obj = new ActiveXObject($intern_45);
+            var obj = new ActiveXObject('ChromeTab.ChromeFrame');
             if (obj) {
               obj.registerBhoIfNeeded();
               return true;
@@ -257,33 +256,33 @@ function somviewer(){
       ();
     }
     ())
-      return $intern_46;
+      return 'safari';
     if (function(){
-      return ua.indexOf($intern_47) != -1 && $doc.documentMode >= 9;
+      return ua.indexOf('msie') != -1 && $doc_0.documentMode >= 9;
     }
     ())
-      return $intern_48;
+      return 'ie9';
     if (function(){
-      return ua.indexOf($intern_47) != -1 && $doc.documentMode >= 8;
+      return ua.indexOf('msie') != -1 && $doc_0.documentMode >= 8;
     }
     ())
-      return $intern_49;
+      return 'ie8';
     if (function(){
       var result = /msie ([0-9]+)\.([0-9]+)/.exec(ua);
       if (result && result.length == 3)
         return makeVersion(result) >= 6000;
     }
     ())
-      return $intern_50;
+      return 'ie6';
     if (function(){
-      return ua.indexOf($intern_51) != -1;
+      return ua.indexOf('gecko') != -1;
     }
     ())
-      return $intern_52;
-    return $intern_53;
+      return 'gecko1_8';
+    return 'unknown';
   }
   ;
-  values[$intern_40] = {gecko1_8:0, ie6:1, ie8:2, ie9:3, opera:4, safari:5};
+  values['user.agent'] = {gecko1_8:0, ie6:1, ie8:2, ie9:3, opera:4, safari:5};
   somviewer.onScriptLoad = function(){
     if (frameInjected) {
       loadDone = true;
@@ -293,7 +292,7 @@ function somviewer(){
   ;
   somviewer.onInjectionDone = function(){
     scriptsDone = true;
-    $stats && $stats({moduleName:$intern_1, sessionId:$sessionId, subSystem:$intern_2, evtGroup:$intern_54, millis:(new Date).getTime(), type:$intern_9});
+    $stats && $stats({moduleName:'somviewer', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'loadExternalRefs', millis:(new Date).getTime(), type:'end'});
     maybeStartModule();
   }
   ;
@@ -302,29 +301,29 @@ function somviewer(){
   var strongName;
   var initialHtml;
   if (isHostedMode()) {
-    if ($wnd.external && ($wnd.external.initModule && $wnd.external.initModule($intern_1))) {
-      $wnd.location.reload();
+    if ($wnd_0.external && ($wnd_0.external.initModule && $wnd_0.external.initModule('somviewer'))) {
+      $wnd_0.location.reload();
       return;
     }
-    initialHtml = $intern_55;
-    strongName = $intern_0;
+    initialHtml = 'hosted.html?somviewer';
+    strongName = '';
   }
-  $stats && $stats({moduleName:$intern_1, sessionId:$sessionId, subSystem:$intern_2, evtGroup:$intern_3, millis:(new Date).getTime(), type:$intern_56});
+  $stats && $stats({moduleName:'somviewer', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'bootstrap', millis:(new Date).getTime(), type:'selectingPermutation'});
   if (!isHostedMode()) {
     try {
-      unflattenKeylistIntoAnswers([$intern_48], $intern_57);
-      unflattenKeylistIntoAnswers([$intern_41], $intern_58);
-      unflattenKeylistIntoAnswers([$intern_49], $intern_59);
-      unflattenKeylistIntoAnswers([$intern_52], $intern_60);
-      unflattenKeylistIntoAnswers([$intern_46], $intern_61);
-      unflattenKeylistIntoAnswers([$intern_50], $intern_62);
-      strongName = answers[computePropValue($intern_40)];
-      var idx = strongName.indexOf($intern_63);
+      unflattenKeylistIntoAnswers(['ie8'], '3E3AECEA7E948E6AADE7EF3E89EC0219');
+      unflattenKeylistIntoAnswers(['safari'], '61776B4F272C03D19107FC8AFE94DEE8');
+      unflattenKeylistIntoAnswers(['ie6'], '95CE188C61FADBCE2BB89DA055892B0F');
+      unflattenKeylistIntoAnswers(['gecko1_8'], 'A15827B5C2584F7E3317348FB0777368');
+      unflattenKeylistIntoAnswers(['ie9'], 'B6EDA9146A5AE14A8C24687A7D82BCF2');
+      unflattenKeylistIntoAnswers(['opera'], 'C7BAF7F6AF4989A35249CA34E2DC8762');
+      strongName = answers[computePropValue('user.agent')];
+      var idx = strongName.indexOf(':');
       if (idx != -1) {
         softPermutationId = Number(strongName.substring(idx + 1));
         strongName = strongName.substring(0, idx);
       }
-      initialHtml = strongName + $intern_64;
+      initialHtml = strongName + '.cache.html';
     }
      catch (e) {
       return;
@@ -334,23 +333,23 @@ function somviewer(){
   function onBodyDone(){
     if (!bodyDone) {
       bodyDone = true;
-      if (!__gwt_stylesLoaded[$intern_65]) {
-        var l = $doc.createElement($intern_66);
-        __gwt_stylesLoaded[$intern_65] = l;
-        l.setAttribute($intern_67, $intern_68);
-        l.setAttribute($intern_69, base + $intern_65);
-        $doc.getElementsByTagName($intern_70)[0].appendChild(l);
+      if (!__gwt_stylesLoaded['gwt/clean/clean.css']) {
+        var l = $doc_0.createElement('link');
+        __gwt_stylesLoaded['gwt/clean/clean.css'] = l;
+        l.setAttribute('rel', 'stylesheet');
+        l.setAttribute('href', base + 'gwt/clean/clean.css');
+        $doc_0.getElementsByTagName('head')[0].appendChild(l);
       }
-      if (!__gwt_stylesLoaded[$intern_71]) {
-        var l = $doc.createElement($intern_66);
-        __gwt_stylesLoaded[$intern_71] = l;
-        l.setAttribute($intern_67, $intern_68);
-        l.setAttribute($intern_69, base + $intern_71);
-        $doc.getElementsByTagName($intern_70)[0].appendChild(l);
+      if (!__gwt_stylesLoaded['css/style.css']) {
+        var l = $doc_0.createElement('link');
+        __gwt_stylesLoaded['css/style.css'] = l;
+        l.setAttribute('rel', 'stylesheet');
+        l.setAttribute('href', base + 'css/style.css');
+        $doc_0.getElementsByTagName('head')[0].appendChild(l);
       }
       maybeStartModule();
-      if ($doc.removeEventListener) {
-        $doc.removeEventListener($intern_72, onBodyDone, false);
+      if ($doc_0.removeEventListener) {
+        $doc_0.removeEventListener('DOMContentLoaded', onBodyDone, false);
       }
       if (onBodyDoneTimerId) {
         clearInterval(onBodyDoneTimerId);
@@ -358,23 +357,23 @@ function somviewer(){
     }
   }
 
-  if ($doc.addEventListener) {
-    $doc.addEventListener($intern_72, function(){
+  if ($doc_0.addEventListener) {
+    $doc_0.addEventListener('DOMContentLoaded', function(){
       maybeInjectFrame();
       onBodyDone();
     }
     , false);
   }
   var onBodyDoneTimerId = setInterval(function(){
-    if (/loaded|complete/.test($doc.readyState)) {
+    if (/loaded|complete/.test($doc_0.readyState)) {
       maybeInjectFrame();
       onBodyDone();
     }
   }
   , 50);
-  $stats && $stats({moduleName:$intern_1, sessionId:$sessionId, subSystem:$intern_2, evtGroup:$intern_3, millis:(new Date).getTime(), type:$intern_9});
-  $stats && $stats({moduleName:$intern_1, sessionId:$sessionId, subSystem:$intern_2, evtGroup:$intern_54, millis:(new Date).getTime(), type:$intern_4});
-  $doc.write($intern_73);
+  $stats && $stats({moduleName:'somviewer', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'bootstrap', millis:(new Date).getTime(), type:'end'});
+  $stats && $stats({moduleName:'somviewer', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'loadExternalRefs', millis:(new Date).getTime(), type:'begin'});
+  $doc_0.write('<script defer="defer">somviewer.onInjectionDone(\'somviewer\')<\/script>');
 }
 
 somviewer();

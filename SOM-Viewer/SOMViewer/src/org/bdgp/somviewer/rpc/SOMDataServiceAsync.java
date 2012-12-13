@@ -9,9 +9,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface SOMDataServiceAsync {
 
-	void getSOMmaps(AsyncCallback callback);
-	void getSOMDataPts(String datasrc, AsyncCallback callback);
-	void getDataOverlay(String datasrc, String name, int variant, AsyncCallback callback);
-	void getPtInfo(int id, int variant, AsyncCallback callback);
+	void getSOMmaps(AsyncCallback<SOMList> callback);
+	void getSOMDataPts(String datasrc, AsyncCallback<SOMDataPts> callback);
+	void getDataOverlay(String datasrc, String name, int variant, AsyncCallback<SOMDataOverlay> callback);
+	void getPtInfo(int id, int variant, AsyncCallback<SOMPtInfo> callback);
 	
 }

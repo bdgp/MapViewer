@@ -2,7 +2,7 @@ package org.bdgp.somviewer.rpc;
 
 import com.google.gwt.core.client.GWT;
 
-public abstract class AbstractLoggingAsyncHandler extends AbstractBaseAsyncHandler {
+public abstract class AbstractLoggingAsyncHandler<T> extends AbstractBaseAsyncHandler<T> {
 	
 	String log = null;
 	
@@ -13,7 +13,7 @@ public abstract class AbstractLoggingAsyncHandler extends AbstractBaseAsyncHandl
 		printLogEntry();
 	}
 
-	public void onSuccess(Object result) {
+	public void onSuccess(T result) {
 		
 		GWT.log("RPC Success [" + this.getClass().getName() + "]", null);
 		super.onSuccess(result);		
