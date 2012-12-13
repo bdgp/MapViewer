@@ -1,4 +1,2 @@
 # Module somviewer
 # RPC service class, partial path of RPC policy file
-org.bdgp.somviewer.rpc.SOMDataService, D489C70DE66F98ED29FF3085864C87DD.gwt.rpc
-org.bdgp.somviewer.client.GreetingService, 2DC38361F9ACBA34F444A6C431A51711.gwt.rpc

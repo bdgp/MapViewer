@@ -254,6 +254,12 @@ public class CanvasComposite extends Composite {
 			rec_treasure.setFillColor("white");
 
 			canvas.add(rec_treasure);
+			
+			if ( pt_info != null ) {
+				InfoClick ic = new InfoClick(treasure.getName(), treasure.getId(), treasure.getVariant());
+				ic.setOtherEntries(treasure.getIdenticalPt());
+				rec_treasure.addClickHandler(ic);
+			}
 		}
 	}
 	
