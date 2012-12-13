@@ -64,8 +64,10 @@ import com.google.gwt.user.client.ui.Image;
 
 public class MainComposite extends ResizeComposite {
 
-	protected int win_w = 400;
-	protected int win_h = 400;
+	public final boolean DEBUG = false;
+	protected final static String REL_VER = "1.0b1";
+	protected final static String REL_DATE = "12/2012";
+	
 	protected boolean initialScaling = true;
 	
 	protected String som_src = "test";
@@ -91,14 +93,9 @@ public class MainComposite extends ResizeComposite {
 	protected final int titlePanelSize = 30;
 	protected int canv_gapx = 0, canv_gapy = 0;
 	
-	protected final static int GRP_TXT = 0;
-	protected final static int GRP_CIRC = 1;
-
 	protected final static boolean TEST_CANV = true;
 	private HorizontalPanel findPanel;
 	private TextBox findBox;
-	// private Button btnFind;
-	// private Button btnClear;
 	private HorizontalPanel horizontalPanel;
 	private HorizontalPanel horizontalPanel_1;
 	private Grid grid;
@@ -115,6 +112,9 @@ public class MainComposite extends ResizeComposite {
 		// mainPanel.setSize("100%", "100%");
 		initWidget(mainPanel);
 		
+		//
+		//
+		// Title on top (NORTH)
 		grid = new Grid(1, 5);
 		grid.setStyleName("titleBar");
 		mainPanel.addNorth(grid, titlePanelSize);
@@ -125,13 +125,13 @@ public class MainComposite extends ResizeComposite {
 			public void onClick(ClickEvent sender) {
 				DialogBoxClosable aboutBox = new DialogBoxClosable();
 				aboutBox.setText("About MapExplorer");
-				// dialogBox.setText(label);
 				aboutBox.setAnimationEnabled(true);
 				VerticalPanel aboutVPanel = new VerticalPanel();
 				aboutVPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 				aboutVPanel.add(new Image("images/bdgp_logo.png"));
-				aboutVPanel.add(new HTML("Map<I>Explorer</I><P>Exploring 2D maps of complex datasets and relationship to other data.<P>Written by Erwin Frise, BDGP, 2012"));
+				aboutVPanel.add(new HTML("Map<I>Explorer</I> Version "+ REL_VER + "<P>Exploring 2D maps of complex datasets and relationship to other data.<P>Written by Erwin Frise, BDGP, " + REL_DATE));
 				aboutBox.setWidget(aboutVPanel);
+				aboutBox.center();
 				aboutBox.show();
 			}			
 		});
@@ -160,7 +160,7 @@ public class MainComposite extends ResizeComposite {
 			}
 		});
 		
-		
+		// Feedback fields
 		statusHtml = new HTML();
 		grid.setWidget(0, 3, statusHtml);
 		statusHtml.setWidth("200px");
@@ -169,26 +169,21 @@ public class MainComposite extends ResizeComposite {
 		grid.setWidget(0, 4, infoHtml);
 		infoHtml.setWidth("200px");
 		
-		// FlowPanel flowPanel = new FlowPanel();
-		// mainPanel.addNorth(flowPanel, 20);
-
 		
+		//
+		//
+		// Control panel on left of browser window (WEST)
 		ScrollPanel scrollCtrlPanel = new ScrollPanel();
 		mainPanel.addWest(scrollCtrlPanel,ctrlPanelSize);
 		
 		VerticalPanel ctrlPanel = new VerticalPanel();
-		// mainPanel.addWest(ctrlPanel,ctrlPanelSize);
 		ctrlPanel.setWidth("100%");
 		scrollCtrlPanel.add(ctrlPanel);
 		
-		//Label lblNewLabel_2 = new Label("Select:");
-		//ctrlPanel.add(lblNewLabel_2);
 		HTML navTitle = new HTML("<b>Navigation</b>");
 		navTitle.setStyleName("ctrlTitle");
 		ctrlPanel.add(navTitle);
-		// ctrlPanel.add(new HTML("<b>Navigation</b>"));
-	
-		
+			
 		//
 		// Search field
 		findPanel = new HorizontalPanel();
@@ -207,13 +202,7 @@ public class MainComposite extends ResizeComposite {
 		findPanel.add(horizontalPanel);
 		horizontalPanel.setHeight("24px");
 		findPanel.setCellHorizontalAlignment(horizontalPanel, HasHorizontalAlignment.ALIGN_RIGHT);
-		
-//		btnFind = new Button("Find");
-//		horizontalPanel.add(btnFind);
-//		btnClear = new Button("Clear");
-//		horizontalPanel.add(btnClear);
-
-		
+				
 		btnFind = new PushButton(new Image("images/find-normal.png"));
 		btnFind.setStyleName("imageButton");
 		btnFind.getDownFace().setImage(new Image("images/find-pressed.png"));
@@ -228,7 +217,6 @@ public class MainComposite extends ResizeComposite {
 		btnClear.getUpHoveringFace().setImage(new Image("images/clear-pressed.png"));
 		btnClear.getUpFace().setImage(new Image("images/clear-normal.png"));
 		horizontalPanel.add(btnClear);
-//		btnClear.setSize("45px", "24px");
 		
 		btnClear.addClickHandler( new ClickHandler() {
 			public void onClick(ClickEvent sender) {
@@ -251,9 +239,8 @@ public class MainComposite extends ResizeComposite {
 		      }
 		} );
 
-		
-		// avail_somBox.addItem("test");
-		
+		//
+		// Zoom
 		HorizontalPanel zoomPanel = new HorizontalPanel();
 		zoomPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		ctrlPanel.add(zoomPanel);
@@ -269,10 +256,6 @@ public class MainComposite extends ResizeComposite {
 		zoomPanel.setCellVerticalAlignment(horizontalPanel_1, HasVerticalAlignment.ALIGN_MIDDLE);
 		zoomPanel.setCellHorizontalAlignment(horizontalPanel_1, HasHorizontalAlignment.ALIGN_RIGHT);
 		
-//		but_zplus = new Button("+");				
-//		but_zone = new Button("1:1");
-//		but_zminus = new Button("-");		
-
 		but_zplus = new PushButton(new Image("images/plus-normal.png"));
 		but_zplus.setStyleName("imageButton");
 		but_zplus.getDownFace().setImage(new Image("images/plus-pressed.png"));
@@ -297,20 +280,28 @@ public class MainComposite extends ResizeComposite {
 		but_zone.addClickHandler(new ZoomHandler());
 		but_zplus.addClickHandler(new ZoomHandler());
 		
-//		ScrollPanel scrollCatPanel = new ScrollPanel();
-//		ctrlPanel.add(scrollCatPanel);
-		
+		//
+		// Overlay categories (to be added when map is loaded)
 		catPanel = new VerticalPanel();
 		ctrlPanel.add(catPanel);
-//		scrollCatPanel.setWidget(catPanel);
-		//catPanel.setSize("100%", "100%");
+
 		
+		//
+		//
+		// SVG canvas in the middle (MAIN)
 		canvPanel = new CanvasComposite(ctrlPanelSize, titlePanelSize);
 		mainPanel.add(canvPanel);
 		
+		
+		//
+		//
+		// Initialize feedback
 		Feedback.getInstance().setInfoWidget(infoHtml);
 		Feedback.getInstance().setStatusWidget(statusHtml);
 		
+		//
+		//
+		// Requesting available SOM from the datase
 		getSOMlist();
 	}
 
@@ -340,14 +331,15 @@ public class MainComposite extends ResizeComposite {
 	protected void set(SOMDataPts data) {
 		SOMDataPts pts = data;
 
+		// Wrong alarm?
 		if (pts == null) {
 			return;
 		}
 
+		// Create new map data structure
 		som = new SOMData(pts);
 
-		// som.setDecorators(df);
-		
+		// Set redrawing canvas to false since there are so many updates going to happen
 		canvPanel.updateCanvas(false);
 		canvPanel.setSOM(som);
 		
@@ -364,7 +356,6 @@ public class MainComposite extends ResizeComposite {
 		while ( it_df.hasNext() )
 			canvPanel.addDecorator(it_df.next());
 		PointInfo pti = new PointInfo();
-		// pti.setViewPortSize(win_w, win_h);
 		canvPanel.setDecorator(pti);
 		
 				
@@ -373,6 +364,7 @@ public class MainComposite extends ResizeComposite {
 		catPanel.add(cat);
 		cat.setColorRank(rank);
 
+		// Enable canvas drawing again
 		canvPanel.updateCanvas(true);
 	}
 	
@@ -399,15 +391,21 @@ public class MainComposite extends ResizeComposite {
 	
 	public class SomUpdater extends AbstractLoggingAsyncHandler {
 		
+		@SuppressWarnings("unused")
 		public void handleFailure(Throwable caught) {
-//			String stack = new String();
-//			StackTraceElement [] stes = caught.getStackTrace();
-//			for ( int i = stes.length-1; i >=0; i-- ) {
-//				StackTraceElement s = stes[i];
-//				stack += "\n" + s.toString();
-//			}
-//			Feedback.getInstance().rpcError("RPC Failure for getting map data: " + caught.getMessage() + "\n" + stack);
-			Feedback.getInstance().rpcError("RPC Failure for getting data: " + caught.getMessage());
+			if ( DEBUG == true ) {
+			// Reverse stack trace for debugging
+			// Disabled for release
+				String stack = new String();
+				StackTraceElement [] stes = caught.getStackTrace();
+				for ( int i = stes.length-1; i >=0; i-- ) {
+					StackTraceElement s = stes[i];
+					stack += "\n" + s.toString();
+				}
+				Feedback.getInstance().rpcError("RPC Failure for getting map data: " + caught.getMessage() + "\n" + stack);
+			} else {
+				Feedback.getInstance().rpcError("RPC Failure for getting data: " + caught.getMessage());
+			}
 		}
 		
 		public void handleSuccess(Object result) {

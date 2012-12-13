@@ -12,7 +12,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 public class PointCloudy extends PointBasic {
 
-	protected static final int BIGCIRC_RAD = 10;
+	protected static final int BIGCIRC_RAD = 12;
 	
 	public PointCloudy(OverlayDrawMap colormap, ColorRank col_rank) {
 		super(colormap, col_rank);
