@@ -10,6 +10,6 @@ public interface SOMinfo {
 	
 	String longInfo(int id, int variant) throws Exception;
 	
-	int getShortInfoWidth();
+	int getShortInfoWidth(int id, int variant) throws Exception;
 	
 }

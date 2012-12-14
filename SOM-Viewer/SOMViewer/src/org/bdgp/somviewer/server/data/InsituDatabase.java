@@ -3,14 +3,11 @@ package org.bdgp.somviewer.server.data;
 import java.sql.ResultSet;
 import java.util.Vector;
 
-import org.bdgp.somviewer.server.DBMySQL;
 import org.bdgp.somviewer.server.DBbase;
 import org.bdgp.somviewer.server.DBbase.LogSeverity;
 
-public class InsituDatabase implements SOMinfo {
+public class InsituDatabase extends SOMInfoGeneric implements SOMinfo {
 
-	private final String st_qmaps = "select distinct(name) from somtitle";
-	
 	private final String st_im_info = "select image.image_path from som2main, annot, image where annot.main_id = som2main.main_id and image.annot_id = annot.id and annot.stage = __STAGE and som2main.somstruct_id = __ID";
 	private final String st_term_info = "select term.go_term from som2main, annot, annot_term, term where annot.main_id = som2main.main_id and annot_term.annot_id = annot.id and annot.stage = __STAGE and annot_term.term_id = term.id and som2main.somstruct_id = __ID";
 	private final String st_id2name = "select main.flybase_name, main.flybase_id, main.est_id, main.cgname from main, som2main where som2main.main_id = main.id and som2main.somstruct_id = __ID";
@@ -20,42 +17,12 @@ public class InsituDatabase implements SOMinfo {
 
 	private final int THUMBNAIL_WIDTH = 250;
 	
-	protected DBbase db;
 	
 	public InsituDatabase(DBbase db) {
-		this.db = db;
-	}
+		super(db);
+	}		
 
 	
-	// non complex queries
-	// queries with multiple data points are in server.data
-	
-	public Vector<String> somMaps() throws Exception {
-		
-		Vector<String> maps = new Vector<String>(2);
-		
-		try {
-			ResultSet rs = db.query(st_qmaps);
-
-			if ( rs == null ) {
-				db.logEvent(this, LogSeverity.WARN, "No result set returned");
-				return null;
-			}
-			
-			while (rs.next()) {	
-				maps.add(rs.getString(1));
-				db.logEvent(this, LogSeverity.INFO, "maps=" + rs.getString(1));								
-			}
-		}
-		catch (Exception e) {
-			db.logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
-			throw e;
-		}
-
-		return maps;
-	}
-	
-
 	public String shortInfo(int id, int variant) throws Exception {
 		Vector<String> impaths = new Vector<String>(5);
 		Vector<String> terms = new Vector<String>(5);
@@ -90,7 +57,7 @@ public class InsituDatabase implements SOMinfo {
 				fbgn = rs.getString(2);
 				est_id = rs.getString(3);
 				cgname = rs.getString(4);
-				db.logEvent(this, LogSeverity.INFO, "impath=" + rs.getString(1));								
+				db.logEvent(this, LogSeverity.INFO, "sym=" + rs.getString(1));								
 						
 			}
 		
@@ -151,7 +118,8 @@ public class InsituDatabase implements SOMinfo {
 		return html;
 	}
 
-	public int getShortInfoWidth() {
+	public int getShortInfoWidth(int id, int variant) throws Exception {
+		// id & variant are ignored here - width is pretty much consistent
 		return THUMBNAIL_WIDTH;
 	}
 	

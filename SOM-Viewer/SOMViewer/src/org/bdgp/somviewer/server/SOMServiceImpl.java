@@ -188,7 +188,7 @@ public class SOMServiceImpl extends RemoteServiceServlet implements
 		
 		try {
 			html = info.shortInfo(id, variant);
-			info_width = info.getShortInfoWidth();
+			info_width = info.getShortInfoWidth(id, variant);
 		}
 		catch (Exception e) {
 			pti.queryResult = "Exception: " + e.getMessage() + db.flatLog(LogSeverity.ALL);

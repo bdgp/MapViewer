@@ -168,7 +168,7 @@ public class CategoryComposite extends Composite {
 				
 				// overlay Slider & Label
 				VerticalPanel vPan = new VerticalPanel();
-				Label osLab = new Label("Stage 13-16");
+				Label osLab = new Label("unknown");
 				osLab.setStyleName("verboseLabel");
 				vPan.add(osLab);
 				VariationSelectWidget osVarSlider = new VariationSelectWidget(max_variant,"60px",true);
