@@ -156,7 +156,8 @@ public class MainComposite extends ResizeComposite {
 		grid.setWidget(0, 2, btnPrint);
 		btnPrint.addClickHandler( new ClickHandler() {
 			public void onClick(ClickEvent sender) {
-				Print.it(canvPanel);
+				//Print.it(canvPanel);
+				canvPanel.print();
 			}
 		});
 		

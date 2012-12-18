@@ -97,6 +97,14 @@ public class CanvasComposite extends Composite {
 	}
 
 	
+	public void print() {
+		String scale = "0.5";
+		canvas.getElement().getStyle().setProperty("transform", "scale(" + scale + ")");
+		Print.it(canvas);
+		canvas.getElement().getStyle().clearProperty("transform");
+	}
+	
+		
 	public void setSOM(SOMData som) {
 
 		this.som = som;
