@@ -65,7 +65,7 @@ import com.google.gwt.user.client.ui.Image;
 public class MainComposite extends ResizeComposite {
 
 	public final boolean DEBUG = false;
-	protected final static String REL_VER = "1.0b1";
+	protected final static String REL_VER = "1.0b2";
 	protected final static String REL_DATE = "12/2012";
 	
 	protected boolean initialScaling = true;

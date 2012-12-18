@@ -31,6 +31,9 @@ public class InsituDatabase extends SOMInfoGeneric implements SOMinfo {
 		
 		String html = new String();
 		
+		// Adjust for variant numbering
+		variant++;
+		
 		String nquery = st_id2name.replace("__ID", new Integer(id).toString());
 		
 		String imquery = st_im_info.replace("__ID", new Integer(id).toString());
@@ -133,18 +136,21 @@ public class InsituDatabase extends SOMInfoGeneric implements SOMinfo {
 		
 		switch (stage) {
 		case 1:
-			stString="4-6";
+			stString="0-3";
 			break;
 		case 2:
-			stString="7-8";
+			stString="4-6";
 			break;
 		case 3:
-			stString="9-10";
+			stString="7-8";
 			break;
 		case 4:
-			stString="11-12";
+			stString="9-10";
 			break;
 		case 5:
+			stString="11-12";
+			break;
+		case 6:
 			stString="13-16";
 			break;
 		}

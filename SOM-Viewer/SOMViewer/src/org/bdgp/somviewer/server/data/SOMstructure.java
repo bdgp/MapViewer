@@ -39,6 +39,7 @@ public class SOMstructure {
 
 			if ( rs == null ) {
 				db.logEvent(this, LogSeverity.WARN, "No result set returned");
+				somdata = null;
 				return;
 			}
 			

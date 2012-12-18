@@ -81,6 +81,10 @@ public class PointInfo implements PointDecorator {
 
 	public void infoQuick(String title, Integer id, int variant, int x, int y) {
 		
+		// If the variant changes, invalidate the cache
+		if ( this.variant != variant )
+			infoCache = new HashMap<Integer,InfoData>();
+		
 		click_x = x; click_y = y;
 		this.title = title;
 		this.variant = variant;

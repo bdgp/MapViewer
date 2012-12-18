@@ -12,6 +12,7 @@ import org.bdgp.somviewer.server.DBbase.LogSeverity;
 public class SOMoverlay {
 	
 	private final String st_title_id = "select id from somtitle where name = ";
+	private final String st_mapsource = "select source_type from somtitle where id = ";
 	private final String st_availoverlays = "select distinct(name), max(variant), color, type, decorator from somoverlay_info where somtitle_id = __ID  group by name";	
 	private final String st_availvariants = "select distinct(variant), variant_name, type from somoverlay_info where somtitle_id = __ID order by variant";
 	private final String st_overlay = "select somstruct_id, value from somoverlay so, somoverlay_info si where so.somoverlay_info_id = si.id and si.name = '__NAME' and si.variant = __VAR and si.somtitle_id = __ID";
@@ -24,6 +25,7 @@ public class SOMoverlay {
 	
 	protected String somtitle = null;
 	protected int som_id = 0;
+	protected String mapsource = null;
 	protected Vector<Available> available = null;
 	protected HashMap<String, Vector<String>> variants = null;
 	protected Overlay last_query = null;
@@ -70,6 +72,7 @@ public class SOMoverlay {
 			return;
 		}
 		
+		getMapSource();
 		getVariants();
 		
 		String fquery = st_availoverlays.replace("__ID", new Integer(som_id).toString());
@@ -178,6 +181,34 @@ public class SOMoverlay {
 		}
 		
 	}
+	
+	
+	private void getMapSource() throws Exception {
+
+		String fquery = st_mapsource + som_id;
+		db.logEvent(this, LogSeverity.INFO, fquery);
+
+		try {
+			ResultSet rs = db.query(fquery);
+
+			if ( rs == null ) {
+				db.logEvent(this, LogSeverity.WARN, "No result set returned");
+				return;
+			}
+			
+			if ( rs.next() )
+				mapsource = rs.getString(1);
+			
+		}
+		catch (Exception e) {
+			db.logEvent(this, LogSeverity.ERROR, "Exception: " + e.getMessage());
+			available = null;
+			throw e;
+		}
+		
+	}
+
+	
 	
 	
 	public boolean overlayExists(String name) throws Exception {
@@ -314,6 +345,7 @@ public class SOMoverlay {
 		if ( available == null || pts == null )
 			return null;
 		
+		pts.mapsource = mapsource;
 		pts.available = new SOMOverlaysAvailable[available.size()];
 		
 		for ( int i=0; i < available.size(); i++ ) {

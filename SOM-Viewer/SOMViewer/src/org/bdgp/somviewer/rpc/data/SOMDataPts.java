@@ -1,7 +1,5 @@
 package org.bdgp.somviewer.rpc.data;
 
-import java.util.Vector;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class SOMDataPts implements IsSerializable {
@@ -14,6 +12,7 @@ public class SOMDataPts implements IsSerializable {
 	public float [] x, y;
 	public String [] names;
 	
+	public String mapsource;
 	public SOMOverlaysAvailable [] available;
 	
 	public SOMOverlaysAvailable CreateAvailable(String name, int variant, String [] variant_names, String color, String[] color_similar, String type, String decorator) {

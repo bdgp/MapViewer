@@ -6,12 +6,13 @@ import java.util.Vector;
 
 public class SOMpt {
 
-	public Integer id;
-	public float x;
-	public float y;
-	public String name;
-	public Vector<DrawHints> draw = new Vector<DrawHints>(2);
-	public Vector<String> overlay_names = new Vector<String>(2);
+	protected Integer id;
+	protected float x;
+	protected float y;
+	protected String name;
+	protected int variant;
+	protected Vector<DrawHints> draw = new Vector<DrawHints>(2);
+	protected Vector<String> overlay_names = new Vector<String>(2);
 	protected HashMap<String,Integer> overlay_unique = new HashMap<String,Integer>();
 	protected OverlayDrawMap overlay_map = null;
 	protected Integer dummy  = new Integer(1);
@@ -72,34 +73,25 @@ public class SOMpt {
 		return col;
 	}
 	
-	
-//	public Vector<String> getColorMapNames() {
-//		if ( overlay_unique.size() == 0 )
-//			return null;
-//		
-//		// Lazy generation of Vector for colormap names
-//		// Generating them upon get call instead of add prevents duplicates (HashMap in addColorMap makes sure about that)
-//		if ( overlay_names.size() == 0 ) {
-//			for (Map.Entry<String, Integer> entry : overlay_unique.entrySet()) {
-//				overlay_names.add(entry.getKey());
-//			}
-//		}
-//		return overlay_names;
-//	}
-	
-	
+		
 	public OverlayDrawMap getDrawMap() {
 		return overlay_map;
 	}
 		
+	public void setVariant(int var) {
+		variant = var;
+	}
+	
 	
 	public int getVariant() {
 		//TODO: This shouldn't return a fixed value!!!
-		if ( draw.size() == 0 ) {
-			return 5;
-		}
-
-		return draw.get(0).variant;
+		return variant;
+		
+//		if ( draw.size() == 0 ) {
+//			return 5;
+//		}
+//
+//		return draw.get(0).variant;
 	}
 	
 	

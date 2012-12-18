@@ -19,7 +19,7 @@ public class SOMData {
 	protected static final float ZOOM_INC = 100; // Increment for zoom
 	protected static final int VALUE_RANGE = 100; // Integer range for point values
 	
-	protected String map_name;
+	protected String map_name, map_source;
 	protected HashMap<String,Overlay> overlay;
 	protected HashMap<Integer,SOMstruct> all_data; // all data 
 	protected HashMap<Integer,SOMstruct> data; // visible data
@@ -27,6 +27,7 @@ public class SOMData {
 	protected HashMap<String,Library> library;
 	protected Vector<String> types, decorators;
 	protected SOMDataPts pts;
+	protected int global_variant;
 	protected HashMap<Integer,Group> data_grp = null;
 	protected float zoom;
 	protected float zoom_range = 1000;
@@ -35,6 +36,7 @@ public class SOMData {
 		this.pts = pts;
 		
 		map_name = pts.map;
+		map_source = pts.mapsource;
 		all_data = new HashMap<Integer,SOMstruct>(100);
 		data = new HashMap<Integer, SOMstruct>(100);
 		hid_data = new HashMap<Integer,Integer>();
@@ -217,6 +219,18 @@ public class SOMData {
 		}
 		
 		return max;
+	}
+	
+	
+	public void setGlobalVariant(int var) {
+		this.global_variant = var;
+	}
+	
+	
+	public boolean isGlobalVariantType(String name) {
+		if ( name.compareTo(map_source) == 0 )
+			return true;
+		return false;
 	}
 	
 	
@@ -571,6 +585,7 @@ public class SOMData {
 				    Map.Entry<Integer, SOMstruct> entry = (Map.Entry<Integer, SOMstruct>) all_it.next();
 				    SOMstruct value = (SOMstruct) entry.getValue();
 				    SOMpt pt = new SOMpt(entry.getKey(), value.x, value.y, value.name);
+				    pt.setVariant(global_variant);
 					seldata.put(entry.getKey(), pt);
 				}
 				all_it = null;
@@ -635,6 +650,7 @@ public class SOMData {
 				if ( ov.values != null )
 					ov_value = ov.values[i];
 				// pt.addDrawDescription(ov.variant, ov.color, library.get(ov.name).color_rank, null); // Draw description is not really used right now?
+				pt.setVariant(ov.variant);
 				pt.addDrawMap(SOMData.this, ov.name, ov_value);
 				//pt.addColorMapName(ov.name, ov_value);
 			}
@@ -657,6 +673,7 @@ public class SOMData {
 			    Map.Entry<Integer, SOMstruct> entry = (Map.Entry<Integer, SOMstruct>) all_it.next();
 			    SOMstruct value = (SOMstruct) entry.getValue();
 			    pt = new SOMpt(entry.getKey(), value.x, value.y, value.name);
+			    pt.setVariant(global_variant);
 			}
 			else if ( sel_it != null ) {
 			    Map.Entry<Integer, SOMpt> entry = (Map.Entry<Integer, SOMpt>) sel_it.next();

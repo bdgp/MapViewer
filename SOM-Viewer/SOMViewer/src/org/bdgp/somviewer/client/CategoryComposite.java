@@ -105,6 +105,7 @@ public class CategoryComposite extends Composite {
 	
 	protected void populateCatGroup(String type) {
 		int max_variant = som.getMaxVariantByType(type);
+		boolean isglobal = som.isGlobalVariantType(type);
 	
 		Vector<String> ovnames = som.getOverlayNames(type);				
 
@@ -138,6 +139,11 @@ public class CategoryComposite extends Composite {
 			globalCatHandler = new CatVariantHandler(null, null, globalInt, globalSlider, globalLabel);
 			globalSlider.addBarValueChangedHandler(globalCatHandler);
 			globalInt.addChangeHandler(globalCatHandler);
+			// Dealing with global variants
+			if ( isglobal == true ) {
+				som.setGlobalVariant(som.getMaxVariant());
+				globalCatHandler.updateGlobalVariant(isglobal);
+			}
 		}
 		
 		Grid osGrid = new Grid(ovnames.size(), 3);
@@ -360,6 +366,7 @@ public class CategoryComposite extends Composite {
 		private Vector<CatVariantHandler> others = null;
 		private String [] variant_names = null;
 		protected boolean change_req = false;
+		protected boolean update_global_variant = false;
 		
 		public CatVariantHandler(String name, CheckBox cb, IntegerBox box, VariationSelectWidget var, Label lab) {
 			this.name = name;
@@ -379,7 +386,11 @@ public class CategoryComposite extends Composite {
 				lab.setText(variant_names[numBox.getValue()]);
 		}
 		
-
+		public void updateGlobalVariant(boolean value) {
+			update_global_variant = value;
+		}
+		
+		
         public void onBarValueChanged(BarValueChangedEvent event) {
         	sync.noDraw();
         	// This prevents the handler from running two simultaneous RPC requests/redraws
@@ -431,6 +442,8 @@ public class CategoryComposite extends Composite {
 			}
 			
 			if ( name == null ) {
+				if ( update_global_variant == true ) 
+					som.setGlobalVariant(variant);
 				return;
 			}
 			
