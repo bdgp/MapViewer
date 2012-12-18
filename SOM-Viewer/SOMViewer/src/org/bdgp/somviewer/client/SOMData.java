@@ -273,6 +273,7 @@ public class SOMData {
 			SOMstruct s = entry.getValue();
 			if ( s.name.compareTo(name) == 0 ) {
 				pt = new SOMpt(s.id, s.x, s.y, s.name);
+				pt.setVariant(global_variant);
 				return pt;
 			}
 		}

@@ -140,14 +140,22 @@ public class MainComposite extends ResizeComposite {
 		avail_somBox = new ListBox();
 		avail_somBox.addItem("Select map from list...");
 		grid.setWidget(0, 1, avail_somBox);
-		avail_somBox.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
+		// For some reason, ClickHandler doesn't work in Chrome
+//		avail_somBox.addClickHandler(new ClickHandler() {
+//			public void onClick(ClickEvent event) {
+//				int selected_map = avail_somBox.getSelectedIndex();
+//				if ( selected_map > 0 )
+//					getSOM(avail_somBox.getValue(selected_map));
+//			}
+//		});
+		avail_somBox.addChangeHandler(new ChangeHandler() {
+			public void onChange(ChangeEvent event) {
 				int selected_map = avail_somBox.getSelectedIndex();
 				if ( selected_map > 0 )
 					getSOM(avail_somBox.getValue(selected_map));
 			}
 		});
-		
+
 		btnPrint = new PushButton(new Image("images/print_map-normal.png"));
 		btnPrint.setStyleName("imageButton");
 		btnPrint.getDownFace().setImage(new Image("images/print_map-pressed.png"));
