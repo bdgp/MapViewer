@@ -1,0 +1,19 @@
+VisualPr	848A40	Organ System	Venn
+CNS		928AA7	Organ System	Venn
+Ect.Epi		CFA13E	Organ System	Venn
+SalGl		6E9E93	Organ System	Venn
+Tracheal	C78485	Organ System	Venn
+FoGut		1BAAD4	Organ System	Venn
+SNS		589DC7	Organ System	Venn
+Endo.Midgut	8D7661	Organ System	Venn
+HiGut		257CBF	Organ System	Venn
+Meso.Muscle	1AA76E	Organ System	Venn
+Endocrine.Heart	19A07B	Organ System	Venn
+Blood.Fat	117F7B	Organ System	Venn
+Pole.Germ.cell	AFB3BE	Organ System	Venn
+Extraemb	8B949B	Organ System	Venn
+imagPR		010101	Organ System	Venn
+PNS		9C7FB5	Organ System	Venn
+Yes		00FF00	Characterized	Cloudy
+No		FF0000	Characterized	Cloudy
+Partial		0000FF	Characterized	Cloudy
